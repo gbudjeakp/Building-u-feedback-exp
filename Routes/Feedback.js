@@ -11,7 +11,7 @@ router.get("/getfeedbackrequest", auth, feedbackController.getAllFeedBackRequest
 
 router.get("/getOneFeedback", auth, feedbackController.getOneFeedback);
 
-router.put("/addFeedBack", auth, feedbackController.addFeedBack);
+router.put("/addFeedBack/:feedbackId", auth, feedbackController.addFeedBack);
 
 
 module.exports = router;

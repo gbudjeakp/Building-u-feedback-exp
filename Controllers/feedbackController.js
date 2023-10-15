@@ -58,11 +58,12 @@ for the mentor endpoints
 */
 
 //@TODO
-//Test the addFeedBack Functionality
+//Add logic to stop mentor's from adding 
+//Feedback to feedback request that they have not acknowledged/assign
 const addFeedBack = async (req, res) => {
     try {
       const { feedback } = req.body;
-      const { feedbackid } = req.params;
+      const { feedbackId } = req.params;
       const { token } = req.cookies;
       const { id } = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -79,7 +80,8 @@ const addFeedBack = async (req, res) => {
       }
 
       // Find the specific feedback record based on feedbackid
-      const feedbackRecord = await Feedback.findByPk(feedbackid);
+      const feedbackRecord = await Feedback.findOne({where: {id: feedbackId}});
+      console.log(`This is feedback record  ${feedbackRecord}`)
 
       if (!feedbackRecord) {
         return res.status(404).json({ msg: "Feedback record not found" });
