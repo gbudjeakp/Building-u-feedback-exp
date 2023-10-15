@@ -11,6 +11,8 @@ router.get("/getfeedbackrequest", auth, feedbackController.getAllFeedBackRequest
 
 router.get("/getOneFeedback", auth, feedbackController.getOneFeedback);
 
+router.get("/getAssignedFeedBacks", auth, feedbackController.getAssignedFeedBacks)
+
 router.put("/addFeedBack/:feedbackId", auth, feedbackController.addFeedBack);
 
 

@@ -58,47 +58,49 @@ for the mentor endpoints
 */
 
 //@TODO
-//Add logic to stop mentor's from adding 
+//Add logic to stop mentor's from adding
 //Feedback to feedback request that they have not acknowledged/assign
 const addFeedBack = async (req, res) => {
-    try {
-      const { feedback } = req.body;
-      const { feedbackId } = req.params;
-      const { token } = req.cookies;
-      const { id } = jwt.verify(token, process.env.JWT_SECRET);
+  try {
+    const { feedback } = req.body;
+    const { feedbackId } = req.params;
+    const { token } = req.cookies;
+    const { id } = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Check if the user is a mentor
-      const isMentor = await User.findOne({
-        where: {
-          id: id,
-          mentor: true,
-        },
-      });
+    // Check if the user is a mentor
+    const isMentor = await User.findOne({
+      where: {
+        id: id,
+        mentor: true,
+      },
+    });
 
-      if (!isMentor) {
-        return res.status(401).json({ msg: "Unauthorized user" });
-      }
-
-      // Find the specific feedback record based on feedbackid
-      const feedbackRecord = await Feedback.findOne({where: {id: feedbackId}});
-      console.log(`This is feedback record  ${feedbackRecord}`)
-
-      if (!feedbackRecord) {
-        return res.status(404).json({ msg: "Feedback record not found" });
-      }
-
-      // Update the "feedback" column with the data from req.body
-      feedbackRecord.feedback = feedback;
-      await feedbackRecord.save();
-
-      res.status(200).json({ msg: "Feedback updated successfully" });
-
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "An error occurred while updating feedback" });
+    if (!isMentor) {
+      return res.status(401).json({ msg: "Unauthorized user" });
     }
-};
 
+    // Find the specific feedback record based on feedbackid
+    const feedbackRecord = await Feedback.findOne({
+      where: { id: feedbackId },
+    });
+    console.log(`This is feedback record  ${feedbackRecord}`);
+
+    if (!feedbackRecord) {
+      return res.status(404).json({ msg: "Feedback record not found" });
+    }
+
+    // Update the "feedback" column with the data from req.body
+    feedbackRecord.feedback = feedback;
+    await feedbackRecord.save();
+
+    res.status(200).json({ msg: "Feedback updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating feedback" });
+  }
+};
 
 const assignFeedBackToMentor = async (req, res) => {
   try {
@@ -127,30 +129,57 @@ const assignFeedBackToMentor = async (req, res) => {
       return res.status(404).json({ msg: "Feedback record not found" });
     }
 
-    if(feedbackRecord.isAssigned){
-      return res.json({ msg: "Feedback is already assigned to another"})
-    } 
-      
+    if (feedbackRecord.isAssigned) {
+      return res.json({ msg: "Feedback is already assigned to another" });
+    }
+
     feedbackRecord.isAssigned = true;
-    await feedbackRecord.save()
-    
-  
+    await feedbackRecord.save();
+
     const mentorFeedbackAssigner = {
       userId: id, // Set the mentor's id as the userId
       studentName: feedbackRecord.studentName,
       topicOfLearningSession: feedbackRecord.topicOfLearningSession,
       codeLink: feedbackRecord.codeLink,
       feedback: feedbackRecord.feedback,
-    }
+    };
 
     await AssignedFeedBack.create(mentorFeedbackAssigner);
-    res.json({ msg: "Feedback Assigned to mentor", data: mentorFeedbackAssigner })
-    
+    res.json({
+      msg: "Feedback Assigned to mentor",
+      data: mentorFeedbackAssigner,
+    });
   } catch (err) {
     console.error(err);
-    res.json({msg: "Something went wrong assigning feedback"});
+    res.json({ msg: "Something went wrong assigning feedback" });
   }
-}; 
+};
+
+const getAssignedFeedBacks = async (req, res) => {
+  try {
+    const { token } = req.cookies;
+    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Check if the user is a mentor
+    const isMentor = await User.findOne({
+      where: {
+        id: id,
+        mentor: true,
+      },
+    });
+
+    if (!isMentor) {
+      return res.status(401).json({ msg: "Unauthorized user" });
+    }
+
+    let assignedList = await AssignedFeedBack.findAll({
+      where: { userId: id },
+    });
+    res.status(200).json({ data: assignedList });
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 module.exports = {
   submitFeedBack,
@@ -158,4 +187,5 @@ module.exports = {
   getOneFeedback,
   assignFeedBackToMentor,
   addFeedBack,
+  getAssignedFeedBacks,
 };
