@@ -12,9 +12,6 @@ const User = sequelize.define('User', {
     mentor: {
       type: DataTypes.BOOLEAN,
     },
-    // assignedfeedbacks:{
-    //   type: DataTypes.ARRAY([]),
-    // },
   });
 
   return User
