@@ -19,22 +19,18 @@ db.sequelize = sequelize;
 
 
 
-//Feebackrequest = feedback
-// Feedback = assignedfeedback
-
-
 // Define the User and Feedback models
 db.User = require('./User')(sequelize, DataTypes);
 db.FeedbackRequest = require('./Feedbackrequest')(sequelize, DataTypes);
 db.Feedbacks = require('./Feedbacks')(sequelize, DataTypes)
 
 // Define associations between User and Feedback models
-db.User.hasMany(db.FeedbackRequest, { foreignKey: 'userId', as: 'feedbackrequest'});
+db.User.hasMany(db.FeedbackRequest, { foreignKey: 'userId'});
 db.FeedbackRequest.belongsTo(db.User, { foreignKey: 'userId' });
 
 
-db.FeedbackRequest.hasMany(db.Feedbacks, { foreignKey: 'userId', as: 'feedbackfrommentor' });
-db.Feedbacks.belongsTo(db.FeedbackRequest, { foreignKey: 'userId' });
+db.FeedbackRequest.hasMany(db.Feedbacks, { foreignKey: 'feedbackRequestId'});
+db.Feedbacks.belongsTo(db.FeedbackRequest, { foreignKey: 'feedbackRequestId'});
 
 
 

@@ -7,11 +7,15 @@ const jwt = require("jsonwebtoken");
 
 
 
-//TODO
-/* 1) Add utility that sens some sort of notification to flock upon
-  feed back request.
-  2) Add some input validation 
-  3) Add rate limiter
+//@TODO
+/* 1) Add utility that sends some sort of notification to flock upon
+   feed back request.
+  2) Add utility that sends notification to intern upon added review on flock
+  3) Add controller that allows code lead to change the status of the request 
+  4) Add controller that allows code lead to delete unwanted feedbacks
+  5) Add controller that allows intern to delete unwanted requests. 
+  6) Add some input validation 
+  7) Add rate limiter
   */
 
 
@@ -23,7 +27,7 @@ const submitFeedBack = async (req, res) => {
   const { token } = req.cookies;
   const { id, username } = jwt.verify(token, process.env.JWT_SECRET);
   try {
-    const { topicOfLearningSession, codeLink, feedback } = req.body;
+    const { topicOfLearningSession, codeLink } = req.body;
     const feedBackRequestData = {
       userId: id,
       studentName: username,
@@ -65,15 +69,39 @@ const getUserFeedBackRequestForms = async (req, res) => {
   }
 };
 
+/*This controller gets all the feedback by a code lead on specific 
+  feedback request forms
+*/
+const getMentorFeedback = async (req, res) => {
+  try {
+    const { feedbackrequestId } = req.params;
+
+    // Find the feedback request
+    const feedbackRequest = await FeedbackRequest.findOne({
+      where: { id: feedbackrequestId },
+    });
+
+    if (!feedbackRequest) {
+      return res.status(404).json({ error: "Feedback request not found" });
+    }
+
+    // Retrieve all feedback associated with the feedback request
+    const allFeedbackOnFeedbackRequest = await Feedbacks.findAll({
+      where: { feedbackrequestId },
+    });
+
+    res.json({ data: allFeedbackOnFeedbackRequest });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
  
 
 //////////////////////////////////////////
 /* Code below here are basically controller functions 
 for the Code leads endpoints 
 */
-//@TODO
-//Add controller that retrieves all the feedback on a specific 
-//Feedback request form.
 ///////////////////////////////////////////////
 
 
@@ -98,32 +126,32 @@ const addFeedBack = async (req, res) => {
       return res.status(401).json({ msg: "Unauthorized user" });
     }
 
-    // Find the specific feedback request record based on feedrequestbackid
-    const feedbackRecord = await FeedbackRequest.findOne({
+    // Find the specific feedback request record based on feedbackrequestId
+    const feedbackRequest = await FeedbackRequest.findOne({
       where: { id: feedbackrequestId },
     });
 
-  
-    console.log(`This is feedback record  ${feedbackRecord}`);
-
-    if (!feedbackRecord) {
-      return res.status(404).json({ msg: "Feedback record not found" });
+    if (!feedbackRequest) {
+      return res.status(404).json({ msg: "Feedback request not found" });
     }
 
+    // Create the feedback and associate it with the feedback request and mentor
     const feedBackData = {
-      userId: feedbackRecord.userId,
+      userId: feedbackRequest.userId, // Use the userId of the intern who made the request
       mentorName: username,
-      feedback: feedback
-    }
+      feedback: feedback,
+      feedbackRequestId: feedbackRequest.id, // Associate feedback with the feedback request
+    };
 
-     Feedbacks.create(feedBackData);
-    
-    res.status(200).json({ msg: "Feedback added successfully", data: feedBackData });
+    const createdFeedback = await Feedbacks.create(feedBackData);
+
+    res.status(200).json({
+      msg: "Feedback added successfully",
+      data: createdFeedback,
+    });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({ error: "An error occurred while updating feedback" });
+    res.status(500).json({ error: "An error occurred adding feedback" });
   }
 };
 
@@ -166,7 +194,8 @@ const assignFeedBackToMentor = async (req, res) => {
     res.json({msg: "Feedback Assigned to mentor"});
   } catch (err) {
     console.error(err);
-    res.json({ msg: "Something went wrong assigning feedback" });
+    res.status(500)
+    .json({ error: "An error occurred while updating feedback" });
   }
 };
 
@@ -206,4 +235,5 @@ module.exports = {
   assignFeedBackToMentor,
   addFeedBack,
   getAssignedFeedBacks,
+  getMentorFeedback
 };
