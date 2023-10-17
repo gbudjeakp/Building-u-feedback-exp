@@ -3,7 +3,6 @@ const db = require("../Models/index");
 const Feedback = db.Feedback;
 const User = db.User;
 const jwt = require("jsonwebtoken");
-const { user } = require("../config/db.config");
 const AssignedFeedBack = db.AssignedFeedBack;
 
 const submitFeedBack = async (req, res) => {

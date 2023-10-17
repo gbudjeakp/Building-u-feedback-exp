@@ -1,6 +1,6 @@
 // Feedback Model
 module.exports = (sequelize, DataTypes) => {
-  const Feedback = sequelize.define("feedback", {
+  const Feedback = sequelize.define("feedbackrequest", {
     studentName: {
       type: DataTypes.STRING,
     },
@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    feedback: {
+    whoisAssigned: {
       type: DataTypes.TEXT,
     },
     // This determins whether or not the assignment is up to standard
