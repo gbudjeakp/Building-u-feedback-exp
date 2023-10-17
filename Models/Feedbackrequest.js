@@ -1,6 +1,6 @@
 // Feedback Model
 module.exports = (sequelize, DataTypes) => {
-  const Feedback = sequelize.define("feedbackrequest", {
+  const Feedbackrequest = sequelize.define("feedbackrequest", {
     studentName: {
       type: DataTypes.STRING,
     },
@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
     whoisAssigned: {
       type: DataTypes.TEXT,
     },
+    isAssigned:{
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     // This determins whether or not the assignment is up to standard
     status: {
       type: DataTypes.BOOLEAN,
@@ -26,5 +30,5 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  return Feedback
+  return Feedbackrequest
 };

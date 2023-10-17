@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const AssignedFeedback = sequelize.define("feedbacks", {
+    const Feedbacks = sequelize.define("feedbacks", {
       mentorName: {
         type: DataTypes.STRING,
       },
@@ -12,6 +12,6 @@ module.exports = (sequelize, DataTypes) => {
       },
     });
   
-    return AssignedFeedback
+    return Feedbacks
   };
   

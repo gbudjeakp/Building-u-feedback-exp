@@ -33,7 +33,7 @@ db.User.hasMany(db.FeedbackRequest, { foreignKey: 'userId', as: 'feedbackrequest
 db.FeedbackRequest.belongsTo(db.User, { foreignKey: 'userId' });
 
 
-db.FeedbackRequest.hasMany(db.Feedbacks, { foreignKey: 'userId', as: 'feedbacks' });
+db.FeedbackRequest.hasMany(db.Feedbacks, { foreignKey: 'userId', as: 'feedbackfrommentor' });
 db.Feedbacks.belongsTo(db.FeedbackRequest, { foreignKey: 'userId' });
 
 
