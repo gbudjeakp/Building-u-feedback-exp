@@ -11,7 +11,7 @@ Feel free to browse through the code though
 
 
 # Application features
-1  Authentication and Authorization using JWT.
+1. Authentication and Authorization using JWT.
 2. Allows for the interns to create their feedback request
 3. Code Leads are able to assign feedback request to themselves.
 4. Code Leads are able to give Feedback on each feed back request
