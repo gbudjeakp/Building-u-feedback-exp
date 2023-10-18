@@ -2,6 +2,14 @@
   A feeback application that allows the interns at building-u, receive feedbacks 
   on their projects (Project is currently being worked on for the Non-Profit Organiazation called Building-U. 
 
+
+# APP IS UNDER CONSTRUCTION
+Feel free to browse through the code though
+
+![under-construction](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/38394f7e-c072-4fa2-9cd7-c628f06eaa1d) ![under-construction](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/7be67884-deba-4c62-b7ce-0bcefafaee7e) ![under-construction](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/7be67884-deba-4c62-b7ce-0bcefafaee7e) ![under-construction](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/7be67884-deba-4c62-b7ce-0bcefafaee7e) ![under-construction](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/7be67884-deba-4c62-b7ce-0bcefafaee7e) 
+
+
+
 # Application features
 1  Authentication and Authorization using JWT.
 2. Allows for the interns to create their feedback request
