@@ -8,21 +8,22 @@ const jwt = require("jsonwebtoken");
 
 
 //@TODO
-/* 1) Add utility that sends some sort of notification to flock upon
+/* 
+  1) Add utility that sends some sort of notification to flock upon
    feed back request.
-  2) Add utility that sends notification to intern upon added review on flock
-  3) Add controller that allows code lead to change the status of the request 
-  4) Add controller that allows code lead to delete unwanted feedbacks
-  5) Add controller that allows intern to delete unwanted requests. 
-  6) Add some input validation 
-  7) Add rate limiter
+  2) Add utility that sends notification to intern upon added review on flock.
+  3) Add controller that allows code lead to change the status of the request. 
+  4) Add controller that allows code lead to edit feedbacks.
+  5) Add some input validation.  
+  6) Add rate limiter.
+  7) Add a review participant to the list of admins. 
   */
 
 
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
-
  */
+
 const submitFeedBack = async (req, res) => {
   const { token } = req.cookies;
   const { id, username } = jwt.verify(token, process.env.JWT_SECRET);

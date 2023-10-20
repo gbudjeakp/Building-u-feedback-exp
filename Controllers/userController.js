@@ -8,6 +8,12 @@ const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 const Users = db.User;
 const mentor = ["Tom", "Sarah", "Tobias", "mentor"];
+const reviewParticipant = []
+//@TODO
+/* 1) Add a review participant to the list of admins. 
+Note, review participants are not  
+. 
+*/
 
 const registerUser = async (req, res) => {
   const { userName, password } = req.body;
