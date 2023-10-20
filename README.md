@@ -1,6 +1,5 @@
 # Building-u-feedback
-  A feeback application that allows the interns at building-u, receive feedbacks 
-  on their projects (Project is currently being worked on for the Non-Profit Organiazation called Building-U. 
+ A feeback application that allows the interns at building-u, receive feedbacks on their projects (Project is currently being worked on for the Non-Profit Organization called Building-U.
 
 
 # APP IS UNDER CONSTRUCTION
