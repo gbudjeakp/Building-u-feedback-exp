@@ -70,8 +70,7 @@ const getUserFeedBackRequestForms = async (req, res) => {
   }
 };
 
-/*This controller gets all the feedback by a code lead on specific 
-  feedback request forms
+/*This controller gets all the feedback by a code lead on specific  feedback request forms
 */
 const getMentorFeedback = async (req, res) => {
   try {
