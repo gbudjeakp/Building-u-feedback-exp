@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import { useDispatch } from 'react-redux';
-import Button from 'react-bootstrap/Button';
 
 
 
@@ -25,7 +24,7 @@ console.log(userData)
         <h1>Login</h1>
         <input type="text" name="username"  placeholder='username' onChange={(event) => setEmail(event.target.value)} value={email} />
         <input type="password" name="password"  placeholder='password' onChange={(event) => setPassword(event.target.value)} value={password} />
-        <Button type='submit' onClick={login}>Login</Button>
+        <button type='submit' onClick={login}>Login</button>
       </form>
     </div>
   )

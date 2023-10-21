@@ -1,4 +1,5 @@
 import React from 'react'
+import Feedbackform from "../components/FeedbackrequestForm"
 
 
 function Interndashboard() {
@@ -10,8 +11,8 @@ function Interndashboard() {
     <div>
       <h1>Intern Dashboard</h1>
 
-
-     <button onClick={getData}>Click for data</button>
+     <Feedbackform />
+     {/* <button onClick={getData}>Click for data</button> */}
     </div>
   )
 }
