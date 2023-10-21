@@ -10,7 +10,10 @@ function App() {
 
   return (
     <>
-     <Interndashboard />
+    {/* <Header /> */}
+     {/* <Interndashboard /> */}
+     <Loginpage />
+     {/* <Registar /> */}
     </>
   )
 }

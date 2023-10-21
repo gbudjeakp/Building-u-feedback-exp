@@ -1,23 +1,29 @@
-import React from 'react'
+import React, {useState} from 'react';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../Slices/userSlice';
+
 
 function LoginPage() {
+   const [email, setEmail] = useState("");
+   const [password, setPassword] = useState("");
+   const dispatch = useDispatch()
 
-  const handleName = (e) => {
-    console.log(e.target.value)
-  }
-  const handlePassword = (e) => {
-    console.log(e.target.value)
-  }
+  const  login = (event) => {
+    event.preventDefault();
 
-  const  login = () => {
-    alert('Logged In')
+    let userData = {
+      userName: email,
+      password: password
+    }
+
+console.log(userData)
   }
   return (
     <div>
       <form action="">
         <h1>Login</h1>
-        <input type="text" name="username"  placeholder='username' onChange={handleName} />
-        <input type="password" name="password"  placeholder='password' onChange={handlePassword} />
+        <input type="text" name="username"  placeholder='username' onChange={(event) => setEmail(event.target.value)} value={email} />
+        <input type="password" name="password"  placeholder='password' onChange={(event) => setPassword(event.target.value)} value={password} />
         <button type='submit' onClick={login}>Login</button>
       </form>
     </div>
