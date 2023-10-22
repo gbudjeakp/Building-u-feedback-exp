@@ -11,7 +11,7 @@ import "./App.css";
 function App() {
   return (
     <>
-      <div style={{ paddingTop: "4rem" }}>
+      <div style={{ paddingBottom: "10rem" }}>
         <Header />
       </div>
       <Routes>

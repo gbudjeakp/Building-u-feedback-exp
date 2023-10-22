@@ -1,68 +1,80 @@
-import React from 'react';
-import {
-  Container,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-} from '@mui/material';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser, setAuthenticated } from "../features/User/userSlice";
+import { redirect } from "react-router-dom";
 
-const paperStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: '20px',
-};
+function Registration() {
+  const dispatch = useDispatch();
+  const history = redirect();
+  // const registrationStatus = useSelector((state) => state.user.registrationStatus);
+  // const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
 
-const formStyle = {
-  width: '100%', // Full width
-  marginTop: '10px',
-};
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
 
-const submitStyle = {
-  margin: '20px 0 10px',
-};
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
-function RegisterPage() {
+  const handleRegistration = (e) => {
+    e.preventDefault();
+    if (!formData.username || !formData.password) {
+      // Check if username or password is missing
+      alert("Username and password are required.");
+      return;
+    }
+    dispatch(registerUser(formData))
+      .unwrap()
+      .then(() => {
+        dispatch(setAuthenticated(true));
+        history.push("/mentor"); 
+      });
+  };
+
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper elevation={3} style={paperStyle}>
-        <Typography variant="h5">Register</Typography>
-        <form style={formStyle} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Username"
-            name="username"
-            autoComplete="username"
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            style={submitStyle}
-          >
-            Register
-          </Button>
+    <div>
+      {isAuthenticated ? (
+        <div>You are already registered and logged in.</div>
+      ) : (
+        <form onSubmit={handleRegistration}>
+          <div>
+            <label>Username</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <button type="submit" disabled={registrationStatus === "loading"}>
+              Register
+            </button>
+          </div>
+          {registrationStatus === "failed" && (
+            <div>Registration failed. Please try again.</div>
+          )}
         </form>
-      </Paper>
-    </Container>
+      )}
+    </div>
   );
 }
 
-export default RegisterPage;
+export default Registration;

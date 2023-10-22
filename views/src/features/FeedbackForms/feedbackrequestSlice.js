@@ -1,24 +1,32 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios"
+import axios from "axios";
 import { feedBackAPI } from "../../api";
 
-const initialState =
-    {
-    forms: ["THis form 1", "This is form 2", "this is form 3", "form 4"],
-    loading: false,
-    error: null,
-    }
+const initialState = {
+  forms: [],
+  loading: false,
+  error: null,
+};
+
+export const fetchFeedbackForms = createAsyncThunk(
+  "feedbackrequest/fetchFeedbackForms",
+  async () => {
+    const response = await axios.get(`${feedBackAPI}/getfeedbackrequestForms`);
+    return response.data;
+  }
+);
 
 const feedbackRequest = createSlice({
-    name: "feedbackrequest",
-    initialState,
-    reducers: {
-        submitFeedbackRequest(state, action){
-            state.forms.push(action.payload)
-        }
-    }
-
+  name: "feedbackrequest",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchFeedbackForms.fulfilled, (state, action) => {
+        state.forms = action.payload;
+        state.loading = false;
+      })
+  },
 });
 
-export const { submitFeedbackRequest } = feedbackRequest.actions;
-export default feedbackRequest.reducer
+export default feedbackRequest.reducer;

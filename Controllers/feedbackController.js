@@ -38,7 +38,7 @@ const submitFeedBack = async (req, res) => {
 
     await FeedbackRequest.create(feedBackRequestData);
     res.status(200).json(JSON.stringify(feedBackRequestData));
-    console.log("FeedBack Request Submitted");
+    console.log("FeedBack Request Submitted BY USer");
   } catch (err) {
     console.error(err);
   }
