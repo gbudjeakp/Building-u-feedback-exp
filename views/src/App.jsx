@@ -4,18 +4,20 @@ import Loginpage from "../src/Pages/LoginPage";
 import Registar from "../src/Pages/RegisterPage";
 import Interndashboard from "./Pages/Interndashboard";
 import Mentordashboard from "./Pages/Mentordashboard";
-import Homepage from "./pages/HomePage"
+import Homepage from "./pages/HomePage";
 
 import "./App.css";
 
 function App() {
   return (
     <>
-     <Header />
+      <div style={{ paddingTop: "4rem" }}>
+        <Header />
+      </div>
       <Routes>
         <Route exact path="/" element={<Homepage />} />
         <Route exact path="/login" element={<Loginpage />} />
-        <Route exact path="/registar" element={<Registar />} />
+        <Route exact path="/register" element={<Registar />} />
         <Route exact path="/intern" element={<Interndashboard />} />
         <Route exact path="/mentor" element={<Mentordashboard />} />
       </Routes>

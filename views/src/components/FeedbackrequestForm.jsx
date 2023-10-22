@@ -1,47 +1,73 @@
-import React, { useState } from "react";
-import { useDispatch } from 'react-redux'
-import { nanoid } from '@reduxjs/toolkit'
-import { submitFeedbackRequest } from "../features/FeedbackForms/feedbackrequestSlice";
+import React from 'react';
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+} from '@mui/material';
+
+const paperStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '20px',
+};
+
+const formStyle = {
+  width: '100%', // Full width
+  marginTop: '10px',
+};
+
+const submitStyle = {
+  margin: '20px 0 10px',
+};
 
 function FeedbackrequestForm() {
-  const [topicOfLearningSession, setTopicOfLearningSession] = useState("");
-  const [codeLink, setcodeLink] = useState("");
-   const dispatch = useDispatch()
-
-  const submitRequest = (event) => {
-    event.preventDefault();
-
-    let feedbackRequestData = topicOfLearningSession;
-    
-    dispatch(submitFeedbackRequest(feedbackRequestData))
-
-    setTopicOfLearningSession("")
-    // console.log(feedbackRequestData);
-  };
   return (
-    <div>
-      <form action="">
-        <h1>Submit Feedback Request</h1>
-        <input
-          type="text"
-          name="topicOfLearningSession"
-          placeholder="Topic of Learning Session"
-          onChange={(event) => setTopicOfLearningSession(event.target.value)}
-          value={topicOfLearningSession}
-        />
-
-        <input
-          type="text"
-          name="codeLink"
-          placeholder="Link to code"
-          onChange={(event) => setcodeLink(event.target.value)}
-          value={codeLink}
-        />
-        <button type="submit" onClick={submitRequest}>
-          Request Feedback
-        </button>
-      </form>
-    </div>
+    <Container component="main" maxWidth="xs">
+      <Paper elevation={3} style={paperStyle}>
+        <Typography variant="h5">Request Form</Typography>
+        <form style={formStyle} noValidate>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="internName"
+            label="Intern Name"
+            name="internName"
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="topicOfLearning"
+            label="Topic of Learning Session"
+            name="topicOfLearning"
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="codeLink"
+            label="Code Link"
+            name="codeLink"
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            style={submitStyle}
+          >
+            Submit Request
+          </Button>
+        </form>
+      </Paper>
+    </Container>
   );
 }
 
