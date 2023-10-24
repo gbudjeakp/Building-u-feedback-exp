@@ -3,7 +3,7 @@ import Loginpage from "../src/Pages/LoginPage";
 import Registar from "../src/Pages/RegisterPage";
 import Interndashboard from "./Pages/Interndashboard";
 import Mentordashboard from "./Pages/Mentordashboard";
-import Homepage from "./pages/Homepage/HomePage";
+import Homepage from "./pages/HomePage";
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 

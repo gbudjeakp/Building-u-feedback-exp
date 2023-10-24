@@ -45,7 +45,7 @@ const HomePage = () => {
     <div style={homepageStyles}>
       <Container size="lg" style={containerStyles}>
         <Text align="center" style={titleStyles}>
-          Welcome to Building-U
+          Welcome to Building-U-Feedback
         </Text>
         <Text align="center" style={subTitleStyles}>
           Request feedback easily with Feedback-U

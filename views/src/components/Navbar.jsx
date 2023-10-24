@@ -13,6 +13,8 @@ import {
   IconSwitchHorizontal,
 } from "@tabler/icons-react";
 
+import Logo from "../assets/logo.png";
+
 function NavbarLink({ icon, label, active, onClick }) {
   const linkStyles = {
     width: rem(50),
@@ -45,7 +47,6 @@ function NavbarLink({ icon, label, active, onClick }) {
 const mockdata = [
   { icon: IconHome2, label: "Home" },
   { icon: IconGauge, label: "Dashboard" },
-  { icon: IconDeviceDesktopAnalytics, label: "Analytics" },
   { icon: IconCalendarStats, label: "Releases" },
   { icon: IconUser, label: "Account" },
   { icon: IconFingerprint, label: "Security" },
@@ -78,10 +79,15 @@ function Navbar() {
     marginTop: rem(50),
   };
 
+  const logoStyles = {
+    width: rem(100), // Adjust the width to your desired size
+    height: rem(100), // Adjust the height to your desired size
+  };
+
   return (
     <nav style={navbarStyles}>
       <Center>
-        Logo Here
+        <img src={Logo} alt="App Logo" style={logoStyles} />
       </Center>
 
       <div style={navbarMainStyles}>
