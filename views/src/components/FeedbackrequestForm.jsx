@@ -1,74 +1,72 @@
 import React from 'react';
-import {
-  Container,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-} from '@mui/material';
+import { Container, Paper, Text, TextInput, Button } from '@mantine/core';
 
 const paperStyle = {
+  padding: 40,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '20px',
+  width: 500,
+  height: 550, // Increase the height
 };
 
 const formStyle = {
-  width: '100%', // Full width
-  marginTop: '10px',
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%', // Increase the height
 };
 
-const submitStyle = {
-  margin: '20px 0 10px',
+const inputStyle = {
+  marginBottom: 20,
 };
 
-function FeedbackrequestForm() {
+const titleStyle = {
+  marginBottom: 20,
+  fontSize: 24,
+};
+
+function FeedbackRequestForm() {
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper elevation={3} style={paperStyle}>
-        <Typography variant="h5">Request Form</Typography>
-        <form style={formStyle} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="internName"
-            label="Intern Name"
-            name="internName"
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="topicOfLearning"
-            label="Topic of Learning Session"
-            name="topicOfLearning"
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="codeLink"
-            label="Code Link"
-            name="codeLink"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            style={submitStyle}
-          >
-            Submit Request
-          </Button>
-        </form>
-      </Paper>
+    <Container size="lg">
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Paper shadow="xs" style={paperStyle}>
+          <Text size="xl" weight={700} style={titleStyle}>
+            Request Feedback
+          </Text>
+          <div style={formStyle}>
+            <TextInput
+              variant="filled"
+              required
+              style={inputStyle}
+              id="internName"
+              label="Intern Name"
+              placeholder="Enter intern's name"
+            />
+            <TextInput
+              variant="filled"
+              required
+              style={inputStyle}
+              id="topicOfLearning"
+              label="Topic of Learning Session"
+              placeholder="Enter the topic of the learning session"
+            />
+            <TextInput
+              variant="filled"
+              required
+              style={inputStyle}
+              id="codeLink"
+              label="Code Link"
+              placeholder="Enter code link"
+            />
+            <Button variant="filled"  size="lg">
+              Submit Request
+            </Button>
+          </div>
+        </Paper>
+      </div>
     </Container>
   );
 }
 
-export default FeedbackrequestForm;
+export default FeedbackRequestForm;

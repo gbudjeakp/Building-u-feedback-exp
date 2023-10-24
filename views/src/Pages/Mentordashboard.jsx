@@ -6,7 +6,7 @@ function Mentordashboard() {
 
   return (
     <>
-    <Navbar />
+    <Navbar isMentor={true}/>
     </>
   );
 }

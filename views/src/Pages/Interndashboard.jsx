@@ -1,4 +1,5 @@
 import React from 'react'
+import Navbar from '../components/Navbar'
 
 
 function Interndashboard() {
@@ -6,7 +7,7 @@ function Interndashboard() {
 
   return (
     <div>
-    <h1>INTERN DASHBOARD</h1>
+    <Navbar  isMentor={false} />
     </div>
   )
 }
