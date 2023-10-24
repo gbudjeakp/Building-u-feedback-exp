@@ -1,11 +1,9 @@
 import {configureStore, combineReducers} from "@reduxjs/toolkit"
-import userReducer from "./features/User/userSlice"
 import feedbackrequestReducer from "./features/FeedbackForms/feedbackrequestSlice";
-import feedbacksReducer from "./features/Feedbacks/feedbackSlice"
+import authReducer from "./features/Auth/authSlice"
 
 const reducer = combineReducers({
-  users: userReducer, 
-  feedbacks: feedbacksReducer,
+  auth: authReducer,
   feedbackRequests: feedbackrequestReducer
 
 });

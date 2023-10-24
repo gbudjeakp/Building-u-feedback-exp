@@ -1,14 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux'
 
-function SingleFeedbackPage({ match }) {
-    const { feedbackrequestId } = match.params;
-
-    const feedbackForm =  useSelector(state => state.forms.find(feedbackrequestId.id))
-
+function SingleFeedbackPage() {
 
   return (
-    <div>SingleFeedbackPage</div>
+    <div><h1>SingleFeedbackPage</h1></div>
   )
 }
 

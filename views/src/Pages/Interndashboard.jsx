@@ -1,18 +1,12 @@
 import React from 'react'
-import Feedbackform from "../components/FeedbackrequestForm"
 
 
 function Interndashboard() {
-    const getData = () =>{
-     console.log("TEST")
-    }
+
 
   return (
     <div>
-      <h1>Intern Dashboard</h1>
-
-     <Feedbackform />
-     {/* <button onClick={getData}>Click for data</button> */}
+    <h1>INTERN DASHBOARD</h1>
     </div>
   )
 }

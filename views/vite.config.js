@@ -9,4 +9,7 @@ export default defineConfig({
       usePolling: true,
     },
   },
+  commonjsOptions: {
+    esmExternals: true,
+ },
 })
