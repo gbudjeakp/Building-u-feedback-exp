@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
-import Navbar from "../components/Navbar";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Drawer, Text } from "@mantine/core";
+import FeedbackQueue from "../components/FeedbackQueue";
 
-
-function Mentordashboard() {
+function MentorDashboard() {
 
   return (
-    <>
-    <Navbar isMentor={true}/>
-    </>
+    <div>
+     <h1>Mentor Page</h1>
+     <FeedbackQueue />
+    </div>
   );
 }
 
-export default Mentordashboard;
+export default MentorDashboard;

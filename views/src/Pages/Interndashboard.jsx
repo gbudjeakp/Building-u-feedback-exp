@@ -1,5 +1,5 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
+import FeedbackRequestForm from '../components/FeedbackrequestForm'
 
 
 function Interndashboard() {
@@ -7,7 +7,8 @@ function Interndashboard() {
 
   return (
     <div>
-    <Navbar  isMentor={false} />
+     <h1>Intern Dashboard</h1>
+     <FeedbackRequestForm />
     </div>
   )
 }

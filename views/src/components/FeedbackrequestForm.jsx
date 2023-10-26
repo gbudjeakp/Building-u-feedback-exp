@@ -7,14 +7,13 @@ const paperStyle = {
   flexDirection: 'column',
   alignItems: 'center',
   width: 500,
-  height: 550, // Increase the height
 };
 
 const formStyle = {
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  height: '100%', // Increase the height
+  flex: 1, // Allow the form to grow and fill the available space
 };
 
 const inputStyle = {
@@ -59,7 +58,7 @@ function FeedbackRequestForm() {
               label="Code Link"
               placeholder="Enter code link"
             />
-            <Button variant="filled"  size="lg">
+            <Button variant="filled" size="lg" color="#191970"> {/* Change the color here */}
               Submit Request
             </Button>
           </div>

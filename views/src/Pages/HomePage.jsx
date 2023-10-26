@@ -53,7 +53,7 @@ const HomePage = () => {
         <Button
           size="lg"
           variant="filled"
-          color="blue"
+          color="#191970" // Change the color here
           style={buttonStyles}
           onClick={handleGetStarted}
         >

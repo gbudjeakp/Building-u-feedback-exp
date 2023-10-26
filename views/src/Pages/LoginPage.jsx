@@ -1,32 +1,32 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   TextInput,
   PasswordInput,
+  Anchor,
   Paper,
   Title,
-  Anchor,
   Text,
   Container,
   Button,
 } from "@mantine/core";
-import { useNavigate } from "react-router-dom";
 
 const titleStyles = {
   fontFamily: "Greycliff CF, var(--mantine-font-family)",
   fontWeight: 900,
 };
 
-function RegisterPage() {
+function LoginPage() {
   const navigate = useNavigate();
 
-  const navigateToRegister = () => {
-    navigate("/register");
+  const navigateTologin = () => {
+    navigate("/login");
   };
 
   return (
     <Container size={420} my={40}>
       <Title ta="center" style={titleStyles}>
-        Login
+        Register Account
       </Title>
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
@@ -38,14 +38,14 @@ function RegisterPage() {
           mt="md"
         />
 
-        <Button fullWidth mt="xl">
+        <Button fullWidth mt="xl" color="#191970"> {/* Change the color here */}
           Login
         </Button>
 
         <Text c="dimmed" size="sm" ta="center" mt={5}>
-          Do not have an account yet?{" "}
-          <Anchor onClick={navigateToRegister} size="sm" component="button">
-            Create account
+          Already Have An Account?{" "}
+          <Anchor onClick={navigateTologin} size="sm" component="button">
+            Log Into Account
           </Anchor>
         </Text>
       </Paper>
@@ -53,4 +53,4 @@ function RegisterPage() {
   );
 }
 
-export default RegisterPage;
+export default LoginPage;
