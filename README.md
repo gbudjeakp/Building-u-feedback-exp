@@ -8,6 +8,9 @@ Feel free to browse through the code though
 ![under-construction](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/38394f7e-c072-4fa2-9cd7-c628f06eaa1d) ![under-construction](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/7be67884-deba-4c62-b7ce-0bcefafaee7e) ![under-construction](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/7be67884-deba-4c62-b7ce-0bcefafaee7e) ![under-construction](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/7be67884-deba-4c62-b7ce-0bcefafaee7e) ![under-construction](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/7be67884-deba-4c62-b7ce-0bcefafaee7e) 
 
 
+# Preview of Available Pages
+![Feedback-u](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/1608df27-c49e-4791-9942-6ea4f24b429b)
+
 
 # Application features
 1. Authentication and Authorization using JWT.
@@ -20,7 +23,7 @@ Feel free to browse through the code though
 # Tech Stack
 ### Front-End Stack
 1. The Front-End is being built in react.js
-2. UI frame work being used (TBD)
+2. UI frame work being used is mantine
 
 ### Backend Stack
 1. The backend is currently being built with Nodejs and express
