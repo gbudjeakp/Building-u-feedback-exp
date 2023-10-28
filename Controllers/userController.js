@@ -16,7 +16,7 @@ Note, review participants are not
 */
 
 const registerUser = async (req, res) => {
-  const { userName, password } = req.body;
+  const { fName, userName, password } = req.body;
   const isUserExist = await Users.findOne({ where: { username: userName } });
   const isUserMentor = mentor.includes(userName);
 
@@ -32,6 +32,7 @@ const registerUser = async (req, res) => {
     // Ideally adding a callback in the hash is best practice
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const userData = {
+      fName: fName,
       username: userName,
       password: hashedPassword,
       mentor: isUserMentor,

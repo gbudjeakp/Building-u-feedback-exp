@@ -26,7 +26,7 @@ function Header() {
         <Group>
           <div>
             <Link to="/" style={logoStyle}>
-              Building-U-Feedback
+              Welcome to Building-U-Feedback
             </Link>
           </div>
           <nav>
