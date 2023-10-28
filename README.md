@@ -23,7 +23,7 @@ Feel free to browse through the code though
 # Tech Stack
 ### Front-End Stack
 1. The Front-End is being built in react.js
-2. UI frame work being used (TBD)
+2. UI frame work being used is mantine
 
 ### Backend Stack
 1. The backend is currently being built with Nodejs and express
