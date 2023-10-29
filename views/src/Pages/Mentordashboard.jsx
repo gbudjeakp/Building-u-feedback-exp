@@ -1,8 +1,12 @@
 import React from 'react'
+import Sidebar from '../components/Sidebar'
 
 function Mentordashboard() {
   return (
-    <div>Mentordashboard</div>
+    <div>
+
+      <Sidebar />
+    </div>
   )
 }
 
