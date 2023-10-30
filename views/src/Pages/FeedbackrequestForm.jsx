@@ -9,11 +9,13 @@ const paperStyle = {
   width: 500,
 };
 
+
+
 const formStyle = {
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  flex: 1, // Allow the form to grow and fill the available space
+  flex: 1,
 };
 
 const inputStyle = {
@@ -27,7 +29,7 @@ const titleStyle = {
 
 function FeedbackRequestForm() {
   return (
-    <Container size="lg">
+    <Container fluid h={0} size="lg">
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <Paper shadow="xs" style={paperStyle}>
           <Text size="xl" weight={700} style={titleStyle}>
@@ -58,7 +60,7 @@ function FeedbackRequestForm() {
               label="Code Link"
               placeholder="Enter code link"
             />
-            <Button variant="filled" size="lg" color="#191970"> {/* Change the color here */}
+            <Button variant="filled" size="lg" color="#F9EB02" style={{ color: 'black' }}> 
               Submit Request
             </Button>
           </div>

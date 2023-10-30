@@ -16,8 +16,8 @@ function App() {
           <Route exact path="/" element={<Homepage />} />
           <Route exact path="/login" element={<Loginpage />} />
           <Route exact path="/signup" element={<Signup />} />
-          <Route exact path="/intern" element={<Interndashboard />} />
-          <Route exact path="/mentor" element={<Mentordashboard />} />
+          <Route exact path="/intern/*" element={<Interndashboard />} />
+          <Route exact path="/mentor/*" element={<Mentordashboard />} />
         </Routes>
       </MantineProvider>
     </>

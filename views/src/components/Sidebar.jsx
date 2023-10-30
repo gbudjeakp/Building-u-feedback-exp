@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Center, Tooltip, UnstyledButton, Stack, rem } from '@mantine/core';
+import { Stack, rem } from '@mantine/core';
+import { Link, useLocation } from 'react-router-dom'; // Use useLocation instead of useMatch
 import { IconLogout, IconSwitchHorizontal } from '@tabler/icons-react';
 
-function NavbarLink({ icon, label, active, onClick }) {
+function NavbarLink({ to, icon, label, active, onClick }) {
   const linkStyle = {
     width: rem(50),
     height: rem(50),
@@ -20,19 +21,21 @@ function NavbarLink({ icon, label, active, onClick }) {
   }
 
   return (
-    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
-      <UnstyledButton onClick={onClick} style={linkStyle} data-active={active || undefined}>
+    <Link to={to}>
+      <div onClick={onClick} style={linkStyle} data-active={active || undefined}>
         {React.createElement(icon, { style: { width: rem(20), height: rem(20), stroke: 1.5 } })}
-      </UnstyledButton>
-    </Tooltip>
+      </div>
+    </Link>
   );
 }
 
 export function Sidebar({ navItems }) {
   const [active, setActive] = useState(0);
+  const location = useLocation(); // Use useLocation to get the current location
 
   const links = navItems.map((link, index) => (
     <NavbarLink
+      to={link.to} // Use the original 'to' prop for routing
       icon={link.icon}
       label={link.label}
       active={index === active}
@@ -43,7 +46,7 @@ export function Sidebar({ navItems }) {
 
   const sidebarStyle = {
     width: rem(80),
-    height: '100vh', 
+    height: '100vh',
     padding: 'var(--mantine-spacing-md)',
     display: 'flex',
     flexDirection: 'column',
@@ -57,7 +60,6 @@ export function Sidebar({ navItems }) {
 
   return (
     <nav style={sidebarStyle}>
-
       <div style={navbarMainStyle}>
         <Stack justify="center" gap={160}>
           {links}
@@ -65,7 +67,7 @@ export function Sidebar({ navItems }) {
       </div>
 
       <Stack justify="center" gap={0}>
-        <NavbarLink icon={IconLogout} label="Logout" />
+        <NavbarLink to="/logout" icon={IconLogout} label="Logout" />
       </Stack>
     </nav>
   );

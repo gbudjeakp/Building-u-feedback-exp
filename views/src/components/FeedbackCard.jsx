@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { Text, Button, Badge, Container } from "@mantine/core";
+import { Text, Button, Paper, Container, Stack } from "@mantine/core";
+
+const feedbackContainer = {
+  zIndex: "1",
+  marginLeft: "90px",
+};
 
 const data = [
   {
@@ -57,86 +62,34 @@ function FeedbackRequestQueue() {
     }
   };
 
-  const feedbackTableStyle = {
-    border: "1px solid #ccc",
-    borderRadius: 4,
-    padding: "10px",
-  };
-
-  const feedbackRowStyle = {
-    display: "flex",
-    alignItems: "center",
-    borderBottom: "1px solid #ccc",
-    padding: "10px 0",
-  };
-
-  const feedbackCellStyle = {
-    flex: 1,
-    padding: "10px",
-    display: "flex",
-    flexDirection: "column",
-  };
-
   return (
-    <Container size="lg">
-      <Text align="center" size="xl" weight={700} style={{ marginBottom: "20px" }}>
-        Feedback Request Queue
+    <Container fluid h={0} style={feedbackContainer}>
+      <Text align="center" size="xl"  style={{ marginBottom: "20px" }}>
+        Feedback Queue
       </Text>
-      <div style={feedbackTableStyle}>
-        <div className="feedback-row header" style={feedbackRowStyle}>
-          <div className="feedback-cell" style={feedbackCellStyle}>
-            <Text size="lg" weight={700}>
-              Name
-            </Text>
-          </div>
-          <div className="feedback-cell" style={feedbackCellStyle}>
-            <Text size="lg" weight={700}>
-              Email
-            </Text>
-          </div>
-          <div className="feedback-cell" style={feedbackCellStyle}>
-            <Text size="lg" weight={700}>
-              Created
-            </Text>
-          </div>
-          <div className="feedback-cell" style={feedbackCellStyle}>
-            <Text size="lg" weight={700}>
-              Status
-            </Text>
-          </div>
-          <div className="feedback-cell" style={feedbackCellStyle}>
-            <Text size="lg" weight={700}>
-              Action
-            </Text>
-          </div>
-        </div>
+      <Stack gap={10}>
         {data.map((item) => (
-          <div key={item.id} className="feedback-row" style={feedbackRowStyle}>
-            <div className="feedback-cell" style={feedbackCellStyle}>
-              {item.name}
+          <Paper
+            shadow="xs"
+            p="sm"
+            withBorder
+            key={item.id}
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <div>
+              <Text>Name: {item.name}</Text>
+              <Text>Completed: {item.completed ? "Yes" : "No"}</Text>
+              <Text>Last Active: {item.lastActive}</Text>
+              {assignedRequests.find((assigned) => assigned.id === item.id) && (
+                <Text>Assigned to: {item.name}</Text>
+              )}
             </div>
-            <div className="feedback-cell" style={feedbackCellStyle}>
-              {item.email}
-            </div>
-            <div className="feedback-cell" style={feedbackCellStyle}>
-              {item.lastActive}
-            </div>
-            <div className="feedback-cell" style={feedbackCellStyle}>
-              <Badge color={item.completed ? "green" : "red"} fullWidth>
-                {item.completed ? "Completed" : "Not Completed"}
-              </Badge>
-            </div>
-            <div className="feedback-cell" style={feedbackCellStyle}>
-              <Button size="sm" variant="light" color="blue" onClick={() => assignRequest(item.id)}>
-                Assign
-              </Button>
-              <Text size="xs" style={{ marginTop: 5, textAlign: "center" }}>
-                {assignedRequests.find((assigned) => assigned.id === item.id) ? "Assigned" : ""}
-              </Text>
-            </div>
-          </div>
+            <Button color="#F9EB02" onClick={() => assignRequest(item.id)}>
+              Assign
+            </Button>
+          </Paper>
         ))}
-      </div>
+      </Stack>
     </Container>
   );
 }
