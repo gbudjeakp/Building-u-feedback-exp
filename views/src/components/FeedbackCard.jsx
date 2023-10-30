@@ -13,6 +13,7 @@ const data = [
     email: "rob_wolf@gmail.com",
     role: "Collaborator",
     lastActive: "2 days ago",
+    Linktoexercise: "www.example.com",
     completed: true,
   },
   {
@@ -21,6 +22,7 @@ const data = [
     email: "jj@breaker.com",
     role: "Collaborator",
     lastActive: "2 days ago",
+    Linktoexercise: "www.example.com",
     completed: true,
   },
   {
@@ -29,6 +31,7 @@ const data = [
     email: "henry@silkeater.io",
     role: "Contractor",
     lastActive: "2 days ago",
+    Linktoexercise: "www.example.com",
     completed: false,
   },
   {
@@ -37,6 +40,7 @@ const data = [
     email: "bhorsefighter@gmail.com",
     role: "Contractor",
     lastActive: "5 days ago",
+    Linktoexercise: "www.example.com",
     completed: true,
   },
   {
@@ -45,6 +49,7 @@ const data = [
     email: "jeremy@foot.dev",
     role: "Manager",
     lastActive: "3 days ago",
+    Linktoexercise: "www.example.com",
     completed: false,
   },
 ];
@@ -64,7 +69,7 @@ function FeedbackRequestQueue() {
 
   return (
     <Container fluid h={0} style={feedbackContainer}>
-      <Text align="center" size="xl"  style={{ marginBottom: "20px" }}>
+      <Text align="center" size="xl" style={{ marginBottom: "20px" }}>
         Feedback Queue
       </Text>
       <Stack gap={10}>
@@ -79,12 +84,20 @@ function FeedbackRequestQueue() {
             <div>
               <Text>Name: {item.name}</Text>
               <Text>Completed: {item.completed ? "Yes" : "No"}</Text>
-              <Text>Last Active: {item.lastActive}</Text>
+              <Text>
+                Link to exercise:{" "}
+                <a href={item.Linktoexercise}>{item.Linktoexercise}</a>
+              </Text>
+              <Text>Created: {item.lastActive}</Text>
               {assignedRequests.find((assigned) => assigned.id === item.id) && (
                 <Text>Assigned to: {item.name}</Text>
               )}
             </div>
-            <Button color="#F9EB02" onClick={() => assignRequest(item.id)}>
+            <Button
+              style={{ color: "black" }}
+              color="#F9EB02"
+              onClick={() => assignRequest(item.id)}
+            >
               Assign
             </Button>
           </Paper>

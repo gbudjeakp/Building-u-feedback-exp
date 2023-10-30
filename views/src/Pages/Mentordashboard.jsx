@@ -18,7 +18,8 @@ function Mentordashboard() {
     <div style={{ display: 'flex', flexDirection: 'column-reverse' }}>
       <Sidebar navItems={mockdata} />
       <Routes location={location}> {/* Pass location to Routes */}
-        <Route path="/" element={<FeedbackRequestQueue />} />
+        {/* <Route path="/" element={<FeedbackRequestQueue />} /> */}
+        <Route path="feedbackqueue" element={<FeedbackRequestQueue />} />
         <Route path="assigned" element={<AssignedFeedback />} />
         {/* <Route path="account" element={<Account />} /> */}
       </Routes>
