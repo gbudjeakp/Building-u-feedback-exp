@@ -1,47 +1,73 @@
-import React from "react";
-import { Container, Paper, Text, Button, Group } from "@mantine/core";
+import React, { useState } from 'react';
+import { Center, Tooltip, UnstyledButton, Stack, rem } from '@mantine/core';
+import { IconLogout, IconSwitchHorizontal } from '@tabler/icons-react';
 
-const sidebarStyles = {
-  height: "100%",
-  width: "200px",
-  backgroundColor: "#f0f0f0",
-  padding: "20px",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "flex-start", // Items start at the top
-  alignItems: "center", // Items spread evenly horizontally
-};
+function NavbarLink({ icon, label, active, onClick }) {
+  const linkStyle = {
+    width: rem(50),
+    height: rem(50),
+    borderRadius: 'var(--mantine-radius-md)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'var(--mantine-color-black)',
+  };
 
-const containerStyles = {
-  height: "100vh",
-  display: "flex",
-};
+  if (active) {
+    linkStyle.boxShadow = 'var(--mantine-shadow-sm)';
+    linkStyle.backgroundColor = 'var(--mantine-color-white)';
+    linkStyle.color = 'var(--mantine-color-black)';
+  }
 
-const buttonStyles = {
-  marginBottom: "10px",
-  width: "100%", // Make buttons take full width of sidebar
-};
-
-function Sidebar() {
   return (
-    <Container style={containerStyles}>
-      <Paper style={sidebarStyles}>
-        <Text size="xl" weight={700} align="center" mb="xl">
-          Sidebar
-        </Text>
-        <Group spacing="xs">
-          <Button style={buttonStyles} size="lg">
-            Item 1
-          </Button>
-          <Button style={buttonStyles} size="lg">
-            Item 2
-          </Button>
-          <Button style={buttonStyles} size="lg">
-            Item 3
-          </Button>
-        </Group>
-      </Paper>
-    </Container>
+    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
+      <UnstyledButton onClick={onClick} style={linkStyle} data-active={active || undefined}>
+        {React.createElement(icon, { style: { width: rem(20), height: rem(20), stroke: 1.5 } })}
+      </UnstyledButton>
+    </Tooltip>
+  );
+}
+
+export function Sidebar({ navItems }) {
+  const [active, setActive] = useState(0);
+
+  const links = navItems.map((link, index) => (
+    <NavbarLink
+      icon={link.icon}
+      label={link.label}
+      active={index === active}
+      onClick={() => setActive(index)}
+      key={link.label}
+    />
+  ));
+
+  const sidebarStyle = {
+    width: rem(80),
+    height: '100vh', 
+    padding: 'var(--mantine-spacing-md)',
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: '#F9EB02',
+  };
+
+  const navbarMainStyle = {
+    flex: 1,
+    marginTop: rem(50),
+  };
+
+  return (
+    <nav style={sidebarStyle}>
+
+      <div style={navbarMainStyle}>
+        <Stack justify="center" gap={160}>
+          {links}
+        </Stack>
+      </div>
+
+      <Stack justify="center" gap={0}>
+        <NavbarLink icon={IconLogout} label="Logout" />
+      </Stack>
+    </nav>
   );
 }
 

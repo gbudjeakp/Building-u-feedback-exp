@@ -5,7 +5,7 @@ const feedbackController = require('../Controllers/feedbackController')
 
 router.post("/submitfeedback", auth, feedbackController.submitFeedBack);
 
-router.post("/assignFeedBackToMentor/:feedbackrequestId", feedbackController.assignFeedBackToMentor);
+router.post("/assignFeedBackToMentor/:feedbackrequestId", auth, feedbackController.assignFeedBackToMentor);
 
 router.post("/addFeedBack/:feedbackrequestId", auth, feedbackController.addFeedBack);
 
@@ -15,7 +15,7 @@ router.get("/getUserFeedBackRequestForms", auth, feedbackController.getUserFeedB
 
 router.get("/getAssignedFeedBacks", auth, feedbackController.getAssignedFeedBacks);
 
-router.get("/getMentorFeedback/:feedbackrequestId",   feedbackController.getMentorFeedback);
+router.get("/getMentorFeedback/:feedbackrequestId", auth,  feedbackController.getMentorFeedback);
 
 
 
