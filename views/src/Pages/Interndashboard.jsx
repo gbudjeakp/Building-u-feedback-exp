@@ -4,7 +4,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { IconFilePlus, IconClipboardText, IconUser } from '@tabler/icons-react';
 
 import FeedbackRequestForm from "../pages/FeedbackrequestForm"
-import AssignedFeedback from '../pages/AssignedFeedback';
+import CreatedRequests from '../pages/CreatedRequests';
 
 function Interndashboard() {
   const mockdata = [
@@ -20,7 +20,7 @@ function Interndashboard() {
     <Sidebar navItems={mockdata} /> 
     <Routes location={location}>
         <Route path="/requestform" element={<FeedbackRequestForm />} />
-        <Route path="/myrequests" element={<AssignedFeedback />} />
+        <Route path="/myrequests" element={<CreatedRequests />} />
         {/* <Route path="account" element={<Account />} /> */}
       </Routes>
   </div>

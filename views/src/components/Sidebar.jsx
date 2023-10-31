@@ -67,7 +67,7 @@ export function Sidebar({ navItems }) {
       </div>
 
       <Stack justify="center" gap={0}>
-        <NavbarLink to="/logout" icon={IconLogout} label="Logout" />
+        <NavbarLink to="/" icon={IconLogout} label="Logout" />
       </Stack>
     </nav>
   );

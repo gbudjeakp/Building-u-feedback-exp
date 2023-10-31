@@ -6,55 +6,8 @@ const feedbackContainer = {
   marginLeft: "90px",
 };
 
-const data = [
-  {
-    id: 1,
-    name: "Robert Wolfkisser",
-    email: "rob_wolf@gmail.com",
-    role: "Collaborator",
-    lastActive: "2 days ago",
-    Linktoexercise: "www.example.com",
-    completed: false,
-  },
-  {
-    id: 2,
-    name: "Jill Jailbreaker",
-    email: "jj@breaker.com",
-    role: "Collaborator",
-    lastActive: "2 days ago",
-    Linktoexercise: "www.example.com",
-    completed: false,
-  },
-  {
-    id: 3,
-    name: "Henry Silkeater",
-    email: "henry@silkeater.io",
-    role: "Contractor",
-    lastActive: "2 days ago",
-    Linktoexercise: "www.example.com",
-    completed: false,
-  },
-  {
-    id: 4,
-    name: "Bill Horsefighter",
-    email: "bhorsefighter@gmail.com",
-    role: "Contractor",
-    lastActive: "5 days ago",
-    Linktoexercise: "www.example.com",
-    completed: false,
-  },
-  {
-    id: 5,
-    name: "Jeremy Footviewer",
-    email: "jeremy@foot.dev",
-    role: "Manager",
-    lastActive: "3 days ago",
-    Linktoexercise: "www.example.com",
-    completed: false,
-  },
-];
 
-function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign }) {
+function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign, pageTitle, showViewFeedback, data, isMentor }) {
   const [assignedRequests, setAssignedRequests] = useState([]);
   const [items, setItems] = useState(data); // Store data in the 'items' state
 
@@ -67,7 +20,10 @@ function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign }) {
       return item;
     });
 
-    setItems(updatedItems); // Update the 'items' state
+    // Remove completed items from the updatedItems
+    const filteredItems = updatedItems.filter((item) => !item.completed);
+
+    setItems(filteredItems); // Update the 'items' state
   };
 
   const assignRequest = (id) => {
@@ -83,7 +39,7 @@ function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign }) {
   return (
     <Container fluid h={0} style={feedbackContainer}>
       <Text align="center" size="xl" style={{ marginBottom: "20px" }}>
-        Feedback Queue
+        {pageTitle}
       </Text>
       <Stack gap={10}>
         {items.map((item) => (
@@ -95,7 +51,7 @@ function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign }) {
             style={{ display: "flex", justifyContent: "space-between" }}
           >
             <div>
-              <Text>Name: {item.name}</Text>
+              {isMentor ?  <Text>Code Lead: {item.CodeLead}</Text> :  <Text>Intern Name: {item.name}</Text>}
               <Text>Completed: {item.completed ? "Yes" : "No"}</Text>
               <Text>
                 Link to exercise:{" "}
@@ -103,7 +59,7 @@ function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign }) {
               </Text>
               <Text>Created: {item.lastActive}</Text>
               {assignedRequests.find((assigned) => assigned.id === item.id) && (
-                <Text>Assigned to: {item.name}</Text>
+                <Text>Assigned to: {item.CodeLead}</Text>
               )}
             </div>
             <Stack direction="horizontal" spacing="sm">
@@ -129,6 +85,11 @@ function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign }) {
                 <Button style={{ color: "black" }} color="#F9EB02">
                   Add Feedback
                 </Button>
+              )}
+              {showViewFeedback && (
+                   <Button style={{ color: "black" }} color="#F9EB02">
+                   View Feedback
+                 </Button>
               )}
             </Stack>
           </Paper>
