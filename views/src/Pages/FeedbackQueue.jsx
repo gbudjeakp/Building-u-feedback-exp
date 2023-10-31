@@ -7,7 +7,7 @@ const containerStyle = {
 function FeedbackQueue() {
   return (
     <div style={containerStyle}>
-      <FeedbackCard />
+      <FeedbackCard isAssign={true} />
     </div>
   );
 }

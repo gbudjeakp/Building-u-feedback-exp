@@ -1,8 +1,9 @@
 import React from 'react'
+import FeedbackCard from "../components/FeedbackCard"
 
 function AssignedFeedback() {
   return (
-    <div>AssignedFeedback</div>
+    <div><FeedbackCard showAddFeedback={true} showComplete={true}/></div>
   )
 }
 

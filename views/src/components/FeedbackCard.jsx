@@ -14,7 +14,7 @@ const data = [
     role: "Collaborator",
     lastActive: "2 days ago",
     Linktoexercise: "www.example.com",
-    completed: true,
+    completed: false,
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ const data = [
     role: "Collaborator",
     lastActive: "2 days ago",
     Linktoexercise: "www.example.com",
-    completed: true,
+    completed: false,
   },
   {
     id: 3,
@@ -41,7 +41,7 @@ const data = [
     role: "Contractor",
     lastActive: "5 days ago",
     Linktoexercise: "www.example.com",
-    completed: true,
+    completed: false,
   },
   {
     id: 5,
@@ -54,11 +54,24 @@ const data = [
   },
 ];
 
-function FeedbackRequestQueue() {
+function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign }) {
   const [assignedRequests, setAssignedRequests] = useState([]);
+  const [items, setItems] = useState(data); // Store data in the 'items' state
+
+  const toggleComplete = (id) => {
+    // Create a copy of 'items' and update the 'completed' status
+    const updatedItems = items.map((item) => {
+      if (item.id === id) {
+        return { ...item, completed: !item.completed };
+      }
+      return item;
+    });
+
+    setItems(updatedItems); // Update the 'items' state
+  };
 
   const assignRequest = (id) => {
-    const request = data.find((item) => item.id === id);
+    const request = items.find((item) => item.id === id);
     if (request) {
       // Check if the request is already assigned before adding it to the assignedRequests
       if (!assignedRequests.find((assigned) => assigned.id === id)) {
@@ -73,7 +86,7 @@ function FeedbackRequestQueue() {
         Feedback Queue
       </Text>
       <Stack gap={10}>
-        {data.map((item) => (
+        {items.map((item) => (
           <Paper
             shadow="xs"
             p="sm"
@@ -93,13 +106,31 @@ function FeedbackRequestQueue() {
                 <Text>Assigned to: {item.name}</Text>
               )}
             </div>
-            <Button
-              style={{ color: "black" }}
-              color="#F9EB02"
-              onClick={() => assignRequest(item.id)}
-            >
-              Assign
-            </Button>
+            <Stack direction="horizontal" spacing="sm">
+              {isAssign && (
+                <Button
+                  style={{ color: "black" }}
+                  color="#F9EB02"
+                  onClick={() => assignRequest(item.id)}
+                >
+                  Assign
+                </Button>
+              )}
+              {showComplete && !item.completed && (
+                <Button
+                  style={{ color: "black" }}
+                  color="#F9EB02"
+                  onClick={() => toggleComplete(item.id)}
+                >
+                  Complete
+                </Button>
+              )}
+              {showAddFeedback && (
+                <Button style={{ color: "black" }} color="#F9EB02">
+                  Add Feedback
+                </Button>
+              )}
+            </Stack>
           </Paper>
         ))}
       </Stack>
