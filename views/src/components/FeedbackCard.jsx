@@ -94,6 +94,13 @@ function FeedbackRequestQueue({
                   </Button>
                 </Link>
               )}
+                {showViewFeedback && (
+                <Link to={`/feedback/${item.id}`}>
+                  <Button style={{ color: "black" }} color="#F9EB02">
+                    View Feedback
+                  </Button>
+                </Link>
+              )}
               {showComplete && !item.completed && (
                 <Button
                   style={{ color: "black" }}

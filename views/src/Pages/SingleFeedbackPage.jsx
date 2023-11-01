@@ -6,13 +6,15 @@ import FeedbackCard from "../components/FeedbackCard";
 
 const feedbackContainer = {
   zIndex: "20",
-  paddingBottom: "20rem"
+  paddingBottom: "20rem",
 };
 
 function SingleFeedbackPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [feedback, setFeedback] = useState("");
+
+  const isMentor = false;
 
   const data = [
     {
@@ -22,19 +24,25 @@ function SingleFeedbackPage() {
       lastActive: "2 days ago",
       Linktoexercise: "www.example.com",
       completed: false,
-      feedbacks: []
-  }
+      feedbacks: [],
+    },
   ];
 
   return (
     <Container>
       <div style={feedbackContainer}>
-        <FeedbackCard data={data} pageTitle="GIVE FEEDBACK" gotoDashboard={true} />
+        <FeedbackCard
+          data={data}
+          pageTitle="GIVE FEEDBACK"
+          gotoDashboard={true}
+        />
       </div>
 
-      <Paper shadow="xs" p="sm" withBorder>
-        <TextEditor />
-      </Paper>
+      {isMentor && (
+        <Paper shadow="xs" p="sm" withBorder>
+          <TextEditor isMentor={false} />
+        </Paper>
+      )}
     </Container>
   );
 }

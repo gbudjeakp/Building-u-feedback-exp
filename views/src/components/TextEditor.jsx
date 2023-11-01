@@ -2,9 +2,9 @@ import { useState } from "react";
 import { RichTextEditor, Link } from "@mantine/tiptap";
 import { useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
-import { Button, Text, Paper, Container } from "@mantine/core";
+import { Button, Text } from "@mantine/core";
 
-function TextEditor() {
+function TextEditor({ isMentor}) {
   const [editorContent, setEditorContent] = useState("");
   const [submittedContent, setSubmittedContent] = useState("");
 
@@ -22,7 +22,8 @@ function TextEditor() {
 
   return (
     <>
-      <Text size="sm">Enter your feedback:</Text>
+    {isMentor && (
+     <div>
       <RichTextEditor editor={editor}>
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           <RichTextEditor.ControlsGroup>
@@ -73,6 +74,8 @@ function TextEditor() {
       >
         Submit Feedback
       </Button>
+     </div>
+    )}
 
       {submittedContent && (
         <div style={{ marginTop: "20px" }}>
