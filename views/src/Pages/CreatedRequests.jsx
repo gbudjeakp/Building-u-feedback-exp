@@ -10,6 +10,7 @@ function CreatedRequests() {
             lastActive: "2 days ago",
             Linktoexercise: "www.example.com",
             completed: false,
+            feedbacks: []
         },
         {
           id: 3,
@@ -17,6 +18,7 @@ function CreatedRequests() {
           lastActive: "2 days ago",
           Linktoexercise: "www.example.com",
           completed: false,
+          feedbacks: []
         },
         {
             id: 4,
@@ -24,6 +26,7 @@ function CreatedRequests() {
             lastActive: "2 days ago",
             Linktoexercise: "www.example.com",
             completed: false,
+            feedbacks: []
         },
         {
             id: 5,
@@ -31,6 +34,7 @@ function CreatedRequests() {
             lastActive: "2 days ago",
             Linktoexercise: "www.example.com",
             completed: false,
+            feedbacks: []
         },
         {
             id: 6,
@@ -38,6 +42,7 @@ function CreatedRequests() {
             lastActive: "2 days ago",
             Linktoexercise: "www.example.com",
             completed: false,
+            feedbacks: []
         },
       ];
 

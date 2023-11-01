@@ -1,15 +1,26 @@
 import React, { useState } from "react";
 import { Text, Button, Paper, Container, Stack } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const feedbackContainer = {
   zIndex: "1",
   marginLeft: "90px",
 };
 
-
-function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign, pageTitle, showViewFeedback, data, isMentor }) {
+function FeedbackRequestQueue({
+  showAddFeedback,
+  showComplete,
+  isAssign,
+  pageTitle,
+  showViewFeedback,
+  data,
+  isMentor,
+  gotoDashboard,
+}) {
   const [assignedRequests, setAssignedRequests] = useState([]);
   const [items, setItems] = useState(data); // Store data in the 'items' state
+  const navigate = useNavigate();
 
   const toggleComplete = (id) => {
     // Create a copy of 'items' and update the 'completed' status
@@ -36,6 +47,15 @@ function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign, pageTit
     }
   };
 
+  const handleGoToDashboard = () => {
+    const isMentor = true;
+    if (isMentor) {
+      navigate("/mentor");
+    } else {
+      navigate("/intern");
+    }
+  };
+
   return (
     <Container fluid h={0} style={feedbackContainer}>
       <Text align="center" size="xl" style={{ marginBottom: "20px" }}>
@@ -51,7 +71,11 @@ function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign, pageTit
             style={{ display: "flex", justifyContent: "space-between" }}
           >
             <div>
-              {isMentor ?  <Text>Code Lead: {item.CodeLead}</Text> :  <Text>Intern Name: {item.name}</Text>}
+              {isMentor ? (
+                <Text>Code Lead: {item.CodeLead}</Text>
+              ) : (
+                <Text>Intern Name: {item.name}</Text>
+              )}
               <Text>Completed: {item.completed ? "Yes" : "No"}</Text>
               <Text>
                 Link to exercise:{" "}
@@ -63,14 +87,12 @@ function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign, pageTit
               )}
             </div>
             <Stack direction="horizontal" spacing="sm">
-              {isAssign && (
-                <Button
-                  style={{ color: "black" }}
-                  color="#F9EB02"
-                  onClick={() => assignRequest(item.id)}
-                >
-                  Assign
-                </Button>
+              {showAddFeedback && (
+                <Link to={`/feedback/${item.id}`}>
+                  <Button style={{ color: "black" }} color="#F9EB02">
+                    Add Feedback
+                  </Button>
+                </Link>
               )}
               {showComplete && !item.completed && (
                 <Button
@@ -81,15 +103,20 @@ function FeedbackRequestQueue({ showAddFeedback, showComplete, isAssign, pageTit
                   Complete
                 </Button>
               )}
-              {showAddFeedback && (
-                <Button style={{ color: "black" }} color="#F9EB02">
-                  Add Feedback
+
+              {gotoDashboard && (
+                <Button style={{ color: "black" }} color="#F9EB02"  onClick={handleGoToDashboard}>
+                  Go to Dashboard
                 </Button>
               )}
-              {showViewFeedback && (
-                   <Button style={{ color: "black" }} color="#F9EB02">
-                   View Feedback
-                 </Button>
+              {isAssign && (
+                <Button
+                  style={{ color: "black" }}
+                  color="#F9EB02"
+                  onClick={() => assignRequest(item.id)}
+                >
+                  Assign
+                </Button>
               )}
             </Stack>
           </Paper>

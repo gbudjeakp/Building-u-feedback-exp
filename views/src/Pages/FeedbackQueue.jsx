@@ -13,6 +13,7 @@ function FeedbackQueue() {
         lastActive: "2 days ago",
         Linktoexercise: "www.example.com",
         completed: false,
+        feedbacks: []
     },
     {
       id: 3,
@@ -21,6 +22,7 @@ function FeedbackQueue() {
       lastActive: "2 days ago",
       Linktoexercise: "www.example.com",
       completed: false,
+      feedbacks: []
     },
     {
         id: 4,
@@ -29,6 +31,7 @@ function FeedbackQueue() {
         lastActive: "2 days ago",
         Linktoexercise: "www.example.com",
         completed: false,
+        feedbacks: []
     },
     {
         id: 5,
@@ -37,6 +40,7 @@ function FeedbackQueue() {
         lastActive: "2 days ago",
         Linktoexercise: "www.example.com",
         completed: false,
+        feedbacks: []
     },
     {
         id: 6,
@@ -45,6 +49,7 @@ function FeedbackQueue() {
         lastActive: "2 days ago",
         Linktoexercise: "www.example.com",
         completed: false,
+        feedbacks: []
     },
   ];
   return (
