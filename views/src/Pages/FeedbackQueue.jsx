@@ -1,60 +1,52 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FeedbackCard from "../components/FeedbackCard";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
+import getJwtToken from "../Utility/getJwtToken";
 
 const containerStyle = {
   flexDirection: "column-reverse",
 };
+
 function FeedbackQueue() {
-  const data = [
+  const dispatch = useDispatch();
+  const feedbackForms = useSelector(
+    (state) => state.feedbackSlice.feedbackRequests
+  );
+
+  useEffect(() => {
+    // Retrieve the JWT token
+    const jwtToken = getJwtToken();
+
+    if (jwtToken) {
+      // Make authenticated requests using jwtToken
+      dispatch(fetchFeedbackRequests(jwtToken)); // Pass the token to the fetchFeedbackRequests action creator
+    } else {
+      console.error("JWT token is not available.");
+    }
+  }, [dispatch]);
+
+  const data = feedbackForms.data;
+
+  const data1 = [
     {
-        id: 2,
-        CodeLead: "Jill Jailbreaker",
-        name: "Jill Jailbreaker",
-        lastActive: "2 days ago",
-        Linktoexercise: "www.example.com",
-        completed: false,
-        feedbacks: []
-    },
-    {
-      id: 3,
-      CodeLead: "Jill Jailbreaker",
-      name: "Jill Jailbreaker",
-      lastActive: "2 days ago",
-      Linktoexercise: "www.example.com",
-      completed: false,
-      feedbacks: []
-    },
-    {
-        id: 4,
-        CodeLead: "Code Lead 3",
-        name: "Jill Jailbreaker",
-        lastActive: "2 days ago",
-        Linktoexercise: "www.example.com",
-        completed: false,
-        feedbacks: []
-    },
-    {
-        id: 5,
-        name: "Jill Jailbreaker",
-        CodeLead: "Code Lead 1",
-        lastActive: "2 days ago",
-        Linktoexercise: "www.example.com",
-        completed: false,
-        feedbacks: []
-    },
-    {
-        id: 6,
-        name: "Jill Jailbreaker",
-        CodeLead: "Code Lead 2",
-        lastActive: "2 days ago",
-        Linktoexercise: "www.example.com",
-        completed: false,
-        feedbacks: []
+      id: 1,
+      studentName: "tom@mail.com",
+      topicOfLearningSession: "Data Structures and Algorithms",
+      codeLink: "linkktocode.com",
+      whoisAssigned: null,
+      isAssigned: false,
+      status: false,
+      date: "2023-11-01T06:36:37.000Z",
+      createdAt: "2023-11-01T06:36:37.000Z",
+      updatedAt: "2023-11-01T06:36:37.000Z",
+      userId: 1,
     },
   ];
+
   return (
     <div style={containerStyle}>
-      <FeedbackCard isAssign={true} data={data}  pageTitle="FEEDBACK QUEUE"/>
+      <FeedbackCard isAssign={true} data={data} pageTitle="FEEDBACK QUEUE" isMentor={true} />
     </div>
   );
 }

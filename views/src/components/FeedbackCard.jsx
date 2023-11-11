@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Text, Button, Paper, Container, Stack } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import formatCreatedAt from "../Utility/DateFormatter";
 
 const feedbackContainer = {
   zIndex: "1",
   marginLeft: "90px",
 };
 
-function FeedbackRequestQueue({
+function FeedbackCard({
   showAddFeedback,
   showComplete,
   isAssign,
@@ -17,10 +18,13 @@ function FeedbackRequestQueue({
   data,
   isMentor,
   gotoDashboard,
+  isLoading
 }) {
   const [assignedRequests, setAssignedRequests] = useState([]);
   const [items, setItems] = useState(data); // Store data in the 'items' state
   const navigate = useNavigate();
+
+
 
   const toggleComplete = (id) => {
     // Create a copy of 'items' and update the 'completed' status
@@ -58,9 +62,12 @@ function FeedbackRequestQueue({
 
   return (
     <Container fluid h={0} style={feedbackContainer}>
-      <Text align="center" size="xl" style={{ marginBottom: "20px" }}>
-        {pageTitle}
-      </Text>
+    <Text align="center" size="xl" style={{ marginBottom: "20px" }}>
+      {pageTitle}
+    </Text>
+    {isLoading ? (
+      <div>Loading...</div>
+    ) : items && items.length > 0 ? ( 
       <Stack gap={10}>
         {items.map((item) => (
           <Paper
@@ -74,14 +81,15 @@ function FeedbackRequestQueue({
               {isMentor ? (
                 <Text>Code Lead: {item.CodeLead}</Text>
               ) : (
-                <Text>Intern Name: {item.name}</Text>
+                <Text>Intern Name: {item.studentName}</Text>
               )}
-              <Text>Completed: {item.completed ? "Yes" : "No"}</Text>
+              <Text>Topic Of Learning Session: {item.topicOfLearningSession}</Text>
+              <Text>Completed: {item.status ? "Yes" : "No"}</Text>
               <Text>
                 Link to exercise:{" "}
-                <a href={item.Linktoexercise}>{item.Linktoexercise}</a>
+                <a href={item.codeLink}>{item.codeLink}</a>
               </Text>
-              <Text>Created: {item.lastActive}</Text>
+              <Text>Created: {formatCreatedAt(item.createdAt)}</Text>
               {assignedRequests.find((assigned) => assigned.id === item.id) && (
                 <Text>Assigned to: {item.CodeLead}</Text>
               )}
@@ -94,7 +102,7 @@ function FeedbackRequestQueue({
                   </Button>
                 </Link>
               )}
-                {showViewFeedback && (
+              {showViewFeedback && (
                 <Link to={`/feedback/${item.id}`}>
                   <Button style={{ color: "black" }} color="#F9EB02">
                     View Feedback
@@ -112,7 +120,7 @@ function FeedbackRequestQueue({
               )}
 
               {gotoDashboard && (
-                <Button style={{ color: "black" }} color="#F9EB02"  onClick={handleGoToDashboard}>
+                <Button style={{ color: "black" }} color="#F9EB02" onClick={handleGoToDashboard}>
                   Go to Dashboard
                 </Button>
               )}
@@ -129,8 +137,11 @@ function FeedbackRequestQueue({
           </Paper>
         ))}
       </Stack>
-    </Container>
+    ) : (
+      <div>No items to display.</div>
+    )}
+  </Container>
   );
 }
 
-export default FeedbackRequestQueue;
+export default FeedbackCard;

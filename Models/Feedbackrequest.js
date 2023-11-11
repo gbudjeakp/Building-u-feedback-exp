@@ -1,6 +1,11 @@
-// Feedback Model
 module.exports = (sequelize, DataTypes) => {
-  const Feedbackrequest = sequelize.define("feedbackrequest", {
+  const Feedbackrequest = sequelize.define("Feedbackrequest", {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     studentName: {
       type: DataTypes.STRING,
     },
@@ -15,11 +20,11 @@ module.exports = (sequelize, DataTypes) => {
     whoisAssigned: {
       type: DataTypes.TEXT,
     },
-    isAssigned:{
+    isAssigned: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    // This determins whether or not the assignment is up to standard
+    // This determines whether or not the assignment is up to standard
     status: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -30,5 +35,5 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  return Feedbackrequest
+  return Feedbackrequest;
 };

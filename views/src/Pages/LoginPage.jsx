@@ -19,13 +19,13 @@ const homepageStyles = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  minHeight: "100vh", // Ensure the content spans at least the viewport height
+  minHeight: "100vh", 
 };
 
 const buttonStyles = {
   borderRadius: "20px",
   background: "#F9EB02",
-  color: "black", // Text color
+  color: "black", 
 };
 
 function LoginPage() {

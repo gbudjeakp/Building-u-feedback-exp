@@ -25,8 +25,9 @@ feedback forms.
  */
 
 const submitFeedBack = async (req, res) => {
-  const { token } = req.cookies;
+  const { authToken } = req.cookies;
   const { id, username } = jwt.verify(token, process.env.JWT_SECRET);
+  
   try {
     const { topicOfLearningSession, codeLink } = req.body;
     const feedBackRequestData = {
@@ -59,7 +60,7 @@ const getAllFeedBackRequestsForms = async (req, res) => {
 that is logged in */
 const getUserFeedBackRequestForms = async (req, res) => {
   try {
-    const { token } = req.cookies;
+    const { authToken } = req.cookies;
     const { id } = jwt.verify(token, process.env.JWT_SECRET);
     let singleFeedBack = await FeedbackRequest.findAll({
       where: { userId: id },
@@ -100,7 +101,7 @@ const getMentorFeedback = async (req, res) => {
 
 //////////////////////////////////////////
 /* Code below here are basically controller functions 
-for the Code leads endpoints 
+for the Code leads or mentor endpoints 
 */
 ///////////////////////////////////////////////
 
@@ -111,7 +112,7 @@ const addFeedBack = async (req, res) => {
   try {
     const { feedback } = req.body;
     const { feedbackrequestId } = req.params;
-    const { token } = req.cookies;
+    const { authToken } = req.cookies;
     const { id, username } = jwt.verify(token, process.env.JWT_SECRET);
 
     // Check if the user is a mentor
@@ -160,7 +161,7 @@ const addFeedBack = async (req, res) => {
 const assignFeedBackToMentor = async (req, res) => {
   try {
     const { feedbackrequestId } = req.params;
-    const { token } = req.cookies;
+    const { authToken } = req.cookies;
     const { id, username } = jwt.verify(token, process.env.JWT_SECRET);
 
     // Check if the user is a mentor
@@ -204,7 +205,7 @@ of the code lead logged in.
  */
 const getAssignedFeedBacks = async (req, res) => {
   try {
-    const { token } = req.cookies;
+    const { authToken } = req.cookies;
     const { id, username } = jwt.verify(token, process.env.JWT_SECRET);
 
     // Check if the user is a mentor

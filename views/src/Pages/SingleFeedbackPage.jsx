@@ -24,7 +24,7 @@ function SingleFeedbackPage() {
       lastActive: "2 days ago",
       Linktoexercise: "www.example.com",
       completed: false,
-      feedbacks: [],
+      feedbacks: ["Feedback1", "Feedback2", "Feedback3", "Feedback4"],
     },
   ];
 
@@ -36,6 +36,14 @@ function SingleFeedbackPage() {
           pageTitle="GIVE FEEDBACK"
           gotoDashboard={true}
         />
+
+{data[0].feedbacks.map((el, index)=>{
+          return(
+            <Paper key={index}>
+              {el}
+            </Paper>
+          )
+        })}
       </div>
 
       {isMentor && (

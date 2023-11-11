@@ -9,11 +9,11 @@ router.post("/assignFeedBackToMentor/:feedbackrequestId", auth, feedbackControll
 
 router.post("/addFeedBack/:feedbackrequestId", auth, feedbackController.addFeedBack);
 
-router.get("/getfeedbackrequestForms",  feedbackController.getAllFeedBackRequestsForms);
+router.get("/getfeedbackrequestForms", auth, feedbackController.getAllFeedBackRequestsForms);
 
 router.get("/getUserFeedBackRequestForms", auth, feedbackController.getUserFeedBackRequestForms);
 
-router.get("/getAssignedFeedBacks", auth, feedbackController.getAssignedFeedBacks);
+router.get("/getAssignedFeedBacks",  feedbackController.getAssignedFeedBacks);
 
 router.get("/getMentorFeedback/:feedbackrequestId", auth,  feedbackController.getMentorFeedback);
 

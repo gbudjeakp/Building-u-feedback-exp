@@ -1,6 +1,5 @@
-// feedbackSlice.js
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import getJwtToken from "../../Utility/getJwtToken"
 import axios from "axios";
 
 // Define an initial state
@@ -10,41 +9,67 @@ const initialState = {
   error: null,
 };
 
+
+
 // Define an async thunk to fetch all feedback requests
- const fetchFeedbackRequests = createAsyncThunk(
-  "feedback/fetchAll",
-  async () => {
-    const response = await axios.get("http://localhost:5001/api/feedbackrequests");
-    return response.data;
-  }
-);
+const fetchFeedbackRequests = createAsyncThunk("feedback/fetchAll", async (jwtToken) => {
+  const response = await axios.get("http://localhost:5001/api/feedback/getfeedbackrequestForms", {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
+  return response.data;
+});
 
 // Define an async thunk to create a feedback request
- const createFeedbackRequest = createAsyncThunk(
-  "feedback/create",
-  async (feedbackData) => {
-    const response = await axios.post("http://localhost:5001/api/feedbackrequests", feedbackData);
-    return response.data;
-  }
-);
+const createFeedbackRequest = createAsyncThunk("feedback/create", async (feedbackData) => {
+  // Include the JWT token in the headers
+  const jwtToken = getJwtToken();
+  const response = await axios.post("http://localhost:5001/api/feedbackrequests", feedbackData, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
+  return response.data;
+});
 
 // Define an async thunk to add feedback to a request
- const addFeedback = createAsyncThunk(
-  "feedback/add",
-  async (feedbackData) => {
-    const response = await axios.post("http://localhost:5001/api/feedback/add", feedbackData);
-    return response.data;
-  }
-);
+const addFeedback = createAsyncThunk("feedback/add", async (feedbackData) => {
+  // Include the JWT token in the headers
+  const jwtToken = getJwtToken();
+  const response = await axios.post("http://localhost:5001/api/feedback/add", feedbackData, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
+  return response.data;
+});
 
 // Define an async thunk to assign a feedback request to a mentor
- const assignFeedbackRequest = createAsyncThunk(
-  "feedback/assign",
-  async (assignmentData) => {
-    const response = await axios.post("http://localhost:5001/api/feedback/assign", assignmentData);
-    return response.data;
-  }
-);
+const assignFeedbackRequest = createAsyncThunk("feedback/assign", async (id) => {
+  // Include the JWT token in the headers
+  const jwtToken = getJwtToken();
+  const response = await axios.post(`http://localhost:5001/api/feedback/assignFeedBackToMentor/${id}`, null, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
+  return response.data;
+});
+
+// Define an async thunk to get assigned feedback requests
+const getAssignedFeedbackRequests = createAsyncThunk("feedback/getAssign", async (jwtToken) => {
+  const response = await axios.get(`http://localhost:5001/api/feedback/getAssignedFeedBacks`, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
+  console.log(response.data)
+
+  return response.data;
+
+});
 
 // Create a feedback slice
 const feedbackSlice = createSlice({
@@ -83,10 +108,27 @@ const feedbackSlice = createSlice({
       }
     });
 
-    // Handle loading and error states
+    // Handle List of assigned Feedback Request
+    builder.addCase(getAssignedFeedbackRequests.fulfilled, (state, action) => {
+      // You may want to append assigned feedback requests instead of overwriting
+      state.feedbackRequests = action.payload; // This line will replace existing feedback requests
+      state.loading = "succeeded";
+    });
+
+    builder.addCase(getAssignedFeedbackRequests.pending, (state) => {
+      state.loading = "loading";
+    });
+
+    builder.addCase(getAssignedFeedbackRequests.rejected, (state, action) => {
+      state.loading = "failed";
+      state.error = action.error.message;
+    });
+
+    // Handle loading and error states for fetchFeedbackRequests
     builder.addCase(fetchFeedbackRequests.pending, (state) => {
       state.loading = "loading";
     });
+
     builder.addCase(fetchFeedbackRequests.rejected, (state, action) => {
       state.loading = "failed";
       state.error = action.error.message;
@@ -95,7 +137,13 @@ const feedbackSlice = createSlice({
 });
 
 // Export async thunks
-export { fetchFeedbackRequests, createFeedbackRequest, addFeedback, assignFeedbackRequest };
+export {
+  fetchFeedbackRequests,
+  createFeedbackRequest,
+  addFeedback,
+  assignFeedbackRequest,
+  getAssignedFeedbackRequests,
+};
 
 // Export the reducer
 export default feedbackSlice.reducer;
