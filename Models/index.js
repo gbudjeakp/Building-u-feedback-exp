@@ -39,7 +39,7 @@ db.Feedbacks.belongsTo(db.FeedbackRequest, { foreignKey: 'feedbackRequestId'});
 // Synchronize the database
   (async () => {
     try {
-      await sequelize.sync({force: true}); 
+      await sequelize.sync({force: false}); 
       console.log('Database synchronized.');
     } catch (error) {
       console.error('Error syncing database:', error);

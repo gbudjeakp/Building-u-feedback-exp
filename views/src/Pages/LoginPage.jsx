@@ -57,7 +57,7 @@ function LoginPage() {
 
       try {
         const response = await axios.post(
-          "http://localhost:5001/api/users/login",
+          "https://localhost:5001/api/users/login",
           userData
         );
 

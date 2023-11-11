@@ -13,7 +13,7 @@ function AssignedFeedback() {
 
   useEffect(() => {
     const jwtToken = getJwtToken(); 
-     console.log(jwtToken);
+
     dispatch(getAssignedFeedbackRequests(jwtToken));
   }, [dispatch]);
 

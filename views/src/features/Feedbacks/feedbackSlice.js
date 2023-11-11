@@ -14,7 +14,6 @@ const initialState = {
 // Define an async thunk to fetch all feedback requests
 const fetchFeedbackRequests = createAsyncThunk("feedback/fetchAll", async (jwtToken) => {
   const response = await axios.get("http://localhost:5001/api/feedback/getfeedbackrequestForms", {
-    withCredentials: true,
     headers: {
       Authorization: `Bearer ${jwtToken}`,
     },

@@ -26,7 +26,7 @@ feedback forms.
 
 const submitFeedBack = async (req, res) => {
   const { authToken } = req.cookies;
-  const { id, username } = jwt.verify(token, process.env.JWT_SECRET);
+  const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
   
   try {
     const { topicOfLearningSession, codeLink } = req.body;
@@ -61,7 +61,7 @@ that is logged in */
 const getUserFeedBackRequestForms = async (req, res) => {
   try {
     const { authToken } = req.cookies;
-    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
     let singleFeedBack = await FeedbackRequest.findAll({
       where: { userId: id },
     });
@@ -113,7 +113,7 @@ const addFeedBack = async (req, res) => {
     const { feedback } = req.body;
     const { feedbackrequestId } = req.params;
     const { authToken } = req.cookies;
-    const { id, username } = jwt.verify(token, process.env.JWT_SECRET);
+    const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
 
     // Check if the user is a mentor
     const isMentor = await User.findOne({
@@ -162,7 +162,7 @@ const assignFeedBackToMentor = async (req, res) => {
   try {
     const { feedbackrequestId } = req.params;
     const { authToken } = req.cookies;
-    const { id, username } = jwt.verify(token, process.env.JWT_SECRET);
+    const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
 
     // Check if the user is a mentor
     const isMentor = await User.findOne({
@@ -206,7 +206,7 @@ of the code lead logged in.
 const getAssignedFeedBacks = async (req, res) => {
   try {
     const { authToken } = req.cookies;
-    const { id, username } = jwt.verify(token, process.env.JWT_SECRET);
+    const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
 
     // Check if the user is a mentor
     const isMentor = await User.findOne({

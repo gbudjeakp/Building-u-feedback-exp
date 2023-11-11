@@ -16,14 +16,8 @@ function FeedbackQueue() {
 
   useEffect(() => {
     // Retrieve the JWT token
-    const jwtToken = getJwtToken();
 
-    if (jwtToken) {
-      // Make authenticated requests using jwtToken
-      dispatch(fetchFeedbackRequests(jwtToken)); // Pass the token to the fetchFeedbackRequests action creator
-    } else {
-      console.error("JWT token is not available.");
-    }
+      dispatch(fetchFeedbackRequests()); // Pass the token to the 
   }, [dispatch]);
 
   const data = feedbackForms.data;
