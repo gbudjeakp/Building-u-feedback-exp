@@ -13,7 +13,7 @@ router.get("/getfeedbackrequestForms", auth, feedbackController.getAllFeedBackRe
 
 router.get("/getUserFeedBackRequestForms", auth, feedbackController.getUserFeedBackRequestForms);
 
-router.get("/getAssignedFeedBacks",  feedbackController.getAssignedFeedBacks);
+router.get("/getAssignedFeedBacks", auth, feedbackController.getAssignedFeedBacks);
 
 router.get("/getMentorFeedback/:feedbackrequestId", auth,  feedbackController.getMentorFeedback);
 

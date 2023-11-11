@@ -46,7 +46,6 @@ function LoginPage() {
   });
 
   const handleFormSubmit = async () => {
-    // Trigger form validation
     form.validate();
 
     if (form.isValid) {
@@ -57,8 +56,11 @@ function LoginPage() {
 
       try {
         const response = await axios.post(
-          "https://localhost:5001/api/users/login",
-          userData
+          "http://localhost:5001/api/users/login",
+          userData,
+          {
+            withCredentials: true, 
+          }
         );
 
         if (response.status === 200) {
@@ -71,12 +73,12 @@ function LoginPage() {
           }
         } else {
           console.log("API request failed");
-          console.log(response); // Log the response for further investigation
+          console.log(response);
           alert("Something went wrong, try again");
         }
       } catch (error) {
         console.error("Error submitting the form data:", error);
-        console.log(error.response); // Log the error response for further investigation
+        console.log(error.response); 
         alert("Something went wrong, try again");
       }
     } else {

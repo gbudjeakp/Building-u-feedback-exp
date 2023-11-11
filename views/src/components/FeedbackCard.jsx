@@ -89,7 +89,7 @@ function FeedbackCard({
                 Link to exercise:{" "}
                 <a href={item.codeLink}>{item.codeLink}</a>
               </Text>
-              <Text>Created: {formatCreatedAt(item.createdAt)}</Text>
+              <Text>{formatCreatedAt(item.createdAt)}</Text>
               {assignedRequests.find((assigned) => assigned.id === item.id) && (
                 <Text>Assigned to: {item.CodeLead}</Text>
               )}

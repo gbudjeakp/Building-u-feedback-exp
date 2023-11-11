@@ -89,6 +89,7 @@ const loginUser = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "None",
+            
             maxAge: 3600,
             path: "/",
           })
