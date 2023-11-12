@@ -1,5 +1,6 @@
 require("dotenv").config();
 const db = require("../Models/index");
+const { Op } = require("sequelize");
 const FeedbackRequest = db.FeedbackRequest;
 const Feedbacks = db.Feedbacks;
 const User = db.User;
@@ -13,10 +14,9 @@ const jwt = require("jsonwebtoken");
    feed back request.
   2) Add utility that sends notification to intern upon added review on flock.
   3) Add controller that allows code lead to change the status of the request. 
-  4) Add controller that allows code lead to edit feedbacks.
-  5) Add some input validation.  
-  6) Add rate limiter.
-  7) Add a review participant to the list of admins. 
+  4) Add some input validation.  
+  5) Add rate limiter.
+  6) Add a review participant to the list of admins. 
   */
 
 
@@ -71,7 +71,7 @@ const getUserFeedBackRequestForms = async (req, res) => {
   }
 };
 
-/*This controller gets all the feedback by a code lead on specific  feedback request forms
+/*This controller gets all the feedback from a code lead on specific  feedback request forms for the logged in Intern
 */
 const getMentorFeedback = async (req, res) => {
   try {
@@ -221,13 +221,52 @@ const getAssignedFeedBacks = async (req, res) => {
     }
 
     let assignedList = await FeedbackRequest.findAll({
-      where: { whoisAssigned: username },
+      where: {
+        whoisAssigned: username,
+        status: {
+          [Op.not]: true,
+        },
+      },
     });
+
     res.status(200).json({ data: assignedList });
   } catch (err) {
     console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+const markFeedbackRequestComplete = async (req, res) =>{
+  try {
+    const { feedbackrequestId } = req.params
+    const { authToken } = req.cookies;
+    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+
+    // Check if the user is a mentor
+    const isMentor = await User.findOne({
+      where: {
+        id: id,
+        mentor: true,
+      },
+    });
+
+    if (!isMentor) {
+      return res.status(401).json({ msg: "Unauthorized user" });
+    }
+
+    let markAsComplete = await FeedbackRequest.findOne({
+      where: { id: feedbackrequestId },
+    });
+    
+    markAsComplete.status = true;
+    await markAsComplete.save();
+
+    res.status(200).json({ msg: "Exercise Marked As Complete"});
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 module.exports = {
   submitFeedBack,
@@ -236,5 +275,6 @@ module.exports = {
   assignFeedBackToMentor,
   addFeedBack,
   getAssignedFeedBacks,
-  getMentorFeedback
+  getMentorFeedback,
+  markFeedbackRequestComplete
 };

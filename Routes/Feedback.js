@@ -17,6 +17,8 @@ router.get("/getAssignedFeedBacks", auth, feedbackController.getAssignedFeedBack
 
 router.get("/getMentorFeedback/:feedbackrequestId", auth,  feedbackController.getMentorFeedback);
 
+router.get("/markFeedBackRequestComplete/:feedbackrequestId", auth,  feedbackController.markFeedbackRequestComplete);
+
 
 
 module.exports = router;
