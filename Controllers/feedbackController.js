@@ -6,20 +6,6 @@ const Feedbacks = db.Feedbacks;
 const User = db.User;
 const jwt = require("jsonwebtoken");
 
-
-
-//@TODO
-/* 
-  1) Add utility that sends some sort of notification to flock upon
-   feed back request.
-  2) Add utility that sends notification to intern upon added review on flock.
-  3) Add controller that allows code lead to change the status of the request. 
-  4) Add some input validation.  
-  5) Add rate limiter.
-  6) Add a review participant to the list of admins. 
-  */
-
-
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
  */
@@ -27,7 +13,7 @@ feedback forms.
 const submitFeedBack = async (req, res) => {
   const { authToken } = req.cookies;
   const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
-  
+
   try {
     const { topicOfLearningSession, codeLink } = req.body;
     const feedBackRequestData = {
@@ -45,14 +31,21 @@ const submitFeedBack = async (req, res) => {
   }
 };
 
-/*This retrieves every single feedback requests made by the interns
+/*This retrieves every single feedback (only requests that are not marked as complete requests made by the interns
  */
 const getAllFeedBackRequestsForms = async (req, res) => {
   try {
-    const feedBackrequests = await FeedbackRequest.findAll();
+    const feedBackrequests = await FeedbackRequest.findAll({
+      where: {
+        status: {
+          [Op.not]: true,
+        },
+      },
+    });
     res.status(200).json({ data: feedBackrequests });
   } catch (err) {
     console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -72,7 +65,7 @@ const getUserFeedBackRequestForms = async (req, res) => {
 };
 
 /*This controller gets all the feedback from a code lead on specific  feedback request forms for the logged in Intern
-*/
+ */
 const getMentorFeedback = async (req, res) => {
   try {
     const { feedbackrequestId } = req.params;
@@ -97,14 +90,12 @@ const getMentorFeedback = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
- 
 
 //////////////////////////////////////////
 /* Code below here are basically controller functions 
 for the Code leads or mentor endpoints 
 */
 ///////////////////////////////////////////////
-
 
 /*This controller allows the Code leads to add feedbacks to the feedback requests made 
 by the interns */
@@ -138,10 +129,10 @@ const addFeedBack = async (req, res) => {
 
     // Create the feedback and associate it with the feedback request and mentor
     const feedBackData = {
-      userId: feedbackRequest.userId, // Use the userId of the intern who made the request
+      userId: feedbackRequest.userId,
       mentorName: username,
       feedback: feedback,
-      feedbackRequestId: feedbackRequest.id, // Associate feedback with the feedback request
+      feedbackRequestId: feedbackRequest.id,
     };
 
     const createdFeedback = await Feedbacks.create(feedBackData);
@@ -192,11 +183,12 @@ const assignFeedBackToMentor = async (req, res) => {
     feedbackRecord.isAssigned = true;
     feedbackRecord.whoisAssigned = username;
     await feedbackRecord.save();
-    res.json({msg: "Feedback Assigned to mentor"});
+    res.json({ msg: "Feedback Assigned to mentor" });
   } catch (err) {
     console.error(err);
-    res.status(500)
-    .json({ error: "An error occurred while updating feedback" });
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating feedback" });
   }
 };
 
@@ -236,10 +228,9 @@ const getAssignedFeedBacks = async (req, res) => {
   }
 };
 
-
-const markFeedbackRequestComplete = async (req, res) =>{
+const markFeedbackRequestComplete = async (req, res) => {
   try {
-    const { feedbackrequestId } = req.params
+    const { feedbackrequestId } = req.params;
     const { authToken } = req.cookies;
     const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
@@ -258,15 +249,15 @@ const markFeedbackRequestComplete = async (req, res) =>{
     let markAsComplete = await FeedbackRequest.findOne({
       where: { id: feedbackrequestId },
     });
-    
+
     markAsComplete.status = true;
     await markAsComplete.save();
 
-    res.status(200).json({ msg: "Exercise Marked As Complete"});
+    res.status(200).json({ msg: "Exercise Marked As Complete" });
   } catch (err) {
     console.error(err);
   }
-}
+};
 
 module.exports = {
   submitFeedBack,
@@ -276,5 +267,5 @@ module.exports = {
   addFeedBack,
   getAssignedFeedBacks,
   getMentorFeedback,
-  markFeedbackRequestComplete
+  markFeedbackRequestComplete,
 };
