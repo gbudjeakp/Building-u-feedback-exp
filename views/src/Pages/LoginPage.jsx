@@ -69,7 +69,7 @@ function LoginPage() {
           if (response.data.user.mentor) {
             navigate("/mentor/feedbackqueue");
           } else {
-            navigate("/intern");
+            navigate("/intern/myrequests");
           }
         } else {
           console.log("API request failed");

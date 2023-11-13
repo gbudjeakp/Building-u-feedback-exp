@@ -14,18 +14,22 @@ function SingleFeedbackPage() {
   const navigate = useNavigate();
   const [feedback, setFeedback] = useState("");
 
-  const isMentor = false;
+  const isMentor = true;
 
   const data = [
     {
-      id: 4,
-      CodeLead: "Code Lead 3",
-      name: "Jill Jailbreaker",
-      lastActive: "2 days ago",
-      Linktoexercise: "www.example.com",
-      completed: false,
-      feedbacks: ["Feedback1", "Feedback2", "Feedback3", "Feedback4"],
-    },
+      id: 6,
+      studentName: "tom@mail.com",
+      topicOfLearningSession: "Checking that status is not Complete and should only show not complete\n",
+      codeLink: "Can't be cmplete",
+      whoisAssigned: "tom@mail.com",
+      isAssigned: false,
+      status: false,
+      date: "2023-11-12T02:52:12.000Z",
+      createdAt: "2023-11-12T02:52:12.000Z",
+      updatedAt: "2023-11-12T22:45:04.000Z",
+      userId: 2
+  }
   ];
 
   return (
@@ -36,19 +40,11 @@ function SingleFeedbackPage() {
           pageTitle="GIVE FEEDBACK"
           gotoDashboard={true}
         />
-
-{data[0].feedbacks.map((el, index)=>{
-          return(
-            <Paper key={index}>
-              {el}
-            </Paper>
-          )
-        })}
       </div>
 
       {isMentor && (
         <Paper shadow="xs" p="sm" withBorder>
-          <TextEditor isMentor={false} />
+          <TextEditor isMentor={true} />
         </Paper>
       )}
     </Container>

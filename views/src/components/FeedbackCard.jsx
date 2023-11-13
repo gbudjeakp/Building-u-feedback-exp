@@ -52,9 +52,9 @@ function FeedbackCard({
   const handleGoToDashboard = () => {
     const isMentor = true;
     if (isMentor) {
-      navigate("/mentor");
+      navigate("/mentor/feedbackqueue");
     } else {
-      navigate("/intern");
+      navigate("/intern/myrequests");
     }
   };
 
