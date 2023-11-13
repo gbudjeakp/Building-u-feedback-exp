@@ -1,31 +1,61 @@
-import { createSlice } from '@reduxjs/toolkit';
+// authSlice.js
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
-// Define the initial state of the authentication slice
+
 const initialState = {
-  user: null, // User object when authenticated
-  isAuthenticated: false, // Authentication status
+  user: null,
+  isAuthenticated: false,
+  loading: 'idle',
+  error: null,
 };
 
-// Create the authentication slice
+// Async thunk to handle the logout request
+export const logoutUser = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
+
+  try {
+    await axios.get(
+      'http://localhost:5001/api/users/logout',
+      {
+        withCredentials: true
+      }
+    );
+
+    // Clear user and set isAuthenticated to false upon successful logout
+    thunkAPI.dispatch(clearUser());
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data);
+  }
+});
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // Action to set user and authentication status when logged in
     setUser: (state, action) => {
       state.user = action.payload;
       state.isAuthenticated = true;
     },
-    // Action to clear user and authentication status when logged out
     clearUser: (state) => {
       state.user = null;
       state.isAuthenticated = false;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = 'loading';
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = 'succeeded';
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = 'failed';
+        state.error = action.payload || 'Error during logout.';
+      });
+  },
 });
 
-// Export the actions
 export const { setUser, clearUser } = authSlice.actions;
 
-// Export the reducer
 export default authSlice.reducer;

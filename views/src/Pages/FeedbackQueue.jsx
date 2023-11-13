@@ -14,16 +14,16 @@ function FeedbackQueue() {
   );
 
   useEffect(() => {
-      dispatch(fetchFeedbackRequests()); // Pass the token to the 
+      dispatch(fetchFeedbackRequests());
   }, [dispatch]);
 
   const data = feedbackForms.data;
 
- console.log(data)
+  console.log(data)
 
   return (
     <div style={containerStyle}>
-      <FeedbackCard isAssign={true} data={data} pageTitle="FEEDBACK QUEUE" isMentor={true} />
+      <FeedbackCard isAssign={true} data={data} pageTitle="FEEDBACK QUEUE" isMentor={true}  />
     </div>
   );
 }

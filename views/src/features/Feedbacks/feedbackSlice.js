@@ -4,6 +4,7 @@ import axios from "axios";
 
 const initialState = {
   feedbackRequests: [],
+  assignedFeedbackRequests: [],
   loading: "idle",
   error: null,
 };
@@ -27,11 +28,11 @@ const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(
 
 const fetchFeedbackRequests = createAsyncThunkWithJwt("feedback/fetchAll", "http://localhost:5001/api/feedback/getfeedbackrequestForms");
 
-const createFeedbackRequest = createAsyncThunkWithJwt("feedback/create", "http://localhost:5001/api/feedbackrequests", "post");
+const createFeedbackRequest = createAsyncThunkWithJwt("feedback/create", "http://localhost:5001/api/feedback/submitfeedback", "post");
 
 const addFeedback = createAsyncThunkWithJwt(`feedback/add", "http://localhost:5001/api/feedback/add`, "post");
 
-const assignFeedbackRequest = createAsyncThunkWithJwt("feedback/assign", "http://localhost:5001/api/feedback/assignFeedBackToMentor/");
+const assignFeedbackRequest = createAsyncThunkWithJwt("feedback/assign", "http://localhost:5001/api/feedback/assignFeedBackToMentor/", "post");
 
 const getAssignedFeedbackRequests = createAsyncThunkWithJwt("feedback/getAssign", "http://localhost:5001/api/feedback/getAssignedFeedBacks");
 
@@ -59,13 +60,13 @@ const feedbackSlice = createSlice({
       })
       .addCase(assignFeedbackRequest.fulfilled, (state, action) => {
         const { requestId, mentorId } = action.payload;
-        const request = state.feedbackRequests.find((req) => req.id === requestId);
+        const request = state.assignedFeedbackRequests.find((req) => req.id === requestId);
         if (request) {
           request.mentorId = mentorId;
         }
       })
       .addCase(getAssignedFeedbackRequests.fulfilled, (state, action) => {
-        state.feedbackRequests = action.payload;
+        state.assignedFeedbackRequests = action.payload;
         state.loading = "succeeded";
       })
       .addCase(getAssignedFeedbackRequests.pending, (state) => {

@@ -3,18 +3,17 @@ import FeedbackCard from "../components/FeedbackCard";
 import { useDispatch, useSelector } from "react-redux";
 import { getAssignedFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
 
-
 function AssignedFeedback() {
   const dispatch = useDispatch();
   const assignedFeedbacks = useSelector(
-    (state) => state.feedbackSlice.feedbackRequests.data
+    (state) => state.feedbackSlice.assignedFeedbackRequests.data
   );
 
   useEffect(() => {
     dispatch(getAssignedFeedbackRequests());
   }, [dispatch]);
 
-  console.log(assignedFeedbacks);
+ 
 
   return (
     <div>

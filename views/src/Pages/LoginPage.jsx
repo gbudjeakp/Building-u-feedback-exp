@@ -67,7 +67,7 @@ function LoginPage() {
           dispatch(setUser(response.data.user));
 
           if (response.data.user.mentor) {
-            navigate("/mentor");
+            navigate("/mentor/feedbackqueue");
           } else {
             navigate("/intern");
           }

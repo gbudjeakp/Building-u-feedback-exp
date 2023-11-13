@@ -38,7 +38,7 @@ function FeedbackCard({
     const filteredItems = updatedItems.filter((item) => !item.completed);
 
     setItems(filteredItems);
-    dispatch(markComplete(id)); // Dispatch the markComplete action
+    dispatch(markComplete(id)); 
   };
 
   const assignRequest = (id) => {

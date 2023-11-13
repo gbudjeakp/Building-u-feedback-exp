@@ -1,7 +1,10 @@
+// Sidebar.js
 import React, { useState } from 'react';
 import { Stack, rem } from '@mantine/core';
-import { Link, useLocation } from 'react-router-dom'; // Use useLocation instead of useMatch
-import { IconLogout, IconSwitchHorizontal } from '@tabler/icons-react';
+import { Link, useLocation } from 'react-router-dom'; 
+import { IconLogout } from '@tabler/icons-react';
+import { useDispatch } from 'react-redux'; 
+import { clearUser, logoutUser } from '../features/Auth/authSlice'; 
 
 function NavbarLink({ to, icon, label, active, onClick }) {
   const linkStyle = {
@@ -31,11 +34,12 @@ function NavbarLink({ to, icon, label, active, onClick }) {
 
 export function Sidebar({ navItems }) {
   const [active, setActive] = useState(0);
-  const location = useLocation(); // Use useLocation to get the current location
+  const location = useLocation();
+  const dispatch = useDispatch(); // Get access to dispatch function
 
   const links = navItems.map((link, index) => (
     <NavbarLink
-      to={link.to} // Use the original 'to' prop for routing
+      to={link.to}
       icon={link.icon}
       label={link.label}
       active={index === active}
@@ -43,6 +47,11 @@ export function Sidebar({ navItems }) {
       key={link.label}
     />
   ));
+
+  const handleLogout = () => {
+    // Use logoutUser to perform logout logic, including making the request
+    dispatch(logoutUser());
+  };
 
   const sidebarStyle = {
     width: rem(80),
@@ -67,7 +76,8 @@ export function Sidebar({ navItems }) {
       </div>
 
       <Stack justify="center" gap={0}>
-        <NavbarLink to="/" icon={IconLogout} label="Logout" />
+        {/* Use handleLogout as onClick handler */}
+        <NavbarLink to="/" icon={IconLogout} label="Logout" onClick={handleLogout} />
       </Stack>
     </nav>
   );
