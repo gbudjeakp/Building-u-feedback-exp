@@ -25,6 +25,17 @@ Feel free to browse through the code though
 1. The Front-End is being built in react.js
 2. UI frame work being used is mantine
 
+
+### Branch Naming Convention
+#### Create your branch with the below convention
+   For Front-End: `commit -m "FE-feature-add-footer"`
+   For Back-End: `commit -m "BE-feature-add-rate-limiter"`  
+
+### Contribution Rule
+ 1. Create a branch
+ 2. Create PR and request  code review
+ 3. Merge code once review has been approved
+
 ### Backend Stack
 1. The backend is currently being built with Nodejs and express
 2. The database is a MySQL database.
