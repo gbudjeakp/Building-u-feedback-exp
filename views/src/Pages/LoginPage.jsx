@@ -1,8 +1,8 @@
 import React from "react";
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux"; // Import useDispatch
-import { setUser } from "../features/Auth/authSlice"; // Import your auth slice actions
+import { useDispatch } from "react-redux"; 
+import { setUser } from "../features/Auth/authSlice"; 
 import axios from "axios";
 import {
   TextInput,

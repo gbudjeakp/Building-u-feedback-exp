@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import getJwtToken from "../../Utility/getJwtToken";
 import axios from "axios";
 
 const initialState = {
@@ -10,15 +9,11 @@ const initialState = {
 };
 
 const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(type, async (id, thunkAPI) => {
-  const jwtToken = getJwtToken();
   try {
     const response = await axios({
       method,
       url: id ? `${url}${id}` : url,
       withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
     });
     return response.data;
   } catch (error) {
