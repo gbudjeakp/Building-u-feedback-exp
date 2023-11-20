@@ -233,20 +233,6 @@ const getAssignedFeedBacks = async (req, res) => {
 const getSelectedFeedback = async (req, res) => {
   try {
     const { feedbackrequestId } = req.params;
-    const { authToken } = req.cookies;
-    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
-
-    // Check if the user is a mentor
-    const isMentor = await User.findOne({
-      where: {
-        id: id,
-        mentor: true,
-      },
-    });
-
-    if (!isMentor) {
-      return res.status(401).json({ msg: "Unauthorized user" });
-    }
 
     // Find the specific feedback request record based on feedbackrequestId
     const feedbackRequest = await FeedbackRequest.findOne({

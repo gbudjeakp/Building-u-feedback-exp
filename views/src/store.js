@@ -5,7 +5,6 @@ import authReducer from "./features/Auth/authSlice"
 const reducer = combineReducers({
   auth: authReducer,
   feedbackSlice: feedbackSlice
-
 });
 
 const store = configureStore({

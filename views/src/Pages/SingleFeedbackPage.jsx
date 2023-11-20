@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Text, Container, Paper } from "@mantine/core";
+import { Text, Container, Paper, Stack, Button } from "@mantine/core";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import TextEditor from "../components/TextEditor";
-import FeedbackCard from "../components/FeedbackCard";
+import formatCreatedAt from "../Utility/DateFormatter";
 
 const feedbackContainer = {
   zIndex: "20",
@@ -12,34 +14,76 @@ const feedbackContainer = {
 function SingleFeedbackPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [feedback, setFeedback] = useState("");
+  const [data, setData] = useState([]);
+
 
   const isMentor = true;
 
-  const data = [
-    {
-      id: 6,
-      studentName: "tom@mail.com",
-      topicOfLearningSession: "Checking that status is not Complete and should only show not complete\n",
-      codeLink: "Can't be cmplete",
-      whoisAssigned: "tom@mail.com",
-      isAssigned: false,
-      status: false,
-      date: "2023-11-12T02:52:12.000Z",
-      createdAt: "2023-11-12T02:52:12.000Z",
-      updatedAt: "2023-11-12T22:45:04.000Z",
-      userId: 2
-  }
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Make the API call using axios
+        const response = await axios.get(
+          `http://localhost:5001/api/feedback/getfeedbackid/${id}`,
+          {
+            withCredentials: true,
+          }
+        );
+
+        setData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching feedback:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(data)
+
+  const handleGoToDashboard = () => {
+    const isMentor = true;
+    if (isMentor) {
+      navigate("/mentor/feedbackqueue");
+    } else {
+      navigate("/intern/myrequests");
+    }
+  };
 
   return (
     <Container>
       <div style={feedbackContainer}>
-        <FeedbackCard
-          data={data}
-          pageTitle="GIVE FEEDBACK"
-          gotoDashboard={true}
-        />
+        <Paper
+          shadow="xs"
+          p="sm"
+          withBorder
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
+          <div>
+            <Text>Intern Name: {data.studentName}</Text>
+            <Text>
+              Topic Of Learning Session: {data.topicOfLearningSession}
+            </Text>
+            <Text>Completed: {data.status ? "Yes" : "No"}</Text>
+            <Text>
+              Link to exercise: <a href={data.codeLink}>{data.codeLink}</a>
+            </Text>
+            <Text>{formatCreatedAt(data.createdAt)}</Text>
+            
+            {data.whoisAssigned ? (
+              <Text>Assigned to: {data.whoisAssigned}</Text>
+            ) : null}
+          </div>
+          <Stack direction="horizontal" spacing="sm">
+            <Button
+              style={{ color: "black" }}
+              color="#F9EB02"
+              onClick={handleGoToDashboard}
+            >
+              Go to Dashboard
+            </Button>
+          </Stack>
+        </Paper>
       </div>
 
       {isMentor && (
