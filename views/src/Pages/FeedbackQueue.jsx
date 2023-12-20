@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import FeedbackCard from "../components/FeedbackCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
@@ -8,22 +8,32 @@ const containerStyle = {
 };
 
 function FeedbackQueue() {
-  const dispatch = useDispatch();
-  const feedbackForms = useSelector(
-    (state) => state.feedbackSlice.feedbackRequests
+  const feedbackData = useSelector(
+    (state) => state.feedbackSlice.feedbackRequests.data
   );
 
+  const [data, setData] = useState(feedbackData);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
-      dispatch(fetchFeedbackRequests());
+    dispatch(fetchFeedbackRequests());
   }, [dispatch]);
 
-  const data = feedbackForms.data;
-
-  console.log(data)
+  useEffect(() => {
+    setData(feedbackData);
+  }, [feedbackData]);
 
   return (
     <div style={containerStyle}>
-      <FeedbackCard isAssign={true} data={data} pageTitle="FEEDBACK QUEUE" isMentor={true}  />
+      {data && (
+        <FeedbackCard
+          isAssign={true}
+          data={data}
+          pageTitle="FEEDBACK QUEUE"
+          isMentor={true}
+        />
+      )}
     </div>
   );
 }

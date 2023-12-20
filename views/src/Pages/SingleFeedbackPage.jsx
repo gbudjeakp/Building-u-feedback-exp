@@ -8,7 +8,8 @@ import formatCreatedAt from "../Utility/DateFormatter";
 
 const feedbackContainer = {
   zIndex: "20",
-  paddingBottom: "20rem",
+  // paddingBottom: "20rem",
+  marginBottom: "20px",
 };
 
 function SingleFeedbackPage() {
@@ -16,6 +17,11 @@ function SingleFeedbackPage() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
 
+  const [submittedContent, setSubmittedContent] = useState([]);
+  // this function "lifts" information from the child element, so we can position "Submitted Feedback" above the text editor
+  const handleSubmittedContent = (newContent) => {
+    setSubmittedContent((prev) => [...prev, newContent]);
+  };
 
   const isMentor = true;
 
@@ -38,8 +44,6 @@ function SingleFeedbackPage() {
 
     fetchData();
   }, []);
-
-  console.log(data)
 
   const handleGoToDashboard = () => {
     const isMentor = true;
@@ -68,8 +72,9 @@ function SingleFeedbackPage() {
             <Text>
               Link to exercise: <a href={data.codeLink}>{data.codeLink}</a>
             </Text>
-            <Text>{formatCreatedAt(data.createdAt)}</Text>
-            
+            {/* temporary fix for formatted time error, it attempted to format before data was available */}
+            <Text>{data.id && formatCreatedAt(data.createdAt)}</Text>
+
             {data.whoisAssigned ? (
               <Text>Assigned to: {data.whoisAssigned}</Text>
             ) : null}
@@ -85,10 +90,46 @@ function SingleFeedbackPage() {
           </Stack>
         </Paper>
       </div>
-
+      {submittedContent && (
+        <div style={{ margin: "50px 0" }}>
+          <Text size="xl" weight={700}>
+            Submitted Feedback:
+          </Text>
+          <div
+            style={{
+              margin: "10px 0",
+              minHeight: "300px",
+              maxHeight: "500px",
+              overflowY: "auto",
+            }}
+          >
+            {submittedContent.length > 0 ? (
+              submittedContent.map((submission, index) => {
+                return (
+                  <li
+                    style={{
+                      listStyle: "none",
+                      border: "1px solid #e1e1e1",
+                      padding: "0 10px",
+                      margin: "15px 0",
+                    }}
+                    key={index}
+                    dangerouslySetInnerHTML={{ __html: submission }}
+                  ></li>
+                );
+              })
+            ) : (
+              <p>No feedback</p>
+            )}
+          </div>
+        </div>
+      )}
       {isMentor && (
         <Paper shadow="xs" p="sm" withBorder>
-          <TextEditor isMentor={true} />
+          <TextEditor
+            isMentor={true}
+            submittedContent={handleSubmittedContent}
+          />
         </Paper>
       )}
     </Container>
