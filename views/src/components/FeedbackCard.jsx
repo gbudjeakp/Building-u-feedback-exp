@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, Button, Paper, Container, Stack } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -27,6 +27,7 @@ function FeedbackCard({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // console.log(data)
 
   const toggleComplete = (id) => {
     const updatedItems = items.map((item) => {
@@ -50,6 +51,7 @@ function FeedbackCard({
     }
   };
 
+
   const handleGoToDashboard = () => {
     const isMentor = true;
     if (isMentor) {
@@ -68,12 +70,12 @@ function FeedbackCard({
         <div>Loading...</div>
       ) : items && items.length > 0 ? (
         <Stack gap={10}>
-          {items.map((item) => (
+          {items.map((item, index) => (
             <Paper
               shadow="xs"
               p="sm"
               withBorder
-              key={item.id}
+              key={item.id + index}
               style={{ display: "flex", justifyContent: "space-between" }}
             >
               <div>
