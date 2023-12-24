@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, Paper, Text, TextInput, Button } from "@mantine/core";
 import { useDispatch } from "react-redux";
-import { createFeedbackRequest } from "../features/Feedbacks/feedbackSlice";
+import { createFeedbackRequest, fetchFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
 
 const paperStyle = {
   padding: 40,
@@ -36,8 +36,9 @@ function FeedbackRequestForm() {
   const dispatch = useDispatch();
 
   const handleSubmitRequest = () => {
-    if (requestForm.studentName !== "") {
+    if (requestForm.name !== "") {
       dispatch(createFeedbackRequest(requestForm));
+      dispatch(fetchFeedbackRequests());
       setRequestForm((prev) => ({
         ...prev,
         name: "",

@@ -44,7 +44,7 @@ const feedbackSlice = createSlice({
         state.loading = "succeeded";
       })
       .addCase(createFeedbackRequest.fulfilled, (state, action) => {
-        state.feedbackRequests.push(action.payload);
+        state.feedbackRequests = action.payload;
       })
       .addCase(addFeedback.fulfilled, (state, action) => {
         const { requestId, feedback } = action.payload;
