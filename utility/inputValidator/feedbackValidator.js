@@ -2,6 +2,13 @@ module.exports = (input) => {
   let errors = {};
   let injectionChecker = /<\s*script.*?\/?\s*>|on\w+\s*=\s*".*?"/i;
 
+  if (!input) {
+    return {
+      errors: { msg: "Input is required" },
+      validationCheck: false,
+    };
+  }
+  
   for (let [key, value] of Object.entries(input)) {
     if (typeof value !== "string") {
       errors[key] = `link and topic of learning session must be a string`;

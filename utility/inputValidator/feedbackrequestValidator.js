@@ -10,13 +10,25 @@ module.exports = (input) => {
        once we start saving feedbacks.
 */
 
+  if (!input) {
+    return {
+      errors: { msg: "Input is required" },
+      validationCheck: false,
+    };
+  }
+
   for (let [key, value] of Object.entries(input)) {
     if (typeof value !== "string") {
       errors[key] = `link and topic of learning session must be a string`;
     }
   }
 
-  if (input.topicOfLearningSession.length <= 0 || input.codeLink.length <= 0) {
+  if (
+    !input.topicOfLearningSession ||
+    input.topicOfLearningSession.length <= 0 ||
+    !input.codeLink ||
+    input.codeLink.length <= 0
+  ) {
     errors.topicOfLearningSession = "Topics or code Link field cannot be empty";
   }
 

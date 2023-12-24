@@ -2,13 +2,23 @@ module.exports = (input) => {
   let errors = {};
   let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-for (let [key, value] of Object.entries(input)) {
-  if (typeof value !== 'string') {
-    errors[key] = `Full name, email and password must be a string`;
+  if (!input) {
+    return {
+      errors: { msg: "Input is required" },
+      validationCheck: false,
+    };
   }
-}
+  for (let [key, value] of Object.entries(input)) {
+    if (typeof value !== "string") {
+      errors[key] = `Full name, email and password must be a string`;
+    }
+  }
 
-  if (input.password.length <= 0 || input.userName.length <= 0 || input.fName.length <= 0) {
+  if (
+    input.password.length <= 0 ||
+    input.userName.length <= 0 ||
+    input.fName.length <= 0
+  ) {
     errors.password = "Password Field Cannot be empty";
   }
   if (input.password.length < 8) {
