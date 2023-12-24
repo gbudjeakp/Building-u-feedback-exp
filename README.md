@@ -28,7 +28,9 @@ Feel free to browse through the code though
 
 ### Branch Naming Convention
 #### Create your branch with the below convention
+     Please see the allowed commit terms: fix, feature, hotfix
    For Front-End: `commit -m "FE-feature-add-footer"`
+
    For Back-End: `commit -m "BE-feature-add-rate-limiter"`  
 
 ### Contribution Rule
@@ -55,4 +57,7 @@ Feel free to browse through the code though
 ### Backend
 1. clone repo to computer using 
 2. open folder in IDE/Text Editor
-3. type npm start to start server
+3. Please set up a SQL database before running step 4 (You can download and use [XAMMP](https://www.apachefriends.org/fr/index.html). 
+   as its super easy to setup and use. This is not mandatory as you can use any other tool that can spin up a local database server
+   in your development environment.
+4. type npm start to start server
