@@ -2,7 +2,6 @@ module.exports = (input) => {
   let errors = {};
   let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  // Validate that each property in the input object is a string
 for (let [key, value] of Object.entries(input)) {
   if (typeof value !== 'string') {
     errors[key] = `Full name, email and password must be a string`;
