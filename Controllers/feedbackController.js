@@ -13,7 +13,6 @@ feedback forms.
 const submitFeedBack = async (req, res) => {
   const { authToken } = req.cookies;
   const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
-
   try {
     const { topicOfLearningSession, codeLink } = req.body;
     const feedBackRequestData = {
@@ -34,15 +33,36 @@ const submitFeedBack = async (req, res) => {
 /*This retrieves every single feedback (only requests that are not marked as complete requests made by the interns
  */
 const getAllFeedBackRequestsForms = async (req, res) => {
+  const { authToken } = req.cookies;
+  const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
   try {
-    const feedBackrequests = await FeedbackRequest.findAll({
+    const isMentor = await User.findOne({
       where: {
-        status: {
-          [Op.not]: true,
-        },
+        id: id,
+        mentor: true,
       },
     });
-    res.status(200).json({ data: feedBackrequests });
+    if (isMentor) {
+      const feedBackrequests = await FeedbackRequest.findAll({
+        where: {
+          status: {
+            [Op.not]: true,
+          },
+        },
+      });
+      res.status(200).json({ data: feedBackrequests });
+    }
+    if (!isMentor) {
+      const feedBackrequests = await FeedbackRequest.findAll({
+        where: {
+          studentName: username,
+          status: {
+            [Op.not]: true,
+          },
+        },
+      });
+      res.status(200).json({ data: feedBackrequests });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal Server Error" });
@@ -220,14 +240,13 @@ const getAssignedFeedBacks = async (req, res) => {
         },
       },
     });
-
+    console.log(assignedList);
     res.status(200).json({ data: assignedList });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 /*This controller fetches a specific request id */
 const getSelectedFeedback = async (req, res) => {
@@ -247,10 +266,10 @@ const getSelectedFeedback = async (req, res) => {
   } catch (error) {
     console.error(error);
     // Handle different types of errors and send an appropriate response
-    if (error.name === 'JsonWebTokenError') {
-      res.status(401).json({ msg: 'Invalid authentication token' });
+    if (error.name === "JsonWebTokenError") {
+      res.status(401).json({ msg: "Invalid authentication token" });
     } else {
-      res.status(500).json({ msg: 'Internal Server Error' });
+      res.status(500).json({ msg: "Internal Server Error" });
     }
   }
 };

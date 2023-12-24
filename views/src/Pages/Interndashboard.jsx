@@ -19,9 +19,9 @@ function Interndashboard() {
     <div style={{ display: 'flex', flexDirection: 'column-reverse' }}>
     <Sidebar navItems={mockdata} /> 
     <Routes location={location}>
-        <Route path="/requestform" element={<FeedbackRequestForm />} />
-        <Route path="/myrequests" element={<CreatedRequests />} />
-        {/* <Route path="account" element={<Account />} /> */}
+        <Route path="/requestform" element={<FeedbackRequestForm active={0}/>} />
+        <Route path="/myrequests" element={<CreatedRequests active={1}/>} />
+        {/* <Route path="account" element={<Account active={2}/>} /> */}
       </Routes>
   </div>
   )

@@ -59,7 +59,7 @@ export function Sidebar({ navItems }) {
     } else {
       setActive(2);
     }
-    console.log("locatoin changed")
+    // console.log("locatoin changed")
   }, [location.pathname]);
 
   const links = navItems.map((link, index) => (
