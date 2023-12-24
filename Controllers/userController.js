@@ -3,11 +3,12 @@ const db = require("../Models/index");
 const bcrypt = require("bcrypt");
 const cookie = require("cookie");
 const jwt = require("jsonwebtoken");
-
 const saltRounds = 10;
 const Users = db.User;
 const mentor = ["tom@mail.com", "mentor@mail.com"];
 const reviewParticipant = [];
+const loginValidator = require("../utility/inputValidator/loginValidator");
+const registerValidator = require("../utility/inputValidator/registerValidator");
 //@TODO
 /* 1) Add a review participant to the list of admins. 
 Note, review participants are not  
@@ -16,8 +17,14 @@ Note, review participants are not
 
 const registerUser = async (req, res) => {
   const { fName, userName, password } = req.body;
+  const { errors, validationCheck } = registerValidator(req.body);
   const isUserExist = await Users.findOne({ where: { username: userName } });
   const isUserMentor = mentor.includes(userName);
+
+  // This checks that the inputs entered meet some criteria
+  if (!validationCheck) {
+    res.status(400).json(errors);
+  }
 
   try {
     ////////Checking if the entered username already exists in our DB
@@ -29,6 +36,7 @@ const registerUser = async (req, res) => {
 
     // Hash the password
     // Ideally adding a callback in the hash is best practice
+    //Might add callback as code 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const userData = {
       fName: fName,
@@ -68,7 +76,12 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { userName, password } = req.body;
+    const { errors, validationCheck } = loginValidator(req.body);
     const user = await Users.findOne({ where: { username: userName } });
+
+    if (!validationCheck) {
+      res.status(400).json(errors);
+    }
 
     if (!user) {
       return res
