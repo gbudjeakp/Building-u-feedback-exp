@@ -9,11 +9,13 @@ const initialState = {
   error: null,
 };
 
-const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(type, async (id, thunkAPI) => {
+const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(type, async ( data, thunkAPI) => {
   try {
     const response = await axios({
       method,
-      url: id ? `${url}${id}` : url,
+      // url: data ? `${url}${data}` : url,
+      url,
+      data,
       withCredentials: true,
     });
     return response.data;
@@ -21,6 +23,7 @@ const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(
     return thunkAPI.rejectWithValue(error.response.data);
   }
 });
+
 
 const createFeedbackRequest = createAsyncThunkWithJwt("feedback/create", "http://localhost:5001/api/feedback/submitfeedback", "post");
 const addFeedback = createAsyncThunkWithJwt("feedback/add", "http://localhost:5001/api/feedback/add", "post");
@@ -41,7 +44,7 @@ const feedbackSlice = createSlice({
         state.loading = "succeeded";
       })
       .addCase(createFeedbackRequest.fulfilled, (state, action) => {
-        state.feedbackRequests.push(action.payload);
+        state.feedbackRequests = action.payload;
       })
       .addCase(addFeedback.fulfilled, (state, action) => {
         const { requestId, feedback } = action.payload;

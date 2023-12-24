@@ -15,12 +15,15 @@ function Mentordashboard() {
   const location = useLocation(); 
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column-reverse' }}>
+    <div style={{ display: "flex", flexDirection: "column-reverse" }}>
       <Sidebar navItems={navItems} />
-      <Routes location={location}> 
-        <Route path="/feedbackqueue" element={<FeedbackRequestQueue />} />
-        <Route path="assigned" element={<AssignedFeedback />} />
-        {/* <Route path="account" element={<Account />} /> */}
+      <Routes location={location}>
+        <Route
+          path="/feedbackqueue"
+          element={<FeedbackRequestQueue active={0} />}
+        />
+        <Route path="assigned" element={<AssignedFeedback active={1} />} />
+        {/* <Route path="account" element={<Account active={2}/>} /> */}
       </Routes>
     </div>
   );
