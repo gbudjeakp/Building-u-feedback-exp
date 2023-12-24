@@ -5,7 +5,8 @@ const FeedbackRequest = db.FeedbackRequest;
 const Feedbacks = db.Feedbacks;
 const User = db.User;
 const jwt = require("jsonwebtoken");
-const feedbackValidator = require("../utility/inputValidator/feedbackValidator")
+const feedbackrequestValidator = require("../utility/inputValidator/feedbackrequestValidator");
+const feedbackValidator = require("../utility/inputValidator/feedbackValidator");
 
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
@@ -14,7 +15,7 @@ feedback forms.
 const submitFeedBack = async (req, res) => {
   const { authToken } = req.cookies;
   const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
-  const {errors, validationChecker } = feedbackValidator(req.body)
+  const {errors, validationChecker } = feedbackrequestValidator(req.body)
 
   if (!validationChecker) {
     res.status(400).json(errors);
@@ -32,7 +33,6 @@ const submitFeedBack = async (req, res) => {
 
     await FeedbackRequest.create(feedBackRequestData);
     res.status(200).json(JSON.stringify(feedBackRequestData));
-    console.log("FeedBack Request Submitted");
   } catch (err) {
     console.error(err);
   }
@@ -130,9 +130,15 @@ by the interns */
 const addFeedBack = async (req, res) => {
   try {
     const { feedback } = req.body;
+    const {errors, validationChecker } = feedbackValidator(req.body);
     const { feedbackrequestId } = req.params;
     const { authToken } = req.cookies;
     const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
+
+    if (!validationChecker) {
+      res.status(400).json(errors);
+      return;
+    }
 
     // Check if the user is a mentor
     const isMentor = await User.findOne({
