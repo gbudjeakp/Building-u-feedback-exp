@@ -1,7 +1,20 @@
-import React, { useState } from "react";
-import { Container, Paper, Text, TextInput, Button } from "@mantine/core";
-import { useDispatch } from "react-redux";
-import { createFeedbackRequest, fetchFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
+import React, { useEffect, useState } from "react";
+import {
+  Container,
+  Paper,
+  Text,
+  TextInput,
+  Button,
+  Select,
+  Modal,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createFeedbackRequest,
+  fetchFeedbackRequests,
+} from "../features/Feedbacks/feedbackSlice";
 
 const paperStyle = {
   padding: 40,
@@ -27,27 +40,46 @@ const titleStyle = {
   fontSize: 24,
 };
 
+const topics = [
+  "HTML",
+  "CSS",
+  "Media Queries/Responsive Design",
+  "Bootstrap",
+  "JavaScript and the DOM",
+  "jQuery",
+  "React",
+  "Structured/Unstructured Data (MySQL)",
+  "MVC Architecture (Express JS)",
+  "API Integration",
+  "React/jQuery",
+];
+
 function FeedbackRequestForm() {
-  const [requestForm, setRequestForm] = useState({
-    name: "",
-    topicOfLearningSession: "",
-    codeLink: "",
-  });
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.feedbackSlice.loading)
+  const [opened, { open, close }] = useDisclosure(false);
 
+  const form = useForm({
+    initialValues: { name: "", topicOfLearningSession: null, codeLink: "" },
+    validate: {
+      name: (value) =>
+        value.length < 2 ? "Name must have at least 2 letters" : null,
+      topicOfLearningSession: (value) =>
+        topics.some((item) => value?.includes(item))
+          ? null
+          : "Please select a topic",
+      codeLink: (value) => (value < 1 ? "You must enter a valid link" : null),
+    },
+  });
   const handleSubmitRequest = () => {
-    if (requestForm.name !== "") {
-      dispatch(createFeedbackRequest(requestForm));
-      dispatch(fetchFeedbackRequests());
-      setRequestForm((prev) => ({
-        ...prev,
-        name: "",
-        topicOfLearningSession: "",
-        codeLink: "",
-      }));
+    dispatch(createFeedbackRequest(form.values));
+    dispatch(fetchFeedbackRequests());
+    if (loading === "succeeded"){
+      open()
     }
+    form.setValues({ name: "", topicOfLearningSession: null, codeLink: "" });
   };
-
+  
   return (
     <Container fluid h={0} size="lg">
       <div
@@ -58,67 +90,50 @@ function FeedbackRequestForm() {
           height: "100vh",
         }}
       >
-        <Paper shadow="xs" style={paperStyle}>
-          <Text size="xl" weight={700} style={titleStyle}>
-            Request Feedback
-          </Text>
-          <div style={formStyle}>
-            <TextInput
-              variant="filled"
-              required
-              style={inputStyle}
-              id="internName"
-              label="Intern Name"
-              placeholder="Enter intern's name"
-              value={requestForm.name}
-              onChange={(e) =>
-                setRequestForm((prev) => ({
-                  ...prev,
-                  name: e.target.value,
-                }))
-              }
-            />
-            <TextInput
-              variant="filled"
-              required
-              style={inputStyle}
-              id="topicOfLearning"
-              label="Topic of Learning Session"
-              placeholder="Enter the topic of the learning session"
-              value={requestForm.topicOfLearningSession}
-              onChange={(e) =>
-                setRequestForm((prev) => ({
-                  ...prev,
-                  topicOfLearningSession: e.target.value,
-                }))
-              }
-            />
-            <TextInput
-              variant="filled"
-              required
-              style={inputStyle}
-              id="codeLink"
-              label="Code Link"
-              placeholder="Enter code link"
-              value={requestForm.codeLink}
-              onChange={(e) =>
-                setRequestForm((prev) => ({
-                  ...prev,
-                  codeLink: e.target.value,
-                }))
-              }
-            />
-            <Button
-              variant="filled"
-              size="lg"
-              color="#F9EB02"
-              style={{ color: "black" }}
-              onClick={handleSubmitRequest}
-            >
-              Submit Request
-            </Button>
-          </div>
-        </Paper>
+        <Modal opened={opened} onClose={close} withCloseButton={false}>
+          Feedback Request submitted!
+        </Modal>
+        <form onSubmit={form.onSubmit(handleSubmitRequest)}>
+          <Paper shadow="xs" style={paperStyle}>
+            <Text size="xl" weight={700} style={titleStyle}>
+              Request Feedback
+            </Text>
+            <div style={formStyle}>
+              <TextInput
+                variant="filled"
+                style={inputStyle}
+                id="internName"
+                label="Intern Name"
+                placeholder="Enter intern's name"
+                {...form.getInputProps("name")}
+              />
+              <Select
+                label="Topic of Learning Session"
+                placeholder="Select the topic of the learning session"
+                style={inputStyle}
+                data={topics}
+                {...form.getInputProps("topicOfLearningSession")}
+              />
+              <TextInput
+                variant="filled"
+                style={inputStyle}
+                id="codeLink"
+                label="Code Link"
+                placeholder="Enter code link"
+                {...form.getInputProps("codeLink")}
+              />
+              <Button
+                variant="filled"
+                size="lg"
+                color="#F9EB02"
+                style={{ color: "black" }}
+                type="submit"
+              >
+                Submit Request
+              </Button>
+            </div>
+          </Paper>
+        </form>
       </div>
     </Container>
   );
