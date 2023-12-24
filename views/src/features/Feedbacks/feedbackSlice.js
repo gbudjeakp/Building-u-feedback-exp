@@ -13,8 +13,7 @@ const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(
   try {
     const response = await axios({
       method,
-      // url: data ? `${url}${data}` : url,
-      url,
+      url: data?.id ? `${url}${data.id}` : url,
       data,
       withCredentials: true,
     });
