@@ -5,6 +5,7 @@ const FeedbackRequest = db.FeedbackRequest;
 const Feedbacks = db.Feedbacks;
 const User = db.User;
 const jwt = require("jsonwebtoken");
+const feedbackValidator = require("../utility/inputValidator/feedbackValidator")
 
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
@@ -13,6 +14,13 @@ feedback forms.
 const submitFeedBack = async (req, res) => {
   const { authToken } = req.cookies;
   const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
+  const {errors, validationChecker } = feedbackValidator(req.body)
+
+  if (!validationChecker) {
+    res.status(400).json(errors);
+    return;
+  }
+
   try {
     const { topicOfLearningSession, codeLink } = req.body;
     const feedBackRequestData = {
