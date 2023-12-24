@@ -15,26 +15,26 @@ feedback forms.
 const submitFeedBack = async (req, res) => {
   const { authToken } = req.cookies;
   const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
-  const {errors, validationChecker } = feedbackrequestValidator(req.body)
+  const { topicOfLearningSession, codeLink } = req.body;
+  const {errors, validationCheck } = feedbackrequestValidator(req.body)
 
-  if (!validationChecker) {
-    res.status(400).json(errors);
-    return;
+  if (!validationCheck) {
+   return res.status(400).json(errors);
   }
 
   try {
-    const { topicOfLearningSession, codeLink } = req.body;
     const feedBackRequestData = {
       userId: id,
       studentName: username,
       topicOfLearningSession: topicOfLearningSession,
       codeLink: codeLink,
     };
-
     await FeedbackRequest.create(feedBackRequestData);
     res.status(200).json(JSON.stringify(feedBackRequestData));
+
   } catch (err) {
     console.error(err);
+    res.status(400).json({msg: err})
   }
 };
 
@@ -279,7 +279,6 @@ const getSelectedFeedback = async (req, res) => {
     res.json({ data: feedbackRequest });
   } catch (error) {
     console.error(error);
-    // Handle different types of errors and send an appropriate response
     if (error.name === "JsonWebTokenError") {
       res.status(401).json({ msg: "Invalid authentication token" });
     } else {

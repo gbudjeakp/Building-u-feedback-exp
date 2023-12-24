@@ -1,13 +1,14 @@
 const express = require("express");
 const router =  express.Router();
 const auth = require("../middleware/auth")
+const rateLimiter = require("../middleware/rateLimiter");
 const feedbackController = require('../Controllers/feedbackController')
 
-router.post("/submitfeedback", auth, feedbackController.submitFeedBack);
+router.post("/submitfeedback", auth, rateLimiter, feedbackController.submitFeedBack);
 
-router.post("/assignFeedBackToMentor/:feedbackrequestId", auth, feedbackController.assignFeedBackToMentor);
+router.post("/assignFeedBackToMentor/:feedbackrequestId", auth, rateLimiter,feedbackController.assignFeedBackToMentor);
 
-router.post("/addFeedBack/:feedbackrequestId", auth, feedbackController.addFeedBack);
+router.post("/addFeedBack/:feedbackrequestId", auth, rateLimiter, feedbackController.addFeedBack);
 
 router.get("/getfeedbackrequestForms", auth, feedbackController.getAllFeedBackRequestsForms);
 
