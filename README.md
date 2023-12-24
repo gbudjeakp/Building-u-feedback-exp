@@ -55,4 +55,5 @@ Feel free to browse through the code though
 ### Backend
 1. clone repo to computer using 
 2. open folder in IDE/Text Editor
+3. The app uses a MySQL database so make sure too first setup a database connection. (You can use something like XAMPP).
 3. type npm start to start server
