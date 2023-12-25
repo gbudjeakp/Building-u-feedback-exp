@@ -7,7 +7,10 @@ const User = db.User;
 const jwt = require("jsonwebtoken");
 const feedbackrequestValidator = require("../utility/inputValidator/feedbackrequestValidator");
 const feedbackValidator = require("../utility/inputValidator/feedbackValidator");
-const {studentNotification, mentorNotification} = require("../utility/notifications/flockNotification");
+const {
+  studentNotification,
+  mentorNotification,
+} = require("../utility/notifications/flockNotification");
 
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
@@ -17,16 +20,15 @@ const submitFeedBack = async (req, res) => {
   const { authToken } = req.cookies;
   const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
   const { topicOfLearningSession, codeLink } = req.body;
-  const {errors, validationCheck } = feedbackrequestValidator(req.body)
+  const { errors, validationCheck } = feedbackrequestValidator(req.body);
 
   if (!validationCheck) {
-   return res.status(400).json(errors);
+    return res.status(400).json(errors);
   }
 
   let fullName = await User.findOne({
     where: { id: id },
   });
-
 
   try {
     const feedBackRequestData = {
@@ -36,13 +38,12 @@ const submitFeedBack = async (req, res) => {
       codeLink: codeLink,
     };
 
-    // await FeedbackRequest.create(feedBackRequestData);
+    await FeedbackRequest.create(feedBackRequestData);
     studentNotification(feedBackRequestData);
-    res.status(200).json({data: feedBackRequestData});
-
+    res.status(200).json({ data: feedBackRequestData });
   } catch (err) {
     console.error(err);
-    res.status(400).json({msg: err})
+    res.status(400).json({ msg: err });
   }
 };
 
@@ -127,27 +128,29 @@ const getMentorFeedback = async (req, res) => {
   }
 };
 
-
 const flockNotification = async (req, res) => {
   const { authToken } = req.cookies;
   const { topicOfLearningSession, codeLink } = req.body;
   const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
-  let fullName = await User.findOne({
-    where: { id: id },
-  });
+  try {
+    let fullName = await User.findOne({
+      where: { id: id },
+    });
 
+    const data = {
+      studentName: fullName.fName,
+      topicOfLearningSession: topicOfLearningSession,
+      codeLink: codeLink,
+    };
 
-      const data = {
-        studentName: fullName.fName,
-        topicOfLearningSession: topicOfLearningSession,
-        codeLink: codeLink,
-      }
-  
-        studentNotification(data)
-   
-      res.status(200).json({message: "Notification was sent successfully"});
-}
+    studentNotification(data);
+
+    res.status(200).json({ message: "Notification was sent successfully" });
+  } catch (err) {
+    console.error();
+  }
+};
 
 //////////////////////////////////////////
 /* Code below here are basically controller functions 
@@ -160,7 +163,7 @@ by the interns */
 const addFeedBack = async (req, res) => {
   try {
     const { feedback } = req.body;
-    const {errors, validationChecker } = feedbackValidator(req.body);
+    const { errors, validationChecker } = feedbackValidator(req.body);
     const { feedbackrequestId } = req.params;
     const { authToken } = req.cookies;
     const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
@@ -190,7 +193,6 @@ const addFeedBack = async (req, res) => {
     let fullName = await User.findOne({
       where: { id: id },
     });
-  
 
     if (!feedbackRequest) {
       return res.status(404).json({ msg: "Feedback request not found" });
@@ -205,11 +207,11 @@ const addFeedBack = async (req, res) => {
     };
 
     const createdFeedback = await Feedbacks.create(feedBackData);
-    mentorNotification(feedBackData);
     res.status(200).json({
       msg: "Feedback added successfully",
       data: createdFeedback,
     });
+    mentorNotification(feedBackData);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred adding feedback" });
@@ -244,7 +246,6 @@ const assignFeedBackToMentor = async (req, res) => {
     let fullName = await User.findOne({
       where: { id: id },
     });
-  
 
     if (!feedbackRecord) {
       return res.status(404).json({ msg: "Feedback record not found" });
@@ -368,5 +369,5 @@ module.exports = {
   getMentorFeedback,
   getSelectedFeedback,
   markFeedbackRequestComplete,
-  flockNotification
+  flockNotification,
 };
