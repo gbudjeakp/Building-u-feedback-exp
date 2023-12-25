@@ -63,7 +63,7 @@ function FeedbackRequestForm() {
     initialValues: { name: "", topicOfLearningSession: null, codeLink: "" },
     validate: {
       name: (value) =>
-        value.length < 2 ? "Name must have at least 2 letters" : null,
+        value.length < 3 ? "Name must have at least 3 letters" : null,
       topicOfLearningSession: (value) =>
         topics.some((item) => value?.includes(item))
           ? null
