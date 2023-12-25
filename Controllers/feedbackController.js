@@ -7,6 +7,10 @@ const User = db.User;
 const jwt = require("jsonwebtoken");
 const feedbackrequestValidator = require("../utility/inputValidator/feedbackrequestValidator");
 const feedbackValidator = require("../utility/inputValidator/feedbackValidator");
+const {
+  studentNotification,
+  mentorNotification,
+} = require("../utility/notifications/flockNotification");
 
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
@@ -14,27 +18,32 @@ feedback forms.
 
 const submitFeedBack = async (req, res) => {
   const { authToken } = req.cookies;
-  const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
+  const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
   const { topicOfLearningSession, codeLink } = req.body;
-  const {errors, validationCheck } = feedbackrequestValidator(req.body)
+  const { errors, validationCheck } = feedbackrequestValidator(req.body);
 
   if (!validationCheck) {
-   return res.status(400).json(errors);
+    return res.status(400).json(errors);
   }
+
+  let fullName = await User.findOne({
+    where: { id: id },
+  });
 
   try {
     const feedBackRequestData = {
       userId: id,
-      studentName: username,
+      studentName: fullName.fName,
       topicOfLearningSession: topicOfLearningSession,
       codeLink: codeLink,
     };
-    await FeedbackRequest.create(feedBackRequestData);
-    res.status(200).json(JSON.stringify(feedBackRequestData));
 
+    await FeedbackRequest.create(feedBackRequestData);
+    studentNotification(feedBackRequestData);
+    res.status(200).json({ data: feedBackRequestData });
   } catch (err) {
     console.error(err);
-    res.status(400).json({msg: err})
+    res.status(400).json({ msg: err });
   }
 };
 
@@ -119,6 +128,30 @@ const getMentorFeedback = async (req, res) => {
   }
 };
 
+const flockNotification = async (req, res) => {
+  const { authToken } = req.cookies;
+  const { topicOfLearningSession, codeLink } = req.body;
+  const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+
+  try {
+    let fullName = await User.findOne({
+      where: { id: id },
+    });
+
+    const data = {
+      studentName: fullName.fName,
+      topicOfLearningSession: topicOfLearningSession,
+      codeLink: codeLink,
+    };
+
+    studentNotification(data);
+
+    res.status(200).json({ message: "Notification was sent successfully" });
+  } catch (err) {
+    console.error();
+  }
+};
+
 //////////////////////////////////////////
 /* Code below here are basically controller functions 
 for the Code leads or mentor endpoints 
@@ -130,7 +163,7 @@ by the interns */
 const addFeedBack = async (req, res) => {
   try {
     const { feedback } = req.body;
-    const {errors, validationChecker } = feedbackValidator(req.body);
+    const { errors, validationChecker } = feedbackValidator(req.body);
     const { feedbackrequestId } = req.params;
     const { authToken } = req.cookies;
     const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
@@ -157,6 +190,10 @@ const addFeedBack = async (req, res) => {
       where: { id: feedbackrequestId },
     });
 
+    let fullName = await User.findOne({
+      where: { id: id },
+    });
+
     if (!feedbackRequest) {
       return res.status(404).json({ msg: "Feedback request not found" });
     }
@@ -164,17 +201,17 @@ const addFeedBack = async (req, res) => {
     // Create the feedback and associate it with the feedback request and mentor
     const feedBackData = {
       userId: feedbackRequest.userId,
-      mentorName: username,
+      mentorName: fullName.fName,
       feedback: feedback,
       feedbackRequestId: feedbackRequest.id,
     };
 
     const createdFeedback = await Feedbacks.create(feedBackData);
-
     res.status(200).json({
       msg: "Feedback added successfully",
       data: createdFeedback,
     });
+    mentorNotification(feedBackData);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred adding feedback" });
@@ -206,6 +243,10 @@ const assignFeedBackToMentor = async (req, res) => {
       where: { id: feedbackrequestId },
     });
 
+    let fullName = await User.findOne({
+      where: { id: id },
+    });
+
     if (!feedbackRecord) {
       return res.status(404).json({ msg: "Feedback record not found" });
     }
@@ -215,7 +256,7 @@ const assignFeedBackToMentor = async (req, res) => {
     }
 
     feedbackRecord.isAssigned = true;
-    feedbackRecord.whoisAssigned = username;
+    feedbackRecord.whoisAssigned = fullName.fName;
     await feedbackRecord.save();
     res.json({ msg: "Feedback Assigned to mentor" });
   } catch (err) {
@@ -328,4 +369,5 @@ module.exports = {
   getMentorFeedback,
   getSelectedFeedback,
   markFeedbackRequestComplete,
+  flockNotification,
 };

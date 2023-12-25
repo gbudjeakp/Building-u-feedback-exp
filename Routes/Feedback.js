@@ -10,6 +10,8 @@ router.post("/assignFeedBackToMentor/:feedbackrequestId", auth, rateLimiter,feed
 
 router.post("/addFeedBack/:feedbackrequestId", auth, rateLimiter, feedbackController.addFeedBack);
 
+router.post("/notification/", auth, rateLimiter, feedbackController.flockNotification)
+
 router.get("/getfeedbackrequestForms", auth, feedbackController.getAllFeedBackRequestsForms);
 
 router.get("/getUserFeedBackRequestForms", auth, feedbackController.getUserFeedBackRequestForms);
