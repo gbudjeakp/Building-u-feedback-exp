@@ -27,11 +27,12 @@ app.use(cookieParser());
 
 
 const usersRouter = require('./Routes/User');
-const feedbackRouter = require('./Routes/Feedback')
-
+const feedbackRouter = require('./Routes/Feedback');
+const passwordRouter =  require('./Routes/Password');
 
 app.use('/api/users', usersRouter);
 app.use('/api/feedback', feedbackRouter);
+app.use('/api/password', passwordRouter);
 
 // Load SSL certificates
 // const privateKey = fs.readFileSync('./Certs/server.key', 'utf8');
