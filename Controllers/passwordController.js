@@ -1,7 +1,7 @@
 require("dotenv").config();
 const db = require("../Models/index");
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
+const saltRounds = process.env.SALT_ROUNDS;
 const cookie = require("cookie");
 const jwt = require("jsonwebtoken");
 const Users = db.User;
@@ -9,12 +9,12 @@ const { sendOTP } = require("../utility/email/email");
 
 const sendToken = async (req, res) => {
   try {
-    const email = req.body;
-    sendOTP(email);
-    res.json({msg: "OTP was sent successfully"});
-    console.log("Token 123456 has been sent");
+    const { username } = req.body;
+    sendOTP(username);
+    res.json({msg: `OTP was sent successfully to ${username}`});
   } catch (err) {
     console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
