@@ -4,6 +4,7 @@ const rateLimiter = require("../middleware/rateLimiter");
 const passwordController = require('../Controllers/passwordController');
 
 
+
 router.post("/forgotPassword", passwordController.sendToken);
 
 

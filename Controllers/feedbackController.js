@@ -128,6 +128,10 @@ const getMentorFeedback = async (req, res) => {
   }
 };
 
+/*
+This controller is used to trigger the flock webhook that is
+used to notify the code leads that an intern needs a code review.
+*/
 const flockNotification = async (req, res) => {
   const { authToken } = req.cookies;
   const { topicOfLearningSession, codeLink } = req.body;
@@ -145,7 +149,6 @@ const flockNotification = async (req, res) => {
     };
 
     studentNotification(data);
-
     res.status(200).json({ message: "Notification was sent successfully" });
   } catch (err) {
     console.error();

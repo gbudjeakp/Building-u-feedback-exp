@@ -11,7 +11,10 @@ const loginValidator = require("../utility/inputValidator/loginValidator");
 const registerValidator = require("../utility/inputValidator/registerValidator");
 //@TODO
 /* 1) Add a review participant to the list of admins. 
-Note, review participants are not  
+Note, review participants are not  mentors.
+They can add feedbacks and assign tickets but are
+limited in what hey can do i.e they cannot mark 
+a ticket/request as complete
 . 
 */
 
