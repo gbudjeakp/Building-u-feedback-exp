@@ -47,7 +47,7 @@ const sendToken = async (req, res) => {
     } else {
       // This allows users to request new token to be sent.
       await userInTokenDB.update(
-        { token: otp },
+        { token: hashedOtp },
         {
           where: {
             username: username,
@@ -58,17 +58,51 @@ const sendToken = async (req, res) => {
     sendOTP(username, otp);
     res.status(200).json({ msg: `OTP was sent successfully to ${username}` });
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({
+      error: "Internal Server Error, something happened while sending OTP",
+    });
   }
 };
 
-// const checkToken = async (req, res) =>{
-// }
+const checkToken = async (req, res) => {
+  try {
+    const { username, resetToken } = req.body;
+    const userTokenData = await Token.findOne({where: { username: username }});
+
+    if (!userTokenData) {
+      res.status(400).json({ msg: "Invalid request, please request for new a OTP" });
+      return;
+    }
+    const storedHashedToken = userTokenData.token;
+
+    bcrypt.compare( resetToken, storedHashedToken, async (err, validToken) => {
+      console.log("This is Valid Token", validToken)
+        if (validToken) {
+    
+          const IstokenExpired = new Date(userTokenData.expiresAt) > new Date();
+
+          if (!IstokenExpired) {
+            res.status(200).json({ message: "Entered OTP is Valid." });
+          } else {
+            res.status(400).json({ msg: "OTP has expired, please request for new a OTP" });
+          }
+        } else {
+          console.error(err);
+          res.status(400).json({ password: "Entered OTP is Invalid, try requesting for a new one." });
+        }
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
+};
 
 const updatePassword = async (req, res) => {
   //Check that there is a token and that the token
   // is the token associated with the email so we'll need the email and token from the FE.
   // If token is not expired and is for the entered email then send a patch to update the password.
+  //We'll first need to decrypt the token and compare.
 
   console.log("Update your password");
 };
@@ -76,4 +110,5 @@ const updatePassword = async (req, res) => {
 module.exports = {
   sendToken,
   updatePassword,
+  checkToken,
 };

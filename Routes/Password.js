@@ -7,8 +7,9 @@ const passwordController = require('../Controllers/passwordController');
 
 router.post("/forgotPassword", passwordController.sendToken);
 
+router.get("/checkToken", passwordController.checkToken);
 
-router.post("/updatePassword", passwordController.updatePassword);
+router.patch("/updatePassword", passwordController.updatePassword);
 
 
 
