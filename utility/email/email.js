@@ -10,21 +10,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendOTP = (email) => {
-  const otpGenerator = () => {
-    const characters = `0123456789`;
-    let generatedOtp = "";
-
-    for (let i = 0; i < 4; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      generatedOtp += characters[randomIndex];
-    }
-
-    return generatedOtp;
-  };
-
-  const otp = otpGenerator();
-
+const sendOTP = (email, otp) => {
   try {
     transporter.sendMail({
       from: process.env.NODEMAILER_FROM_ADDRESS,
