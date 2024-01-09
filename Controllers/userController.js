@@ -14,8 +14,7 @@ const registerValidator = require("../utility/inputValidator/registerValidator")
 Note, review participants are not  mentors.
 They can add feedbacks and assign tickets but are
 limited in what hey can do i.e they cannot mark 
-a ticket/request as complete
-. 
+a ticket/request as complete. 
 */
 
 const registerUser = async (req, res) => {
@@ -27,6 +26,7 @@ const registerUser = async (req, res) => {
   // This checks that the inputs entered meet some criteria
   if (!validationCheck) {
     res.status(400).json(errors);
+    return
   }
 
   try {
@@ -129,6 +129,7 @@ const logout = (req, res) => {
     path: "/",
   });
   res.status(200).json({ msg: "User was Logged Out Successfully" });
+  return
 };
 
 module.exports = {

@@ -23,7 +23,8 @@ const submitFeedBack = async (req, res) => {
   const { errors, validationCheck } = feedbackrequestValidator(req.body);
 
   if (!validationCheck) {
-    return res.status(400).json(errors);
+     res.status(400).json(errors);
+     return
   }
 
   let fullName = await User.findOne({
@@ -198,7 +199,8 @@ const addFeedBack = async (req, res) => {
     });
 
     if (!feedbackRequest) {
-      return res.status(404).json({ msg: "Feedback request not found" });
+      res.status(404).json({ msg: "Feedback request not found" });
+      return
     }
 
     // Create the feedback and associate it with the feedback request and mentor
@@ -238,7 +240,8 @@ const assignFeedBackToMentor = async (req, res) => {
     });
 
     if (!isMentor) {
-      return res.status(401).json({ msg: "Unauthorized user" });
+       res.status(401).json({ msg: "Unauthorized user" });
+       return
     }
 
     // Find the specific feedback request record based on feedbackrequestId
@@ -251,11 +254,13 @@ const assignFeedBackToMentor = async (req, res) => {
     });
 
     if (!feedbackRecord) {
-      return res.status(404).json({ msg: "Feedback record not found" });
+       res.status(404).json({ msg: "Feedback record not found" });
+       return
     }
 
     if (feedbackRecord.isAssigned) {
-      return res.json({ msg: "Feedback is already assigned to another" });
+       res.json({ msg: "Feedback is already assigned to another" });
+       return
     }
 
     feedbackRecord.isAssigned = true;
@@ -287,7 +292,8 @@ const getAssignedFeedBacks = async (req, res) => {
     });
 
     if (!isMentor) {
-      return res.status(401).json({ msg: "Unauthorized user" });
+       res.status(401).json({ msg: "Unauthorized user" });
+       return
     }
 
     let assignedList = await FeedbackRequest.findAll({
@@ -317,7 +323,8 @@ const getSelectedFeedback = async (req, res) => {
     });
 
     if (!feedbackRequest) {
-      return res.status(404).json({ msg: "Feedback request not found" });
+       res.status(404).json({ msg: "Feedback request not found" });
+       return
     }
 
     res.json({ data: feedbackRequest });
@@ -346,7 +353,8 @@ const markFeedbackRequestComplete = async (req, res) => {
     });
 
     if (!isMentor) {
-      return res.status(401).json({ msg: "Unauthorized user" });
+       res.status(401).json({ msg: "Unauthorized user" });
+       return
     }
 
     let markAsComplete = await FeedbackRequest.findOne({
