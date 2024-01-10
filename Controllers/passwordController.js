@@ -6,7 +6,6 @@ const Users = db.User;
 const Token = db.Otptoken;
 const { tokenValidator } = require("./helpers/tokenValidator");
 const { sendOTP } = require("../utility/email/email");
-const { password } = require("../config/db.config");
 
 const sendToken = async (req, res) => {
   const { username } = req.body;
@@ -85,6 +84,7 @@ const updatePassword = async (req, res) => {
   try {
     const { username, resetToken, newPassword } = req.body;
     const userInDB = await Users.findOne({ where: { username: username } });
+    const userInTokenDB = await Token.findOne({ where: { username: username } });
 
     const isTokenAndUserValid = await tokenValidator(username, resetToken);
 
@@ -94,7 +94,9 @@ const updatePassword = async (req, res) => {
       await userInDB.update(
         { password: hashednewPassword },
         { where: { username: username } }
-      );
+      ).then( async()=>{
+        await userInTokenDB.destroy();
+      });
       res.status(200).json({ msg: "Password has been successfully Changed" });
     } else {
       res.status(400).json({
