@@ -99,7 +99,7 @@ function FeedbackCard({
                 {isMentor ? (
                   <Text>Intern Name: {item.studentName}</Text>
                 ) : (
-                  <Text>Reviewer Name: {item.whoisAssigned}</Text>
+                  <Text>{item.whoisAssigned? "Reviewer Name:" : "Reviewer Name: Not Assigned"} {item.whoisAssigned}</Text>
                 )}
                 <Text>
                   Topic Of Learning Session: {item.topicOfLearningSession}
