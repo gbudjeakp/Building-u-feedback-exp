@@ -97,9 +97,9 @@ function FeedbackCard({
             >
               <div>
                 {isMentor ? (
-                  <Text>Code Lead: {item.CodeLead}</Text>
-                ) : (
                   <Text>Intern Name: {item.studentName}</Text>
+                ) : (
+                  <Text>Reviewer Name: {item.whoisAssigned}</Text>
                 )}
                 <Text>
                   Topic Of Learning Session: {item.topicOfLearningSession}

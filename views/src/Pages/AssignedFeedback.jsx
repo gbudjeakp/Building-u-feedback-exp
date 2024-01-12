@@ -23,6 +23,7 @@ function AssignedFeedback() {
       {assignedFeedbacks && (
         <FeedbackCard
           data={assignedFeedbacks}
+          isMentor={true}
           showAddFeedback={true}
           showComplete={true}
           pageTitle="MY ASSIGNED FEEDBACKS"

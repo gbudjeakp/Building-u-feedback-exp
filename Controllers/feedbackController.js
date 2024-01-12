@@ -283,6 +283,10 @@ const getAssignedFeedBacks = async (req, res) => {
     const { authToken } = req.cookies;
     const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
 
+    let fullName = await User.findOne({
+      where: { id: id },
+    });
+
     // Check if the user is a mentor
     const isMentor = await User.findOne({
       where: {
@@ -298,13 +302,12 @@ const getAssignedFeedBacks = async (req, res) => {
 
     let assignedList = await FeedbackRequest.findAll({
       where: {
-        whoisAssigned: username,
-        status: {
-          [Op.not]: true,
-        },
+        whoisAssigned: fullName.fName,
+        // status: {
+        //   [Op.not]: true,
+        // },
       },
     });
-    console.log(assignedList);
     res.status(200).json({ data: assignedList });
   } catch (err) {
     console.error(err);

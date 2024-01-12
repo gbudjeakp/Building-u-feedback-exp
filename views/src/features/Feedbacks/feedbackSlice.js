@@ -9,14 +9,28 @@ const initialState = {
   error: null,
 };
 
-const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(type, async ( data, thunkAPI) => {
+const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(type, async (data, thunkAPI) => {
   try {
+    let apiUrl = url;
+
+    if (typeof data ==='number'){
+      apiUrl =  `${url}${data}`
+    }
+
+    if (typeof data === 'object' && data.id) {
+      apiUrl = `${url}${data.id}`;
+    }
+
+
+    console.log(apiUrl);
+
     const response = await axios({
       method,
-      url: data?.id ? `${url}${data.id}` : url,
-      data,
+      url: apiUrl,
+      data: typeof data === 'object' ? data : undefined,
       withCredentials: true,
     });
+
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);
@@ -25,11 +39,18 @@ const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(
 
 
 const createFeedbackRequest = createAsyncThunkWithJwt("feedback/create", "http://localhost:5001/api/feedback/submitfeedback", "post");
+
 const addFeedback = createAsyncThunkWithJwt("feedback/add", "http://localhost:5001/api/feedback/add", "post");
+
 const assignFeedbackRequest = createAsyncThunkWithJwt("feedback/assign", "http://localhost:5001/api/feedback/assignFeedBackToMentor/", "post");
+
 const getAssignedFeedbackRequests = createAsyncThunkWithJwt("feedback/getAssign", "http://localhost:5001/api/feedback/getAssignedFeedBacks");
 const fetchFeedbackRequests = createAsyncThunkWithJwt("feedback/fetchAll", "http://localhost:5001/api/feedback/getfeedbackrequestForms");
+
+const fetchInternFeedbackRequests = createAsyncThunkWithJwt("feedback/fetchAll", "http://localhost:5001/api/feedback/getUserFeedBackRequestForms");
+
 const getSelectedFeedbackRequest = createAsyncThunk('feedback/getSelectedRequest', "http://localhost:5001/api/feedback/getfeedbackid/"); 
+
 const markComplete = createAsyncThunkWithJwt("feedback/markComplete", "http://localhost:5001/api/feedback/markFeedBackRequestComplete/", "get");
 
 const feedbackSlice = createSlice({
@@ -96,6 +117,7 @@ export {
   assignFeedbackRequest,
   getAssignedFeedbackRequests,
   getSelectedFeedbackRequest,
+  fetchInternFeedbackRequests,
   markComplete,
 };
 
