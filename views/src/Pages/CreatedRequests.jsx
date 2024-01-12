@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FeedbackCard from "../components/FeedbackCard";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
+import { fetchInternFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
 
 function CreatedRequests() {
 
@@ -11,7 +11,7 @@ function CreatedRequests() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchFeedbackRequests());
+    dispatch(fetchInternFeedbackRequests());
   }, [dispatch]);
 
   return (
