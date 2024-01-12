@@ -216,7 +216,7 @@ const addFeedBack = async (req, res) => {
       msg: "Feedback added successfully",
       data: createdFeedback,
     });
-    mentorNotification(feedBackData);
+    // mentorNotification(feedBackData);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred adding feedback" });
@@ -303,9 +303,9 @@ const getAssignedFeedBacks = async (req, res) => {
     let assignedList = await FeedbackRequest.findAll({
       where: {
         whoisAssigned: fullName.fName,
-        // status: {
-        //   [Op.not]: true,
-        // },
+        status: {
+          [Op.not]: true,
+        },
       },
     });
     res.status(200).json({ data: assignedList });
