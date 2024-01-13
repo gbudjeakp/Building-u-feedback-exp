@@ -258,11 +258,6 @@ const assignFeedBackToMentor = async (req, res) => {
        return
     }
 
-    if (feedbackRecord.isAssigned) {
-       res.json({ msg: "Feedback is already assigned to another" });
-       return
-    }
-
     feedbackRecord.isAssigned = true;
     feedbackRecord.whoisAssigned = fullName.fName;
     await feedbackRecord.save();
