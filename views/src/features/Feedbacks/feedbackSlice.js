@@ -21,8 +21,7 @@ const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(
       apiUrl = `${url}${data.id}`;
     }
 
-
-    console.log(apiUrl);
+    console.log("URL/Method", apiUrl, method);
 
     const response = await axios({
       method,
@@ -33,6 +32,7 @@ const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(
 
     return response.data;
   } catch (error) {
+    console.log(error)
     return thunkAPI.rejectWithValue(error.response.data);
   }
 });
@@ -40,7 +40,7 @@ const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(
 
 const createFeedbackRequest = createAsyncThunkWithJwt("feedback/create", "http://localhost:5001/api/feedback/submitfeedback", "post");
 
-const addFeedback = createAsyncThunkWithJwt("feedback/add", "http://localhost:5001/api/feedback/add", "post");
+const addFeedback = createAsyncThunkWithJwt("feedback/add", "http://localhost:5001/api/feedback/addFeedBack/", "post");
 
 const assignFeedbackRequest = createAsyncThunkWithJwt("feedback/assign", "http://localhost:5001/api/feedback/assignFeedBackToMentor/", "post");
 

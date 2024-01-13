@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Text, Container, Paper, Stack, Button } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import TextEditor from "../components/TextEditor";
 import formatCreatedAt from "../Utility/DateFormatter";
+import { addFeedback } from "../features/Feedbacks/feedbackSlice";
 
 const feedbackContainer = {
   zIndex: "20",
@@ -15,12 +16,43 @@ const feedbackContainer = {
 function SingleFeedbackPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [data, setData] = useState([]);
 
+  const feedbackScrollRef = useRef(null);
+
   const [submittedContent, setSubmittedContent] = useState([]);
-  // this function "lifts" information from the child element, so we can position "Submitted Feedback" above the text editor
+
+  // This function fetches the feedback, used once on load and on every "Submit Feedback"
+  const fetchFeedbackData = async () => {
+    try {
+      // Make the API call using axios
+      const response = await axios.get(
+        `http://localhost:5001/api/feedback/getMentorFeedback/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      setSubmittedContent(response.data.data);
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+    }
+  };
+  // scroll to the bottom after new feedback has been added
+  useEffect(() => {
+    if (feedbackScrollRef.current) {
+      feedbackScrollRef.current.scrollTop = feedbackScrollRef.current.scrollHeight;
+    }
+  }, [submittedContent]);
+
+  // this function "lifts" information from the child element (text editor) and does a POST to /addFeedBack/:id
   const handleSubmittedContent = (newContent) => {
-    setSubmittedContent((prev) => [...prev, newContent]);
+    dispatch(addFeedback({ id: id, feedback: newContent })).then((action) => {
+      // fetch data only after the POST is fulfilled to avoid an endless loop
+      if (action.type === "feedback/add/fulfilled") {
+        fetchFeedbackData();
+      }
+    });
   };
 
   const isMentor = true;
@@ -35,7 +67,6 @@ function SingleFeedbackPage() {
             withCredentials: true,
           }
         );
-
         setData(response.data.data);
       } catch (error) {
         console.error("Error fetching feedback:", error);
@@ -43,6 +74,7 @@ function SingleFeedbackPage() {
     };
 
     fetchData();
+    fetchFeedbackData();
   }, []);
 
   const handleGoToDashboard = () => {
@@ -96,6 +128,7 @@ function SingleFeedbackPage() {
             Submitted Feedback:
           </Text>
           <div
+            ref={feedbackScrollRef}
             style={{
               margin: "10px 0",
               minHeight: "300px",
@@ -114,7 +147,7 @@ function SingleFeedbackPage() {
                       margin: "15px 0",
                     }}
                     key={index}
-                    dangerouslySetInnerHTML={{ __html: submission }}
+                    dangerouslySetInnerHTML={{ __html: submission.feedback }}
                   ></li>
                 );
               })
