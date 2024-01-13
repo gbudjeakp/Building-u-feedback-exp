@@ -7,10 +7,7 @@ const User = db.User;
 const jwt = require("jsonwebtoken");
 const feedbackrequestValidator = require("../utility/inputValidator/feedbackrequestValidator");
 const feedbackValidator = require("../utility/inputValidator/feedbackValidator");
-const {
-  studentNotification,
-  mentorNotification,
-} = require("../utility/notifications/flockNotification");
+const {studentNotification} = require("../utility/notifications/flockNotification");
 
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
@@ -22,10 +19,10 @@ const submitFeedBack = async (req, res) => {
   const { topicOfLearningSession, codeLink } = req.body;
   const { errors, validationCheck } = feedbackrequestValidator(req.body);
 
-  // if (!validationCheck) {
-  //    res.status(400).json(errors);
-  //    return
-  // }
+  if (!validationCheck) {
+    res.status(400).json(errors);
+    return;
+  }
 
   let fullName = await User.findOne({
     where: { id: id },
@@ -40,10 +37,10 @@ const submitFeedBack = async (req, res) => {
     };
 
     await FeedbackRequest.create(feedBackRequestData);
-    // studentNotification(feedBackRequestData);
+
+    studentNotification(feedBackRequestData);
     res.status(200).json({ data: feedBackRequestData });
   } catch (err) {
-    console.error(err);
     res.status(400).json({ msg: err });
   }
 };
@@ -82,7 +79,6 @@ const getAllFeedBackRequestsForms = async (req, res) => {
       res.status(200).json({ data: feedBackrequests });
     }
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -98,7 +94,7 @@ const getUserFeedBackRequestForms = async (req, res) => {
     });
     res.status(200).json({ data: singleFeedBack });
   } catch (err) {
-    console.error(err);
+    res.status(500).json({ msg: "Internal Server Error" });
   }
 };
 
@@ -124,7 +120,6 @@ const getMentorFeedback = async (req, res) => {
 
     res.json({ data: allFeedbackOnFeedbackRequest });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -152,7 +147,7 @@ const flockNotification = async (req, res) => {
     studentNotification(data);
     res.status(200).json({ message: "Notification was sent successfully" });
   } catch (err) {
-    console.error();
+    res.status(500).json({ msg: err });
   }
 };
 
@@ -167,15 +162,14 @@ by the interns */
 const addFeedBack = async (req, res) => {
   try {
     const { feedback } = req.body;
-    const { errors, validationChecker } = feedbackValidator(req.body);
+    const { errors, validationCheck } = feedbackValidator(req.body);
     const { feedbackrequestId } = req.params;
     const { authToken } = req.cookies;
-    const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
+    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
-    // if (!validationChecker) {
-    //   res.status(400).json(errors);
-    //   return;
-    // }
+    if (!validationCheck) {
+      return res.status(400).json(errors);
+    }
 
     // Check if the user is a mentor
     const isMentor = await User.findOne({
@@ -200,7 +194,7 @@ const addFeedBack = async (req, res) => {
 
     if (!feedbackRequest) {
       res.status(404).json({ msg: "Feedback request not found" });
-      return
+      return;
     }
 
     // Create the feedback and associate it with the feedback request and mentor
@@ -216,9 +210,7 @@ const addFeedBack = async (req, res) => {
       msg: "Feedback added successfully",
       data: createdFeedback,
     });
-    // mentorNotification(feedBackData);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: "An error occurred adding feedback" });
   }
 };
@@ -229,7 +221,7 @@ const assignFeedBackToMentor = async (req, res) => {
   try {
     const { feedbackrequestId } = req.params;
     const { authToken } = req.cookies;
-    const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
+    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
     // Check if the user is a mentor
     const isMentor = await User.findOne({
@@ -240,8 +232,8 @@ const assignFeedBackToMentor = async (req, res) => {
     });
 
     if (!isMentor) {
-       res.status(401).json({ msg: "Unauthorized user" });
-       return
+      res.status(401).json({ msg: "Unauthorized user" });
+      return;
     }
 
     // Find the specific feedback request record based on feedbackrequestId
@@ -254,8 +246,8 @@ const assignFeedBackToMentor = async (req, res) => {
     });
 
     if (!feedbackRecord) {
-       res.status(404).json({ msg: "Feedback record not found" });
-       return
+      res.status(404).json({ msg: "Feedback record not found" });
+      return;
     }
 
     feedbackRecord.isAssigned = true;
@@ -263,7 +255,6 @@ const assignFeedBackToMentor = async (req, res) => {
     await feedbackRecord.save();
     res.json({ msg: "Feedback Assigned to mentor" });
   } catch (err) {
-    console.error(err);
     res
       .status(500)
       .json({ error: "An error occurred while updating feedback" });
@@ -276,7 +267,7 @@ of the code lead logged in.
 const getAssignedFeedBacks = async (req, res) => {
   try {
     const { authToken } = req.cookies;
-    const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
+    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
     let fullName = await User.findOne({
       where: { id: id },
@@ -291,8 +282,8 @@ const getAssignedFeedBacks = async (req, res) => {
     });
 
     if (!isMentor) {
-       res.status(401).json({ msg: "Unauthorized user" });
-       return
+      res.status(401).json({ msg: "Unauthorized user" });
+      return;
     }
 
     let assignedList = await FeedbackRequest.findAll({
@@ -321,8 +312,8 @@ const getSelectedFeedback = async (req, res) => {
     });
 
     if (!feedbackRequest) {
-       res.status(404).json({ msg: "Feedback request not found" });
-       return
+      res.status(404).json({ msg: "Feedback request not found" });
+      return;
     }
 
     res.json({ data: feedbackRequest });
@@ -351,8 +342,8 @@ const markFeedbackRequestComplete = async (req, res) => {
     });
 
     if (!isMentor) {
-       res.status(401).json({ msg: "Unauthorized user" });
-       return
+      res.status(401).json({ msg: "Unauthorized user" });
+      return;
     }
 
     let markAsComplete = await FeedbackRequest.findOne({
@@ -364,7 +355,7 @@ const markFeedbackRequestComplete = async (req, res) => {
 
     res.status(200).json({ msg: "Exercise Marked As Complete" });
   } catch (err) {
-    console.error(err);
+    res.status(500).json({ msg: err });
   }
 };
 

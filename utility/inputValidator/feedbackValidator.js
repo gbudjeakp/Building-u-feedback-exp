@@ -2,12 +2,6 @@ module.exports = (input) => {
   let errors = {};
   let injectionChecker = /<\s*script.*?\/?\s*>|on\w+\s*=\s*".*?"/i;
 
-  if (!input) {
-    return {
-      errors: { msg: "Input is required" },
-      validationCheck: false,
-    };
-  }
   
   for (let [key, value] of Object.entries(input)) {
     if (typeof value !== "string") {
@@ -29,6 +23,10 @@ module.exports = (input) => {
    if there's an error then that means that the entered input is not valid
    and thus the controller should not run. **/
   let validationCheck = !Object.keys(errors).length ? true : false;
+
+  console.log("THIS VAlidation Checker", validationCheck)
+
+  console.log("THIS IS THE ERROR", errors)
 
   return {
     errors,
