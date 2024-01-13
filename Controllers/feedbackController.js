@@ -22,10 +22,10 @@ const submitFeedBack = async (req, res) => {
   const { topicOfLearningSession, codeLink } = req.body;
   const { errors, validationCheck } = feedbackrequestValidator(req.body);
 
-  if (!validationCheck) {
-     res.status(400).json(errors);
-     return
-  }
+  // if (!validationCheck) {
+  //    res.status(400).json(errors);
+  //    return
+  // }
 
   let fullName = await User.findOne({
     where: { id: id },
@@ -40,7 +40,7 @@ const submitFeedBack = async (req, res) => {
     };
 
     await FeedbackRequest.create(feedBackRequestData);
-    studentNotification(feedBackRequestData);
+    // studentNotification(feedBackRequestData);
     res.status(200).json({ data: feedBackRequestData });
   } catch (err) {
     console.error(err);
@@ -172,10 +172,10 @@ const addFeedBack = async (req, res) => {
     const { authToken } = req.cookies;
     const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
 
-    if (!validationChecker) {
-      res.status(400).json(errors);
-      return;
-    }
+    // if (!validationChecker) {
+    //   res.status(400).json(errors);
+    //   return;
+    // }
 
     // Check if the user is a mentor
     const isMentor = await User.findOne({
