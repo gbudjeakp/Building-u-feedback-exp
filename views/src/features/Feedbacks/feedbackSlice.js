@@ -21,6 +21,7 @@ const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(
       apiUrl = `${url}${data.id}`;
     }
 
+    
     console.log("URL/Method", apiUrl, method);
 
     const response = await axios({
@@ -32,7 +33,6 @@ const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(
 
     return response.data;
   } catch (error) {
-    console.log(error)
     return thunkAPI.rejectWithValue(error.response.data);
   }
 });
