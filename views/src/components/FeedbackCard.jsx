@@ -75,11 +75,6 @@ function FeedbackCard({
         [itemId]: true,
       }));
     }
-    // this would be the dispatch data
-    let placeholderData = {
-      topicOfLearningSession: items[index].topicOfLearningSession,
-      codeLink: items[index].codeLink
-    }
   };
 
   return (
