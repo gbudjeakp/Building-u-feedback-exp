@@ -2,10 +2,12 @@ import { useState } from "react";
 import { RichTextEditor, Link } from "@mantine/tiptap";
 import { useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
-import { Button, Text } from "@mantine/core";
+import { Button, Modal } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 
 function TextEditor({ isMentor, submittedContent }) {
   const [editorContent, setEditorContent] = useState("");
+  const [opened, { open, close }] = useDisclosure(false);
   // const [submittedContent, setSubmittedContent] = useState([]);
 
   const editor = useEditor({
@@ -20,6 +22,7 @@ function TextEditor({ isMentor, submittedContent }) {
     if (editorContent !== "") {
       // the new feedback will now be added as <li> elements and will not erase the previous ones
       submittedContent(editorContent);
+      open();
       setEditorContent("");
       editor.commands.clearContent();
     }
@@ -29,6 +32,9 @@ function TextEditor({ isMentor, submittedContent }) {
     <>
       {isMentor && (
         <div>
+        <Modal opened={opened} onClose={close} withCloseButton={false}>
+          Feedback Added !!!!
+        </Modal>
           <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={60}>
               <RichTextEditor.ControlsGroup>
@@ -79,32 +85,6 @@ function TextEditor({ isMentor, submittedContent }) {
           >
             Submit Feedback
           </Button>
-          {/* {submittedContent && (
-              <div style={{ marginTop: "20px" }}>
-                <Text size="xl" weight={700}>
-                  Submitted Feedback:
-                </Text>
-                <div
-                // dangerouslySetInnerHTML={{ __html: submittedContent }}
-                // style={{ border: "1px solid #e1e1e1", padding: "10px" }}
-                />
-                {submittedContent &&
-                  submittedContent.map((submission, index) => {
-                    return (
-                      <li
-                        style={{
-                          listStyle: "none",
-                          border: "1px solid #e1e1e1",
-                          padding: "0 10px",
-                          margin: "15px 0",
-                        }}
-                        key={index}
-                        dangerouslySetInnerHTML={{ __html: submission }}
-                      ></li>
-                    );
-                  })}
-              </div>
-            )} */}
         </div>
       )}
     </>
