@@ -7,7 +7,7 @@ const homepageStyles = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  height: '100vh', // Set the height to 100% of the viewport
+  height: '100vh', 
 };
 
 const containerStyles = {
@@ -34,16 +34,16 @@ const subTitleStyles = {
 const buttonStyles = {
   borderRadius: '20px',
   background: '#F9EB02',
-  color: 'black', // Text color
+  color: 'black',
 };
 
 const imageStyles = {
-  maxWidth: '100%', // Ensure the image doesn't exceed its container's width
-  height: 'auto', // Allow the image's height to adjust proportionally
+  maxWidth: '100%', 
+  height: 'auto', 
 };
 
 const responsiveImageStyles = {
-  maxWidth: '10%', // Adjust the image size for smaller screens
+  maxWidth: '10%', 
 };
 
 const HomePage = () => {
