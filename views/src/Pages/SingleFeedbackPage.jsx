@@ -39,7 +39,8 @@ function SingleFeedbackPage(props) {
   // scroll to the bottom after new feedback has been added
   useEffect(() => {
     if (feedbackScrollRef.current) {
-      feedbackScrollRef.current.scrollTop = feedbackScrollRef.current.scrollHeight;
+      feedbackScrollRef.current.scrollTop =
+        feedbackScrollRef.current.scrollHeight;
     }
   }, [submittedContent]);
 
@@ -134,16 +135,19 @@ function SingleFeedbackPage(props) {
             {submittedContent.length > 0 ? (
               submittedContent.map((submission, index) => {
                 return (
-                  <li
-                    style={{
-                      listStyle: "none",
-                      border: "1px solid #e1e1e1",
-                      padding: "0 10px",
-                      margin: "15px 0",
-                    }}
-                    key={index}
-                    dangerouslySetInnerHTML={{ __html: submission.feedback }}
-                  ></li>
+                  <div key={index}>
+                    <p>{props.user.fName}</p>
+                    <li
+                      style={{
+                        listStyle: "none",
+                        border: "1px solid #e1e1e1",
+                        padding: "0 10px",
+                        margin: "15px 0",
+                      }}
+                      key={index}
+                      dangerouslySetInnerHTML={{ __html: submission.feedback }}
+                    ></li>
+                  </div>
                 );
               })
             ) : (
