@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import FeedbackCard from "../components/FeedbackCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchInternFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
 
 function CreatedRequests() {
-
-  const feedbackData = useSelector(
-    (state) => state.feedbackSlice.feedbackRequests.data
-  );
   const dispatch = useDispatch();
+  const internFeedbackRequests = useSelector((state) => state.feedbackSlice.feedbackRequests);
 
   useEffect(() => {
     dispatch(fetchInternFeedbackRequests());
@@ -16,10 +13,10 @@ function CreatedRequests() {
 
   return (
     <div>
-      {feedbackData && feedbackData.length > 0 && (
+      {internFeedbackRequests && internFeedbackRequests.length > 0 && (
         <FeedbackCard
           showViewFeedback={true}
-          data={feedbackData}
+          data={internFeedbackRequests}
           pageTitle="MY FEEDBACK REQUESTS"
         />
       )}

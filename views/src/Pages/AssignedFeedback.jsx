@@ -1,26 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import FeedbackCard from "../components/FeedbackCard";
 import { useDispatch, useSelector } from "react-redux";
 import { getAssignedFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
 
 function AssignedFeedback() {
   const dispatch = useDispatch();
-  const data = useSelector(
-    (state) => state.feedbackSlice.assignedFeedbackRequests.data
-  );
+  const assignedFeedbacks = useSelector((state) => state.feedbackSlice.assignedFeedbackRequests);
 
-  const [assignedFeedbacks, setAssignedFeedbacks] = useState(data);
   useEffect(() => {
     dispatch(getAssignedFeedbackRequests());
   }, [dispatch]);
 
-  useEffect(() => {
-    setAssignedFeedbacks(data);
-  }, [data]);
-
   return (
     <div>
-      {assignedFeedbacks && (
+      {assignedFeedbacks && assignedFeedbacks.length > 0 && (
         <FeedbackCard
           data={assignedFeedbacks}
           isMentor={true}

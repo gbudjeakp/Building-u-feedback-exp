@@ -41,6 +41,10 @@ function FeedbackCard({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    setItems(data)
+  },[data])
+
   const toggleComplete = (id) => {
     const updatedItems = items.map((item) => {
       if (item.id === id) {
@@ -87,12 +91,6 @@ function FeedbackCard({
         [itemId]: true,
       }));
     }
-    // this would be the dispatch data
-    let placeholderData = {
-      topicOfLearningSession: items[index].topicOfLearningSession,
-      codeLink: items[index].codeLink,
-    };
-
     if (loading === "succeeded"){
       openNotifyModal();
     }
@@ -122,7 +120,7 @@ function FeedbackCard({
               shadow="xs"
               p="sm"
               withBorder
-              key={item.id + index}
+              key={item.id}
               style={{ display: "flex", justifyContent: "space-between" }}
             >
               <div>
