@@ -134,16 +134,19 @@ function SingleFeedbackPage(props) {
             {submittedContent.length > 0 ? (
               submittedContent.map((submission, index) => {
                 return (
-                  <li
-                    style={{
-                      listStyle: "none",
-                      border: "1px solid #e1e1e1",
-                      padding: "0 10px",
-                      margin: "15px 0",
-                    }}
-                    key={index}
-                    dangerouslySetInnerHTML={{ __html: submission.feedback }}
-                  ></li>
+                  <div key={index}>
+                    <p>{submission.mentorName}</p>
+                    <li
+                      style={{
+                        listStyle: "none",
+                        border: "1px solid #e1e1e1",
+                        padding: "0 10px",
+                        margin: "15px 0",
+                      }}
+                      key={index}
+                      dangerouslySetInnerHTML={{ __html: submission.feedback }}
+                    ></li>
+                  </div>
                 );
               })
             ) : (
@@ -155,7 +158,7 @@ function SingleFeedbackPage(props) {
       {props.user?.mentor && (
         <Paper shadow="xs" p="sm" withBorder>
           <TextEditor
-            isMentor={true}
+            isMentor={props.user?.mentor}
             submittedContent={handleSubmittedContent}
           />
         </Paper>
