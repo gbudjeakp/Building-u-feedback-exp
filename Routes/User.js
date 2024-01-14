@@ -2,7 +2,7 @@ const express = require("express");
 const router =  express.Router();
 const userController   = require('../Controllers/userController')
 const rateLimiter = require("../middleware/rateLimiter");
-const auth = require("../middleware/auth");
+const auth = require("../middleware/auth")
 
 
 router.get("/authorized", auth, userController.authorized);

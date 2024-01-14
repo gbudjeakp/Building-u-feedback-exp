@@ -54,7 +54,7 @@ const registerUser = async (req, res) => {
     /////////////////////////////////////////////////
     const user = await Users.findOne({ where: { username: userName } });
     if (user) {
-      const payload = { id: user.id, username: user.username, fName: user.fName };
+      const payload = { id: user.id, username: user.username,  fName: user.fName };
       const token = jwt.sign(payload, process.env.JWT_SECRET);
       res.set(
         "Set-Cookie",
