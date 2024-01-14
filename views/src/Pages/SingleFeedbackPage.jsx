@@ -32,6 +32,7 @@ function SingleFeedbackPage(props) {
         }
       );
       setSubmittedContent(response.data.data);
+      console.log(submittedContent)
     } catch (error) {
       console.error("Error fetching feedback:", error);
     }
@@ -136,7 +137,7 @@ function SingleFeedbackPage(props) {
               submittedContent.map((submission, index) => {
                 return (
                   <div key={index}>
-                    <p>{props.user.fName}</p>
+                    <p>{submission.mentorName}</p>
                     <li
                       style={{
                         listStyle: "none",
@@ -159,7 +160,7 @@ function SingleFeedbackPage(props) {
       {props.user?.mentor && (
         <Paper shadow="xs" p="sm" withBorder>
           <TextEditor
-            isMentor={true}
+            isMentor={props.user?.mentor}
             submittedContent={handleSubmittedContent}
           />
         </Paper>
