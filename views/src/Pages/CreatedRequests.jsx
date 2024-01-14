@@ -3,7 +3,7 @@ import FeedbackCard from "../components/FeedbackCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchInternFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
 
-function CreatedRequests() {
+function CreatedRequests(props) {
   const dispatch = useDispatch();
   const internFeedbackRequests = useSelector((state) => state.feedbackSlice.feedbackRequests);
 
@@ -13,13 +13,12 @@ function CreatedRequests() {
 
   return (
     <div>
-      {internFeedbackRequests && internFeedbackRequests.length > 0 && (
-        <FeedbackCard
-          showViewFeedback={true}
-          data={internFeedbackRequests}
-          pageTitle="MY FEEDBACK REQUESTS"
-        />
-      )}
+      <FeedbackCard
+        showViewFeedback={true}
+        data={internFeedbackRequests}
+        pageTitle="MY FEEDBACK REQUESTS"
+        user={props.user}
+      />
     </div>
   );
 }

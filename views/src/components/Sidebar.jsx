@@ -1,6 +1,6 @@
 // Sidebar.js
 import React, { useEffect, useState } from "react";
-import { Stack, rem } from "@mantine/core";
+import { Stack, rem, Tooltip } from "@mantine/core";
 import { Link, useLocation } from "react-router-dom";
 import { IconLogout } from "@tabler/icons-react";
 import { useDispatch } from "react-redux";
@@ -24,17 +24,20 @@ function NavbarLink({ to, icon, label, active, onClick }) {
   }
 
   return (
-    <Link to={to}>
-      <div
-        onClick={onClick}
-        style={linkStyle}
-        data-active={active || undefined}
-      >
-        {React.createElement(icon, {
-          style: { width: rem(20), height: rem(20), stroke: 1.5 },
-        })}
-      </div>
-    </Link>
+    // Feel free to change position / offset
+    <Tooltip label={label} position="bottom-start" offset={5}>
+      <Link to={to}>
+        <div
+          onClick={onClick}
+          style={linkStyle}
+          data-active={active || undefined}
+        >
+          {React.createElement(icon, {
+            style: { width: rem(20), height: rem(20), stroke: 1.5 },
+          })}
+        </div>
+      </Link>
+    </Tooltip>
   );
 }
 
@@ -85,6 +88,9 @@ export function Sidebar({ navItems }) {
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#F9EB02",
+    position: "fixed",
+    top: "0",
+    bottom: "0"
   };
 
   const navbarMainStyle = {

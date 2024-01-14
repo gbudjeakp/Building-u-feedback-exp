@@ -9,6 +9,7 @@ import Unauthorized from "./pages/Unauthorized";
 import Notfound from "./pages/Notfound";
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
+import AuthWrapper from "./Utility/AuthWrapper";
 
 
 function App() {
@@ -18,11 +19,11 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<Loginpage />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/intern/*" element={<Interndashboard />} />
-        <Route path="/mentor/*" element={<Mentordashboard />} />
-        <Route path="/feedback/:id" element={<SingleFeedBack />} />
-        <Route path="/403" element={< Unauthorized />} />
-        <Route path="/404" element={< Notfound />} />
+        <Route path="/intern/*" element={<AuthWrapper>{({ user }) => <Interndashboard user={user} />}</AuthWrapper>} />
+        <Route path="/mentor/*" element={<AuthWrapper>{({ user }) => <Mentordashboard user={user} />}</AuthWrapper>} />
+        <Route path="/feedback/:id" element={<AuthWrapper>{({ user }) => <SingleFeedBack user={user} />}</AuthWrapper>} />
+        <Route path="/403" element={<Unauthorized />} />
+        <Route path="/404" element={<Notfound />} />
       </Routes>
     </MantineProvider>
   );

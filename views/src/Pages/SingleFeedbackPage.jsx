@@ -13,14 +13,12 @@ const feedbackContainer = {
   marginBottom: "20px",
 };
 
-function SingleFeedbackPage() {
+function SingleFeedbackPage(props) {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [data, setData] = useState([]);
-
   const feedbackScrollRef = useRef(null);
-
   const [submittedContent, setSubmittedContent] = useState([]);
 
   // This function fetches the feedback, used once on load and on every "Submit Feedback"
@@ -55,8 +53,6 @@ function SingleFeedbackPage() {
     });
   };
 
-  const isMentor = true;
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -78,8 +74,7 @@ function SingleFeedbackPage() {
   }, []);
 
   const handleGoToDashboard = () => {
-    const isMentor = true;
-    if (isMentor) {
+    if (props.user?.mentor) {
       navigate("/mentor/feedbackqueue");
     } else {
       navigate("/intern/myrequests");
@@ -157,7 +152,7 @@ function SingleFeedbackPage() {
           </div>
         </div>
       )}
-      {isMentor && (
+      {props.user?.mentor && (
         <Paper shadow="xs" p="sm" withBorder>
           <TextEditor
             isMentor={true}
