@@ -27,6 +27,7 @@ function FeedbackCard({
   isMentor,
   gotoDashboard,
   isLoading,
+  user
 }) {
   const [assignedRequests, setAssignedRequests] = useState([]);
   const [notificationStatus, setNotificationStatus] = useState({});
@@ -44,7 +45,6 @@ function FeedbackCard({
   useEffect(() => {
     setItems(data)
   },[data])
-
   const toggleComplete = (id) => {
     const updatedItems = items.map((item) => {
       if (item.id === id) {
@@ -76,8 +76,8 @@ function FeedbackCard({
   };
 
   const handleGoToDashboard = () => {
-    const isMentor = true;
-    if (isMentor) {
+ 
+    if (user?.mentor) {
       navigate("/mentor/feedbackqueue");
     } else {
       navigate("/intern/myrequests");
@@ -98,7 +98,7 @@ function FeedbackCard({
 
   return (
     <Container fluid h={0} style={feedbackContainer}>
-      <Text align="center" size="xl" style={{ marginBottom: "20px" }}>
+      <Text align="center" size="xl" style={{ marginBottom: "20px", marginTop: "10px" }}>
         {pageTitle}
       </Text>
       <Modal opened={openedAssignModal} onClose={closeAssignModal} withCloseButton={false}>
@@ -124,7 +124,7 @@ function FeedbackCard({
               style={{ display: "flex", justifyContent: "space-between" }}
             >
               <div>
-                {isMentor ? (
+                {user?.mentor ? (
                   <Text>Intern Name: {item.studentName}</Text>
                 ) : (
                   <Text>

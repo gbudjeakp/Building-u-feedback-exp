@@ -3,7 +3,7 @@ import FeedbackCard from "../components/FeedbackCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
 
-function FeedbackQueue() {
+function FeedbackQueue(props) {
   const dispatch = useDispatch();
   const feedbackData = useSelector((state) => state.feedbackSlice.feedbackRequests);
   
@@ -13,14 +13,12 @@ function FeedbackQueue() {
 
   return (
     <div>
-      {feedbackData && feedbackData.length > 0 && (
-        <FeedbackCard
-          isAssign={true}
-          data={feedbackData}
-          pageTitle="FEEDBACK QUEUE"
-          isMentor={true}
-        />
-      )}
+      <FeedbackCard
+        isAssign={true}
+        data={feedbackData}
+        pageTitle="FEEDBACK QUEUE"
+        user={props.user}
+      />
     </div>
   );
 }

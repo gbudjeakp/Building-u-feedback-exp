@@ -23,7 +23,7 @@ const createAsyncThunkWithJwt = (type, url, method = "get") =>
         apiUrl = `${url}${data.id}`;
       }
 
-      console.log("URL/Method", apiUrl, method);
+      // console.log("URL/Method", apiUrl, method);
 
       const response = await axios({
         method,

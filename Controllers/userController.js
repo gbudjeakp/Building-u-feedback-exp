@@ -54,7 +54,7 @@ const registerUser = async (req, res) => {
     /////////////////////////////////////////////////
     const user = await Users.findOne({ where: { username: userName } });
     if (user) {
-      const payload = { id: user.id, username: user.username };
+      const payload = { id: user.id, username: user.username, fName: user.fName };
       const token = jwt.sign(payload, process.env.JWT_SECRET);
       res.set(
         "Set-Cookie",
@@ -132,7 +132,13 @@ const logout = (req, res) => {
   return
 };
 
+const authorized = (req, res) => {
+  return res.json({ user: res.locals.user });
+};
+
+
 module.exports = {
+  authorized,
   registerUser,
   loginUser,
   logout,
