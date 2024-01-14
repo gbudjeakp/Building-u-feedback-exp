@@ -32,7 +32,7 @@ function SingleFeedbackPage(props) {
         }
       );
       setSubmittedContent(response.data.data);
-      console.log(submittedContent)
+
     } catch (error) {
       console.error("Error fetching feedback:", error);
     }
