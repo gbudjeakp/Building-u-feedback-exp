@@ -22,8 +22,6 @@ const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(
     }
 
     
-    console.log("URL/Method", apiUrl, method);
-
     const response = await axios({
       method,
       url: apiUrl,
