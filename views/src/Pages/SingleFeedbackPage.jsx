@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Text, Container, Paper, Stack, Button } from "@mantine/core";
+import { Text, Container, Paper, Stack, Button, Card, Badge  } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import TextEditor from "../components/TextEditor";
@@ -9,9 +9,26 @@ import { addFeedback } from "../features/Feedbacks/feedbackSlice";
 
 const feedbackContainer = {
   zIndex: "20",
-  // paddingBottom: "20rem",
+  paddingBottom: "1rem",
   marginBottom: "20px",
 };
+
+const textColor = {
+  color: "black"
+}
+
+const singleFeedback = {
+border: "solid",
+borderRadius: "5px",
+margin: "2rem"
+}
+
+const authorInfo ={
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  flexWrap: "wrap",
+}
 
 function SingleFeedbackPage(props) {
   const { id } = useParams();
@@ -56,7 +73,6 @@ function SingleFeedbackPage(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Make the API call using axios
         const response = await axios.get(
           `http://localhost:5001/api/feedback/getfeedbackid/${id}`,
           {
@@ -83,6 +99,7 @@ function SingleFeedbackPage(props) {
 
   return (
     <Container>
+      <br />
       <div style={feedbackContainer}>
         <Paper
           shadow="xs"
@@ -120,7 +137,7 @@ function SingleFeedbackPage(props) {
       {submittedContent && (
         <div style={{ margin: "50px 0" }}>
           <Text size="xl" weight={700}>
-            Submitted Feedback:
+          Feedback:
           </Text>
           <div
             ref={feedbackScrollRef}
@@ -135,17 +152,22 @@ function SingleFeedbackPage(props) {
               submittedContent.map((submission, index) => {
                 return (
                   <div key={index}>
-                    <p>{submission.mentorName}</p>
+                    <Card style={singleFeedback}>
                     <li
                       style={{
                         listStyle: "none",
-                        border: "1px solid #e1e1e1",
                         padding: "0 10px",
                         margin: "15px 0",
                       }}
                       key={index}
                       dangerouslySetInnerHTML={{ __html: submission.feedback }}
                     ></li>
+
+                       <div style={authorInfo}>
+                       <Badge style={textColor} color="#F9EB02" radius="sm">{submission.mentorName}</Badge>
+                       {formatCreatedAt(submission.createdAt)}
+                       </div>
+                      </Card>
                   </div>
                 );
               })
@@ -156,12 +178,11 @@ function SingleFeedbackPage(props) {
         </div>
       )}
       {props.user?.mentor && (
-        <Paper shadow="xs" p="sm" withBorder>
           <TextEditor
             isMentor={props.user?.mentor}
             submittedContent={handleSubmittedContent}
           />
-        </Paper>
+
       )}
     </Container>
   );
