@@ -22,7 +22,7 @@ module.exports = (input) => {
     errors.password = "Password Field Cannot be empty";
   }
   if (input.password.length < 8) {
-    errors.password = "Password must be at least 6 characters long";
+    errors.password = "Password must be at least 8 characters long";
   }
 
   if (input.password.length > 30) {

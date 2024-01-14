@@ -93,6 +93,7 @@ function FeedbackRequestForm() {
         <Modal opened={opened} onClose={close} withCloseButton={false}>
           Feedback Request submitted!
         </Modal>
+        
         <form onSubmit={form.onSubmit(handleSubmitRequest)}>
           <Paper shadow="xs" style={paperStyle}>
             <Text size="xl" weight={700} style={titleStyle}>
