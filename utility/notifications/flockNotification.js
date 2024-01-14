@@ -15,7 +15,7 @@ const studentNotification = (data) => {
     text: `${data.studentName} is requesting some review/feed back for the exercise ${data.topicOfLearningSession}. Please click link ${data.codeLink} to see code`,
   };
 
-  // sendNotificationToFlockWebhook(message);
+  sendNotificationToFlockWebhook(message);
 };
 
 const mentorNotification = (data) => {
@@ -24,7 +24,7 @@ const mentorNotification = (data) => {
     ${data.topicOfLearningSession} exercise.`
   };
 
-  // sendNotificationToFlockWebhook(message);
+  sendNotificationToFlockWebhook(message);
 };
 
 module.exports = {
