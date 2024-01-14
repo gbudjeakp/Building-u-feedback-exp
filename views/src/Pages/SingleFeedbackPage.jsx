@@ -32,7 +32,6 @@ function SingleFeedbackPage(props) {
         }
       );
       setSubmittedContent(response.data.data);
-
     } catch (error) {
       console.error("Error fetching feedback:", error);
     }
@@ -40,8 +39,7 @@ function SingleFeedbackPage(props) {
   // scroll to the bottom after new feedback has been added
   useEffect(() => {
     if (feedbackScrollRef.current) {
-      feedbackScrollRef.current.scrollTop =
-        feedbackScrollRef.current.scrollHeight;
+      feedbackScrollRef.current.scrollTop = feedbackScrollRef.current.scrollHeight;
     }
   }, [submittedContent]);
 
