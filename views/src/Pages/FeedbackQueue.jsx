@@ -3,23 +3,16 @@ import FeedbackCard from "../components/FeedbackCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFeedbackRequests } from "../features/Feedbacks/feedbackSlice";
 
-const containerStyle = {
-  flexDirection: "column-reverse",
-};
-
 function FeedbackQueue() {
-  const feedbackData = useSelector(
-    (state) => state.feedbackSlice.feedbackRequests.data
-  );
-
   const dispatch = useDispatch();
-
+  const feedbackData = useSelector((state) => state.feedbackSlice.feedbackRequests);
+  
   useEffect(() => {
     dispatch(fetchFeedbackRequests());
   }, [dispatch]);
 
   return (
-    <div style={containerStyle}>
+    <div>
       {feedbackData && feedbackData.length > 0 && (
         <FeedbackCard
           isAssign={true}
