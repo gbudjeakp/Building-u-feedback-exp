@@ -4,6 +4,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { IconListDetails, IconCheckupList, IconUser } from '@tabler/icons-react';
 import FeedbackRequestQueue from '../pages/FeedbackQueue';
 import AssignedFeedback from '../pages/AssignedFeedback';
+import Account from '../pages/Account';
 import TopBar from '../components/TopBar';
 
 function Mentordashboard(props) {
@@ -25,7 +26,8 @@ function Mentordashboard(props) {
           element={<FeedbackRequestQueue active={0} user={props.user} />}
         />
         <Route path="assigned" element={<AssignedFeedback active={1} user={props.user} />} />
-        {/* <Route path="account" element={<Account active={2}/>} /> */}
+
+        <Route path="account" element={<Account active={2} user={props.user} />}  />
       </Routes>
     </div>
   );
