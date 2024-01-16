@@ -7,8 +7,6 @@ const AuthWrapper = ({ children: ChildComponent }) => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("AuthWrapper page change");
-
     const fetchUser = async () => {
       try {
         const response = await axios.get(

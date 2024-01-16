@@ -5,6 +5,7 @@ import { IconFilePlus, IconClipboardText, IconUser } from '@tabler/icons-react';
 
 import FeedbackRequestForm from "../pages/FeedbackrequestForm"
 import CreatedRequests from '../pages/CreatedRequests';
+import Account from '../pages/Account/';
 import TopBar from '../components/TopBar';
 
 function Interndashboard(props) {
@@ -23,7 +24,7 @@ function Interndashboard(props) {
       <Routes location={location}>
         <Route path="/requestform" element={<FeedbackRequestForm active={0} user={props.user}/>} />
         <Route path="/myrequests" element={<CreatedRequests active={1} user={props.user}/>} />
-        {/* <Route path="account" element={<Account active={2}/>} /> */}
+        <Route path="/account" element={<Account active={2} user={props.user} />} />
       </Routes>
   </div>
   )
