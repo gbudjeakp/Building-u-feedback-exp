@@ -1,13 +1,13 @@
-const dbConfig = require('../config/db.config');
+const dbConfig = require('../config/db.config')['development'];
 const { Sequelize, DataTypes } = require('sequelize');
 
-const sequelize = new Sequelize(dbConfig.db, dbConfig.user, '', {
+const sequelize = new Sequelize(dbConfig.db, dbConfig.user, "", {
   host: dbConfig.host,
-  dialect: 'mysql'
+  dialect: "mysql"
 });
 
 try {
-  sequelize.authenticate();
+   sequelize.authenticate();
   console.log('Connection has been established successfully.');
 } catch (error) {
   console.error('Unable to connect to the database:', error);

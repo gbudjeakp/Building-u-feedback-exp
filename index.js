@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const app = express();
 const https = require('https');
-const port = process.env.PORT || 5001
+const port = process.env.PORT || 5006
 
 //////Express MiddleWares//////////////
 const corsOptions = {

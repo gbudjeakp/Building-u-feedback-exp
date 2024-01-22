@@ -1,8 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
-  const Feedbacks = sequelize.define("feedbacks", {
+  const Feedbacks = sequelize.define("Feedbacks", {
     mentorName: {
       type: DataTypes.STRING,
     },
+    // mentorid:{
+    //   type: DataTypes.STRING
+    // },
     feedback: {
       type: DataTypes.TEXT,
     },
