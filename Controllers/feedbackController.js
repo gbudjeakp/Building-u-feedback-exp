@@ -4,10 +4,13 @@ const { Op } = require("sequelize");
 const FeedbackRequest = db.FeedbackRequest;
 const Feedbacks = db.Feedbacks;
 const User = db.User;
+const exerciseInfo = db.ExerciseInfo;
 const jwt = require("jsonwebtoken");
 const feedbackrequestValidator = require("../utility/inputValidator/feedbackrequestValidator");
 const feedbackValidator = require("../utility/inputValidator/feedbackValidator");
-const {studentNotification} = require("../utility/notifications/flockNotification");
+const {
+  studentNotification,
+} = require("../utility/notifications/flockNotification");
 
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
@@ -36,12 +39,31 @@ const submitFeedBack = async (req, res) => {
       codeLink: codeLink,
     };
 
-    await FeedbackRequest.create(feedBackRequestData);
+    // Check if the user is a mentor
+    const isMentor = await User.findOne({
+      where: {
+        id: id,
+        mentor: true,
+      },
+    });
 
-    studentNotification(feedBackRequestData);
+    //This is used to determine if we should create an exercise infromation
+    //record for a user (Only interns have those)
+    if (!isMentor) {
+      const add_User_To_ExerciseInfo_Table = {
+        userId: id,
+        internName: fullName.fName,
+        topic: topicOfLearningSession,
+        isSubmitted: true,
+      };
+      await exerciseInfo.create(add_User_To_ExerciseInfo_Table);
+      await FeedbackRequest.create(feedBackRequestData);
+      // studentNotification(feedBackRequestData);
+    }
+
     res.status(200).json({ data: feedBackRequestData });
   } catch (err) {
-    res.status(400).json({ msg: err });
+    res.status(400).json({ msg: err.message });
   }
 };
 
@@ -199,7 +221,7 @@ const addFeedBack = async (req, res) => {
 
     // Create the feedback and associate it with the feedback request and mentor
     const feedBackData = {
-      userId: feedbackRequest.userId,
+      userId: id,
       mentorName: fullName.fName,
       feedback: feedback,
       feedbackRequestId: feedbackRequest.id,
@@ -350,8 +372,27 @@ const markFeedbackRequestComplete = async (req, res) => {
       where: { id: feedbackrequestId },
     });
 
-    markAsComplete.status = true;
-    await markAsComplete.save();
+    if (!markAsComplete) {
+      return res.status(404).json({ message: "FeedbackRequest not found" });
+    }
+
+    // Extract necessary information from the FeedbackRequest record
+    const { userId, topicOfLearningSession } = markAsComplete;
+
+    // Find the associated ExerciseInfo record based on userId and topic
+    const exerciseInfo = await db.ExerciseInfo.findOne({
+      where: { userId, topic: topicOfLearningSession },
+    });
+
+    if (!exerciseInfo) {
+      return res.status(404).json({ message: "ExerciseInfo not found" });
+    }
+
+    // Update the ExerciseInfo record
+    await exerciseInfo.update({ isCompleted: true });
+
+    // Update the status attribute of the FeedbackRequest record
+    await markAsComplete.update({ status: true });
 
     res.status(200).json({ msg: "Exercise Marked As Complete" });
   } catch (err) {

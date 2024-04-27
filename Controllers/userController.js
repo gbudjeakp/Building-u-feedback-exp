@@ -5,18 +5,22 @@ const cookie = require("cookie");
 const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 const Users = db.User;
+const ExerciseInfo = db.ExerciseInfo;
 const mentor = ["tom@mail.com", "mentor@mail.com"];
 const reviewParticipant = [];
 const loginValidator = require("../utility/inputValidator/loginValidator");
 const registerValidator = require("../utility/inputValidator/registerValidator");
+const { fn } = require("sequelize");
+const { pipeline } = require("stream");
 //@TODO
 /* 1) Add a review participant to the list of admins. 
 Note, review participants are not  mentors.
 They can add feedbacks and assign tickets but are
-limited in what hey can do i.e they cannot mark 
+limited in what they can do i.e they cannot mark 
 a ticket/request as complete. 
 */
 
+//Allows users to register to the app
 const registerUser = async (req, res) => {
   const { fName, userName, password } = req.body;
   const { errors, validationCheck } = registerValidator(req.body);
@@ -26,7 +30,7 @@ const registerUser = async (req, res) => {
   // This checks that the inputs entered meet some criteria
   if (!validationCheck) {
     res.status(400).json(errors);
-    return
+    return;
   }
 
   try {
@@ -39,7 +43,7 @@ const registerUser = async (req, res) => {
 
     // Hash the password
     // Ideally adding a callback in the hash is best practice
-    //Might add callback as code 
+    //Might add callback as code
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const userData = {
       fName: fName,
@@ -54,7 +58,11 @@ const registerUser = async (req, res) => {
     /////////////////////////////////////////////////
     const user = await Users.findOne({ where: { username: userName } });
     if (user) {
-      const payload = { id: user.id, username: user.username,  fName: user.fName };
+      const payload = {
+        id: user.id,
+        username: user.username,
+        fName: user.fName,
+      };
       const token = jwt.sign(payload, process.env.JWT_SECRET);
       res.set(
         "Set-Cookie",
@@ -76,6 +84,7 @@ const registerUser = async (req, res) => {
   }
 };
 
+//This allows a user to login, into our application
 const loginUser = async (req, res) => {
   try {
     const { userName, password } = req.body;
@@ -121,6 +130,8 @@ const loginUser = async (req, res) => {
   }
 };
 
+//This logs the user out the app by removing the
+//Users token
 const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
@@ -129,11 +140,93 @@ const logout = (req, res) => {
     path: "/",
   });
   res.status(200).json({ msg: "User was Logged Out Successfully" });
-  return
+  return;
 };
 
+// This feeds the auth wrapper on the fron-end letting
+// the app know whether or not a user is logged in.
 const authorized = (req, res) => {
   return res.json({ user: res.locals.user });
+};
+
+// This lets us update a users account information everywhere
+const updateAccount = async (req, res) => {
+  const { fName, userName, oldPassword, newpassword } = req.body;
+  const isUserExist = await Users.findOne({ where: { username: userName } });
+  const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+
+  try {
+
+
+
+    if (isUserExist) {
+      // Sequelize hook to update related records when a User is updated
+
+          //Make sure old password is not the same as new one
+   const hashedPassword =  isUserExist.password;
+
+   bcrypt.compare(oldPassword, hashedPassword, (err, passwordIsCorrect)=>{
+     if(passwordIsCorrect){
+      if(oldPassword !== newpassword){
+        
+      } else{
+        res.json({msg: 'Old password cannot be same as new password'});
+      }
+     }
+   })   
+
+      Users.afterUpdate(async (user, options) => {
+        // Fetch all related records associated with the updated user
+        const feedbackRequests = await feedbackRequests.findAll({
+          where: { userId: id },
+        });
+
+        const exerciseInfo = await db.ExerciseInfo.findAll({
+          where: { userId: id },
+        });
+
+        const feedbacks = await db.Feedbacks.findAll({
+          where: { userId: id },
+        });
+
+        // Update relevant fields in related records
+        await Promise.all(
+          feedbackRequests.map(async (request) => {
+            request.update({ studenName: fName });
+          })
+        );
+
+        await Promise.all(
+          exerciseInfo.map(async (request) => {
+            // Update fields in related records based on changes in the user
+            request.update({ internName: fName });
+          })
+        );
+
+        await Promise.all(
+          feedbacks.map(async (request) => {
+            // Update fields in related records based on changes in the user
+            request.update({ mentorName: fName });
+          })
+        );
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  res.json({ msg: "Account Details updated" });
+};
+
+const getAllExerciseInfo = async (req, res) => {
+  try {
+    const exerciseInfos = await db.ExerciseInfo.findAll();
+
+    res.status(200).json({ data: exerciseInfos });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 
@@ -142,4 +235,6 @@ module.exports = {
   registerUser,
   loginUser,
   logout,
+  updateAccount,
+  getAllExerciseInfo,
 };

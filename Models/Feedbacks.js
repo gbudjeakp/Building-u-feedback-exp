@@ -3,9 +3,6 @@ module.exports = (sequelize, DataTypes) => {
     mentorName: {
       type: DataTypes.STRING,
     },
-    // mentorid:{
-    //   type: DataTypes.STRING
-    // },
     feedback: {
       type: DataTypes.TEXT,
     },
