@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 const Users = db.User;
 const ExerciseInfo = db.ExerciseInfo;
+const FeedbackRequest = db.FeedbackRequest;
+const Feedbacks = db.Feedbacks;
 const mentor = ["tom@mail.com", "mentor@mail.com"];
 const reviewParticipant = [];
 const loginValidator = require("../utility/inputValidator/loginValidator");
@@ -85,7 +87,7 @@ const registerUser = async (req, res) => {
 };
 
 //This allows a user to login, into our application
-const loginUser = async (req, res) => {
+const loginUser = async (req, res) => { 
   try {
     const { userName, password } = req.body;
     const { errors, validationCheck } = loginValidator(req.body);
@@ -151,72 +153,58 @@ const authorized = (req, res) => {
 
 // This lets us update a users account information everywhere
 const updateAccount = async (req, res) => {
-  const { fName, userName, oldPassword, newpassword } = req.body;
-  const isUserExist = await Users.findOne({ where: { username: userName } });
+  const { authToken } = req.cookies;
+  const { fName, userName, oldPassword, newPassword } = req.body; 
   const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+  const isUserExist = await Users.findOne({ where: { id: id } });
 
   try {
-
-
-
-    if (isUserExist) {
-      // Sequelize hook to update related records when a User is updated
-
-          //Make sure old password is not the same as new one
-   const hashedPassword =  isUserExist.password;
-
-   bcrypt.compare(oldPassword, hashedPassword, (err, passwordIsCorrect)=>{
-     if(passwordIsCorrect){
-      if(oldPassword !== newpassword){
-        
-      } else{
-        res.json({msg: 'Old password cannot be same as new password'});
-      }
-     }
-   })   
-
-      Users.afterUpdate(async (user, options) => {
-        // Fetch all related records associated with the updated user
-        const feedbackRequests = await feedbackRequests.findAll({
-          where: { userId: id },
-        });
-
-        const exerciseInfo = await db.ExerciseInfo.findAll({
-          where: { userId: id },
-        });
-
-        const feedbacks = await db.Feedbacks.findAll({
-          where: { userId: id },
-        });
-
-        // Update relevant fields in related records
-        await Promise.all(
-          feedbackRequests.map(async (request) => {
-            request.update({ studenName: fName });
-          })
-        );
-
-        await Promise.all(
-          exerciseInfo.map(async (request) => {
-            // Update fields in related records based on changes in the user
-            request.update({ internName: fName });
-          })
-        );
-
-        await Promise.all(
-          feedbacks.map(async (request) => {
-            // Update fields in related records based on changes in the user
-            request.update({ mentorName: fName });
-          })
-        );
-      });
+    if (!isUserExist) {
+      return res.json({msg: 'User does not exist'});
     }
+
+    const updates = {}; // Object to store the fields to be updated
+
+    // Check if fName is provided and not equal to current fName
+    if (fName && fName !== isUserExist.fName) {
+      updates.fName = fName;
+    }
+
+    // Check if userName is provided and not equal to current userName
+    if (userName && userName !== isUserExist.username) {
+      updates.username = userName;
+    }
+
+    // Check if oldPassword and newPassword are provided and oldPassword is correct
+    if (oldPassword && newPassword) {
+      const passwordIsCorrect = await bcrypt.compare(oldPassword, isUserExist.password);
+      if (!passwordIsCorrect) {
+        return res.status(400).json({ msg: 'Old password is incorrect' });
+      }
+      if (oldPassword === newPassword) {
+        return res.status(400).json({ msg: 'Old password cannot be same as new password' });
+      }
+      updates.password = await bcrypt.hash(newPassword, saltRounds);
+    }
+
+    // Update user with the provided changes
+    await isUserExist.update(updates);
+
+    // Since the full name is used in different tables and is called different
+    //names across tables, we are simply updating them below.
+    if (fName) {
+      await FeedbackRequest.update({ studentName: fName }, { where: { userId: id } });
+      await ExerciseInfo.update({ internName: fName }, { where: { userId: id } });
+      await Feedbacks.update({ mentorName: fName }, { where: { userId: id } });
+    }
+
+    return res.json({ msg: "Account details have successfully been updated" });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ msg: "Internal server error" });
   }
-
-  res.json({ msg: "Account Details updated" });
 };
+
 
 const getAllExerciseInfo = async (req, res) => {
   try {
