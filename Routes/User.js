@@ -9,6 +9,8 @@ router.get("/authorized", auth, userController.authorized);
 router.get("/logout", userController.logout);
 router.post("/login",  rateLimiter, userController.loginUser);
 router.post("/register", rateLimiter, userController.registerUser);
+router.patch("/updateaccount",  userController.updateAccount);
+router.get("/exerciseInfo", userController.getAllExerciseInfo);
 
 
 module.exports = router;

@@ -5,18 +5,24 @@ const cookie = require("cookie");
 const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 const Users = db.User;
+const ExerciseInfo = db.ExerciseInfo;
+const FeedbackRequest = db.FeedbackRequest;
+const Feedbacks = db.Feedbacks;
 const mentor = ["tom@mail.com", "mentor@mail.com"];
 const reviewParticipant = [];
 const loginValidator = require("../utility/inputValidator/loginValidator");
 const registerValidator = require("../utility/inputValidator/registerValidator");
+const { fn } = require("sequelize");
+const { pipeline } = require("stream");
 //@TODO
 /* 1) Add a review participant to the list of admins. 
 Note, review participants are not  mentors.
 They can add feedbacks and assign tickets but are
-limited in what hey can do i.e they cannot mark 
+limited in what they can do i.e they cannot mark 
 a ticket/request as complete. 
 */
 
+//Allows users to register to the app
 const registerUser = async (req, res) => {
   const { fName, userName, password } = req.body;
   const { errors, validationCheck } = registerValidator(req.body);
@@ -26,7 +32,7 @@ const registerUser = async (req, res) => {
   // This checks that the inputs entered meet some criteria
   if (!validationCheck) {
     res.status(400).json(errors);
-    return
+    return;
   }
 
   try {
@@ -39,7 +45,7 @@ const registerUser = async (req, res) => {
 
     // Hash the password
     // Ideally adding a callback in the hash is best practice
-    //Might add callback as code 
+    //Might add callback as code
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const userData = {
       fName: fName,
@@ -54,7 +60,11 @@ const registerUser = async (req, res) => {
     /////////////////////////////////////////////////
     const user = await Users.findOne({ where: { username: userName } });
     if (user) {
-      const payload = { id: user.id, username: user.username,  fName: user.fName };
+      const payload = {
+        id: user.id,
+        username: user.username,
+        fName: user.fName,
+      };
       const token = jwt.sign(payload, process.env.JWT_SECRET);
       res.set(
         "Set-Cookie",
@@ -76,7 +86,8 @@ const registerUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
+//This allows a user to login, into our application
+const loginUser = async (req, res) => { 
   try {
     const { userName, password } = req.body;
     const { errors, validationCheck } = loginValidator(req.body);
@@ -121,6 +132,8 @@ const loginUser = async (req, res) => {
   }
 };
 
+//This logs the user out the app by removing the
+//Users token
 const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
@@ -129,11 +142,79 @@ const logout = (req, res) => {
     path: "/",
   });
   res.status(200).json({ msg: "User was Logged Out Successfully" });
-  return
+  return;
 };
 
+// This feeds the auth wrapper on the fron-end letting
+// the app know whether or not a user is logged in.
 const authorized = (req, res) => {
   return res.json({ user: res.locals.user });
+};
+
+// This lets us update a users account information everywhere
+const updateAccount = async (req, res) => {
+  const { authToken } = req.cookies;
+  const { fName, userName, oldPassword, newPassword } = req.body; 
+  const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+  const isUserExist = await Users.findOne({ where: { id: id } });
+
+  try {
+    if (!isUserExist) {
+      return res.json({msg: 'User does not exist'});
+    }
+
+    const updates = {}; // Object to store the fields to be updated
+
+    // Check if fName is provided and not equal to current fName
+    if (fName && fName !== isUserExist.fName) {
+      updates.fName = fName;
+    }
+
+    // Check if userName is provided and not equal to current userName
+    if (userName && userName !== isUserExist.username) {
+      updates.username = userName;
+    }
+
+    // Check if oldPassword and newPassword are provided and oldPassword is correct
+    if (oldPassword && newPassword) {
+      const passwordIsCorrect = await bcrypt.compare(oldPassword, isUserExist.password);
+      if (!passwordIsCorrect) {
+        return res.status(400).json({ msg: 'Old password is incorrect' });
+      }
+      if (oldPassword === newPassword) {
+        return res.status(400).json({ msg: 'Old password cannot be same as new password' });
+      }
+      updates.password = await bcrypt.hash(newPassword, saltRounds);
+    }
+
+    // Update user with the provided changes
+    await isUserExist.update(updates);
+
+    // Since the full name is used in different tables and is called different
+    //names across tables, we are simply updating them below.
+    if (fName) {
+      await FeedbackRequest.update({ studentName: fName }, { where: { userId: id } });
+      await ExerciseInfo.update({ internName: fName }, { where: { userId: id } });
+      await Feedbacks.update({ mentorName: fName }, { where: { userId: id } });
+    }
+
+    return res.json({ msg: "Account details have successfully been updated" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+};
+
+
+const getAllExerciseInfo = async (req, res) => {
+  try {
+    const exerciseInfos = await db.ExerciseInfo.findAll();
+
+    res.status(200).json({ data: exerciseInfos });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 
@@ -142,4 +223,6 @@ module.exports = {
   registerUser,
   loginUser,
   logout,
+  updateAccount,
+  getAllExerciseInfo,
 };
