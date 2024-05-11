@@ -12,8 +12,6 @@ const mentor = ["tom@mail.com", "mentor@mail.com"];
 const reviewParticipant = [];
 const loginValidator = require("../utility/inputValidator/loginValidator");
 const registerValidator = require("../utility/inputValidator/registerValidator");
-const { fn } = require("sequelize");
-const { pipeline } = require("stream");
 //@TODO
 /* 1) Add a review participant to the list of admins. 
 Note, review participants are not  mentors.
@@ -154,7 +152,7 @@ const authorized = (req, res) => {
 // This lets us update a users account information everywhere
 const updateAccount = async (req, res) => {
   const { authToken } = req.cookies;
-  const { fName, userName, oldPassword, newPassword } = req.body; 
+  const { fName, username, oldPassword, newPassword } = req.body; 
   const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
   const isUserExist = await Users.findOne({ where: { id: id } });
 
@@ -163,19 +161,16 @@ const updateAccount = async (req, res) => {
       return res.json({msg: 'User does not exist'});
     }
 
-    const updates = {}; // Object to store the fields to be updated
-
-    // Check if fName is provided and not equal to current fName
+    const updates = {}; 
     if (fName && fName !== isUserExist.fName) {
       updates.fName = fName;
     }
 
-    // Check if userName is provided and not equal to current userName
-    if (userName && userName !== isUserExist.username) {
-      updates.username = userName;
+    if (username && username !== isUserExist.username) {
+      updates.username = username;
     }
+  
 
-    // Check if oldPassword and newPassword are provided and oldPassword is correct
     if (oldPassword && newPassword) {
       const passwordIsCorrect = await bcrypt.compare(oldPassword, isUserExist.password);
       if (!passwordIsCorrect) {
@@ -187,11 +182,9 @@ const updateAccount = async (req, res) => {
       updates.password = await bcrypt.hash(newPassword, saltRounds);
     }
 
-    // Update user with the provided changes
     await isUserExist.update(updates);
 
-    // Since the full name is used in different tables and is called different
-    //names across tables, we are simply updating them below.
+    // Since the full name is used in different tables and is called different names across tables, we are simply updating them below.
     if (fName) {
       await FeedbackRequest.update({ studentName: fName }, { where: { userId: id } });
       await ExerciseInfo.update({ internName: fName }, { where: { userId: id } });
