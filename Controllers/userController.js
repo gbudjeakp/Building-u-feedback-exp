@@ -8,24 +8,18 @@ const Users = db.User;
 const ExerciseInfo = db.ExerciseInfo;
 const FeedbackRequest = db.FeedbackRequest;
 const Feedbacks = db.Feedbacks;
-const mentor = ["tom@mail.com", "mentor@mail.com"];
-const reviewParticipant = [];
+const admins = require('../admin.json');
+const { mentors } = admins;
 const loginValidator = require("../utility/inputValidator/loginValidator");
 const registerValidator = require("../utility/inputValidator/registerValidator");
-//@TODO
-/* 1) Add a review participant to the list of admins. 
-Note, review participants are not  mentors.
-They can add feedbacks and assign tickets but are
-limited in what they can do i.e they cannot mark 
-a ticket/request as complete. 
-*/
+
 
 //Allows users to register to the app
 const registerUser = async (req, res) => {
   const { fName, userName, password } = req.body;
   const { errors, validationCheck } = registerValidator(req.body);
   const isUserExist = await Users.findOne({ where: { username: userName } });
-  const isUserMentor = mentor.includes(userName);
+  const isUserMentor = mentors.includes(userName);
 
   // This checks that the inputs entered meet some criteria
   if (!validationCheck) {

@@ -179,8 +179,7 @@ for the Code leads or mentor endpoints
 */
 ///////////////////////////////////////////////
 
-/*This controller allows the Code leads to add feedbacks to the feedback requests made 
-by the interns */
+/*This controller allows the Code leads to add feedbacks to the feedback requests made  by the interns */
 const addFeedBack = async (req, res) => {
   try {
     const { feedback } = req.body;
