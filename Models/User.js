@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
     mentor: {
       type: DataTypes.BOOLEAN,
     },
+    mentorId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      unique: true,
+    },
   });
 
   return User;

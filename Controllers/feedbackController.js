@@ -262,19 +262,16 @@ const assignFeedBackToMentor = async (req, res) => {
       where: { id: feedbackrequestId },
     });
 
-    let fullName = await User.findOne({
-      where: { id: id },
-    });
-
     if (!feedbackRecord) {
       res.status(404).json({ msg: "Feedback record not found" });
       return;
     }
 
     feedbackRecord.isAssigned = true;
-    feedbackRecord.whoisAssigned = fullName.fName;
+    feedbackRecord.mentorId = isMentor.mentorId;
+    feedbackRecord.whoisAssigned = isMentor.fName;
     await feedbackRecord.save();
-    res.json({ msg: "Feedback Assigned to mentor" });
+    res.json({ msg: "Feedback assigned to mentor" });
   } catch (err) {
     res
       .status(500)

@@ -15,6 +15,8 @@ const ExerciseInfo = require('./ExerciseInfo')(sequelize, DataTypes);
 // Define associations between models
 User.hasMany(FeedbackRequest, { foreignKey: 'userId' });
 FeedbackRequest.belongsTo(User, { foreignKey: 'userId' });
+FeedbackRequest.belongsTo(User, { as: 'mentor', foreignKey: 'mentorId' });
+
 
 FeedbackRequest.hasMany(Feedbacks, { foreignKey: 'feedbackRequestId' });
 Feedbacks.belongsTo(FeedbackRequest, { foreignKey: 'feedbackRequestId' });
@@ -28,6 +30,7 @@ User.hasMany(ExerciseInfo, { foreignKey: 'userId' });
 
 Feedbacks.belongsTo(User, {foreignKey: 'userId'});
 User.hasMany(Feedbacks, { foreignKey: 'userId' }); 
+
 
 async function syncDatabase() {
   try {
