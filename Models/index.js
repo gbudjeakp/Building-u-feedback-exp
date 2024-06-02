@@ -34,7 +34,7 @@ User.hasMany(Feedbacks, { foreignKey: 'userId' });
 
 async function syncDatabase() {
   try {
-    await sequelize.sync({force: true });
+    await sequelize.sync({force: false });
     console.log('Database synchronized.');
   } catch (error) {
     console.error('Error syncing database:', error);
