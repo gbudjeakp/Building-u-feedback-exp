@@ -33,6 +33,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
+    mentorId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'Users',
+        key: 'mentorId',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+    },
   });
 
   return Feedbackrequest;

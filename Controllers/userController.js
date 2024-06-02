@@ -20,6 +20,7 @@ const registerUser = async (req, res) => {
   const { errors, validationCheck } = registerValidator(req.body);
   const isUserExist = await Users.findOne({ where: { username: userName } });
   const isUserMentor = mentors.includes(userName);
+  const {v4: uuidv4} = require('uuid')
 
   // This checks that the inputs entered meet some criteria
   if (!validationCheck) {
@@ -44,6 +45,7 @@ const registerUser = async (req, res) => {
       username: userName,
       password: hashedPassword,
       mentor: isUserMentor,
+      mentorId: isUserMentor ? uuidv4() : null
     };
 
     await Users.create(userData);
@@ -180,6 +182,7 @@ const updateAccount = async (req, res) => {
 
     // Since the full name is used in different tables and is called different names across tables, we are simply updating them below.
     if (fName) {
+      await FeedbackRequest.update({ whoisAssigned: fName }, { where: { mentorId: isUserExist.mentorId } });
       await FeedbackRequest.update({ studentName: fName }, { where: { userId: id } });
       await ExerciseInfo.update({ internName: fName }, { where: { userId: id } });
       await Feedbacks.update({ mentorName: fName }, { where: { userId: id } });

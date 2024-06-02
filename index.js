@@ -43,7 +43,7 @@ app.use('/api/password', passwordRouter);
 
 
 app.listen(port, ()=>{
-    console.log(`HTTP Server listening on port ${port}}`);
+    console.log(`HTTP Server listening on port ${port}`);
 })
 
 // https.createServer(credentials, app).listen(port, ()=>{
