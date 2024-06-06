@@ -1,4 +1,4 @@
-const FtpDeploy = require("ftp-deploy");
+var FtpDeploy = require("ftp-deploy");
 const path = require('path');
 
 const ftpDeploy = new FtpDeploy();
