@@ -1,4 +1,4 @@
-const FtpDeploy = require('ftp-deploy');
+const FtpDeploy = require("ftp-deploy");
 const path = require('path');
 
 const ftpDeploy = new FtpDeploy();
@@ -9,11 +9,12 @@ const config = {
   host: process.env.FTP_HOST,
   port: 21,
   localRoot: path.join(__dirname),
-  remoteRoot: '/public_html/building-u-feedback-server', 
+  remoteRoot: '/public_html/building-u-feedback-api', 
   include: ['*', '**/*'], 
   exclude: ['.git', '.github', 'views/**', 'node_modules/**', 'deploy-backend.js', '.env'],
   deleteRemote: false,
   forcePasv: true,
+  sftp: false,
 };
 
 ftpDeploy.deploy(config)
