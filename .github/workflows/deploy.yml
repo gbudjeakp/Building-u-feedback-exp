@@ -27,7 +27,7 @@ jobs:
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_HOST: ${{ secrets.FTP_HOST }}
-        run: node deploy-backend.js
+        run: node deploy-server.js
 
   deploy-frontend:
     name: Deploy Frontend
