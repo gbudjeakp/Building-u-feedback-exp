@@ -13,9 +13,20 @@ const config = {
   exclude: ['.git', '.github', 'views/**', 'node_modules/**', 'deploy-backend.js', '.env'],
   deleteRemote: false,
   forcePasv: true,
-  sftp: false,
 };
-
+// Add detailed logging to track the deployment process
+ftpDeploy.on('uploading', function(data) {
+    console.log(`Uploading ${data.transferredFileCount} of ${data.totalFilesCount}: ${data.filename}`);
+  });
+  
+  ftpDeploy.on('uploaded', function(data) {
+    console.log(`Uploaded: ${data.filename}`);
+  });
+  
+  ftpDeploy.on('upload-error', function(data) {
+    console.log('Error uploading file:', data.err);
+  });
+  
 ftpDeploy.deploy(config)
   .then(res => console.log('Finished:', res))
   .catch(err => console.error('Error:', err));
