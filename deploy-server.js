@@ -1,6 +1,5 @@
-var FtpDeploy = require("ftp-deploy");
+const FtpDeploy = require('ftp-deploy');
 const path = require('path');
-
 const ftpDeploy = new FtpDeploy();
 
 const config = {
