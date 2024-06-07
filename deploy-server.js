@@ -8,7 +8,7 @@ const config = {
   host: process.env.FTP_HOST,
   port: 21,
   localRoot: path.join(__dirname),
-  remoteRoot: '/public_html/building-u-feedback-api', 
+  remoteRoot: '/building-u-feedback-api', 
   include: ['*', '**/*'], 
   exclude: ['.git', '.github', 'views/**', 'node_modules/**', 'deploy-backend.js', '.env'],
   deleteRemote: false,
