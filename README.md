@@ -49,7 +49,7 @@ Feel free to browse through the code though
 1. clone repo to computer
 2. open folder in IDE/Text Editor
 3. type `cd views` in terminal to enter into the Views directory
-4. type npm run dev to start app
+4. type `npm run dev` to start app
 
 ### Backend
 1. clone repo to computer using 
@@ -57,4 +57,6 @@ Feel free to browse through the code though
 3. Please set up a SQL database before running step 4 (You can download and use [XAMMP](https://www.apachefriends.org/fr/index.html). 
    as its super easy to setup and use. This is not mandatory as you can use any other tool that can spin up a local database server
    in your development environment.
-4. type npm start to start server
+4. Once you have started XAMPP, open the software, you'll see
+
+5. type `npm start` to start server
