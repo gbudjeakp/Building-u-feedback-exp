@@ -11,8 +11,4 @@ export default defineConfig({
   //     usePolling: true,
   //   },
   // },
-
-  resolve:{
-    "@": path.resolve(__dirname, "./src"),
-  }
 })
