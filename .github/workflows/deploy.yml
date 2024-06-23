@@ -49,6 +49,11 @@ jobs:
       - name: Build frontend
         run: cd views && npm run build
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "coding@building-U.com"
+          git config --global user.name "buildingu"
+        
       - name: Deploy to GitHub Pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
