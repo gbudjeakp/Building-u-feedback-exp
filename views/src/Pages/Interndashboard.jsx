@@ -3,9 +3,9 @@ import Sidebar from '../components/Sidebar';
 import { Routes, Route, useLocation } from 'react-router-dom'; 
 import { IconFilePlus, IconClipboardText, IconUser } from '@tabler/icons-react';
 
-import FeedbackRequestForm from "../pages/FeedbackrequestForm"
-import CreatedRequests from '../pages/CreatedRequests';
-import Account from '../pages/Account/';
+import FeedbackRequestForm from "../Pages/FeedbackrequestForm"
+import CreatedRequests from '../Pages/CreatedRequests';
+import Account from '../Pages/Account/';
 import TopBar from '../components/TopBar';
 
 function Interndashboard(props) {
