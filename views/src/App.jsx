@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
 import Loginpage from "../src/Pages/LoginPage";
-import Signup from "./pages/Signup";
+import Signup from "./Pages/Signup";
 import Interndashboard from "./Pages/Interndashboard";
 import Mentordashboard from "./Pages/Mentordashboard";
-import SingleFeedBack from "./pages/SingleFeedbackPage";
-import Homepage from "./pages/HomePage";
-import Unauthorized from "./pages/Unauthorized";
-import Notfound from "./pages/Notfound";
+import SingleFeedBack from "./Pages/SingleFeedbackPage";
+import Homepage from "./Pages/HomePage";
+import Unauthorized from "./Pages/Unauthorized";
+import Notfound from "./Pages/Notfound";
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 import AuthWrapper from "./Utility/AuthWrapper";
