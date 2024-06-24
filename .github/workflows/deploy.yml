@@ -5,6 +5,10 @@ on:
     branches:
       - deploy-experiment
 
+permissions:
+  contents: write
+
+
 jobs:
   deploy-backend:
     name: Deploy Backend
