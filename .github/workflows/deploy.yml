@@ -3,7 +3,7 @@ name: Deploy Applications
 on:
   push:
     branches:
-      - deploy-experiment
+      - main
 
 permissions:
   contents: write
