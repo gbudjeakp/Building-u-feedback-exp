@@ -3,7 +3,7 @@ name: Deploy Applications
 on:
   push:
     branches:
-      - main
+      - chore-deploy-fix-2
 
 permissions:
   contents: write
@@ -62,4 +62,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd views
+          git config --global user.name 'buildingu'
+          git config --global user.email 'coding@building-U.com'
           npm run deploy
