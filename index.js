@@ -1,10 +1,7 @@
 const express = require('express');
 const cors = require('cors')
-const { join } = require("path");
 const cookieParser = require('cookie-parser'); 
-const fs = require('fs');
 const app = express();
-const https = require('https');
 const port = process.env.PORT || 5001
 
 //////Express MiddleWares//////////////

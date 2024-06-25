@@ -1,6 +1,6 @@
 {
   "name": "building-u-feedback-api",
-  "version": "0.1.0-alpha",
+  "version": "v0.1.0-alpha",
   "description": "Contains packages for the server",
   "main": "index.js",
   "scripts": {
