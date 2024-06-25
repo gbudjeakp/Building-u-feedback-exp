@@ -14,7 +14,6 @@ import AuthWrapper from "./Utility/AuthWrapper";
 function App() {
   return (
     <MantineProvider>
-      <Router basename="/Building-u-feedback">
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<Loginpage />} />
@@ -25,7 +24,6 @@ function App() {
           <Route path="/403" element={<Unauthorized />} />
           <Route path="/404" element={<Notfound />} />
         </Routes>
-      </Router>
     </MantineProvider>
   );
 }
