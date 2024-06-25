@@ -5,6 +5,7 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: '/Building-u-feedback/'
   ////Uncomment for local development only
   // server: {
   //   watch: {
