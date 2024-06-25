@@ -9,7 +9,7 @@ import store from "./store.js";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <React.StrictMode>
-      <BrowserRouter>
+      <BrowserRouter basename="/Building-u-feedback">
         <App />
       </BrowserRouter>
     </React.StrictMode>
