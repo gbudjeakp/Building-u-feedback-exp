@@ -43,8 +43,9 @@ jobs:
             cd /home/u959678651/domains/building-u.com/public_html/building-u-feedback-api
             wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
             nvm instal v20.10.0
+            nvm use v20.10.0
             nvm install node
-            npm install
+            npm install -g pm2
             pm2 stop all || true
             pm2 start index.js
 
