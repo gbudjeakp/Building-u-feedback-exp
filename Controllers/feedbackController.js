@@ -11,6 +11,7 @@ const feedbackValidator = require("../utility/inputValidator/feedbackValidator")
 const {
   studentNotification,
 } = require("../utility/notifications/flockNotification");
+const logger = require('../utility/logger/logger');
 
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
@@ -23,8 +24,8 @@ const submitFeedBack = async (req, res) => {
   const { errors, validationCheck } = feedbackrequestValidator(req.body);
 
   if (!validationCheck) {
-    res.status(400).json(errors);
-    return;
+    logger.error(`error validating inputs: ${JSON.stringify(errors)}`)
+    return  res.status(400).json(errors);
   }
 
   let fullName = await User.findOne({
@@ -59,11 +60,14 @@ const submitFeedBack = async (req, res) => {
       await exerciseInfo.create(add_User_To_ExerciseInfo_Table);
       await FeedbackRequest.create(feedBackRequestData);
       studentNotification(feedBackRequestData);
+
     }
 
     res.status(200).json({ data: feedBackRequestData });
+    logger.info(`User submitted request successfully`, {log: JSON.stringify(feedBackRequestData)});
   } catch (err) {
     res.status(400).json({ msg: err.message });
+    logger.error(`error submitting request`, {error: JSON.stringify(err)});
   }
 };
 
@@ -89,6 +93,7 @@ const getAllFeedBackRequestsForms = async (req, res) => {
       });
       res.status(200).json({ data: feedBackrequests });
     }
+    //Not sure why this was added. Might not be useful. Will revisit to make sure it's needed.
     if (!isMentor) {
       const feedBackrequests = await FeedbackRequest.findAll({
         where: {
@@ -102,6 +107,7 @@ const getAllFeedBackRequestsForms = async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
+    logger.error(`Server Error`, {error: JSON.stringify(err)})
   }
 };
 
@@ -115,8 +121,10 @@ const getUserFeedBackRequestForms = async (req, res) => {
       where: { userId: id },
     });
     res.status(200).json({ data: singleFeedBack });
+    logger.info(`Feedback Requests was Fetached Successfully`)
   } catch (err) {
     res.status(500).json({ msg: "Internal Server Error" });
+    logger.error(`error is ${JSON.stringify(err)}`)
   }
 };
 
@@ -132,6 +140,7 @@ const getMentorFeedback = async (req, res) => {
     });
 
     if (!feedbackRequest) {
+      logger.error(`Feedback request not found for mentor`, {error: JSON.stringify(feedbackRequest)});
       return res.status(404).json({ error: "Feedback request not found" });
     }
 
@@ -143,6 +152,7 @@ const getMentorFeedback = async (req, res) => {
     res.json({ data: allFeedbackOnFeedbackRequest });
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
+    logger.error(`Feedback was not fetched due to error`,  {error: JSON.stringify(error)})
   }
 };
 
@@ -168,8 +178,10 @@ const flockNotification = async (req, res) => {
 
     studentNotification(data);
     res.status(200).json({ message: "Notification was sent successfully" });
+    logger.info(`Notification was sent successfully`, {log: JSON.stringify(data)})
   } catch (err) {
     res.status(500).json({ msg: err });
+    logger.error(`error sending notification`, {error: JSON.stringify(err)})
   }
 };
 
@@ -189,6 +201,7 @@ const addFeedBack = async (req, res) => {
     const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
     if (!validationCheck) {
+      logger.error(`Bad Input:`, {log: JSON.stringify(errors)})
       return res.status(400).json(errors);
     }
 
@@ -201,6 +214,7 @@ const addFeedBack = async (req, res) => {
     });
 
     if (!isMentor) {
+      logger.error(`Unauthorized user`, {log: JSON.stringify(isMentor)})
       return res.status(401).json({ msg: "Unauthorized user" });
     }
 
@@ -214,8 +228,8 @@ const addFeedBack = async (req, res) => {
     });
 
     if (!feedbackRequest) {
-      res.status(404).json({ msg: "Feedback request not found" });
-      return;
+      logger.error(`Feeback request not found`, {log: JSON.stringify(feedbackRequest)})
+      return res.status(404).json({ msg: "not found" });;
     }
 
     // Create the feedback and associate it with the feedback request and mentor
@@ -227,11 +241,14 @@ const addFeedBack = async (req, res) => {
     };
 
     const createdFeedback = await Feedbacks.create(feedBackData);
+
+    logger.info(`Feedback added successfully`, {log: JSON.stringify(createdFeedback)})
     res.status(200).json({
       msg: "Feedback added successfully",
       data: createdFeedback,
     });
   } catch (err) {
+    logger.error(`An error occurred adding feedback`, {log: JSON.stringify(err)})
     res.status(500).json({ error: "An error occurred adding feedback" });
   }
 };
@@ -253,8 +270,8 @@ const assignFeedBackToMentor = async (req, res) => {
     });
 
     if (!isMentor) {
-      res.status(401).json({ msg: "Unauthorized user" });
-      return;
+      logger.error(`Unauthorized user`, {log: JSON.stringify(isMentor)})
+      return res.status(401).json({ msg: "Unauthorized user" });
     }
 
     // Find the specific feedback request record based on feedbackrequestId
@@ -263,16 +280,19 @@ const assignFeedBackToMentor = async (req, res) => {
     });
 
     if (!feedbackRecord) {
-      res.status(404).json({ msg: "Feedback record not found" });
-      return;
+      logger.error(`Feedback record not found`, {log: JSON.stringify(feedbackRecord)})
+      return res.status(404).json({ msg: "Feedback record not found" }); 
     }
 
     feedbackRecord.isAssigned = true;
     feedbackRecord.mentorId = isMentor.mentorId;
     feedbackRecord.whoisAssigned = isMentor.fName;
     await feedbackRecord.save();
+
+    logger.info(`Feedback assigned to mentor`, {log: JSON.stringify()})
     res.json({ msg: "Feedback assigned to mentor" });
   } catch (err) {
+    logger.error(`An error occurred while updating feedback`, {log: JSON.stringify(err)})
     res
       .status(500)
       .json({ error: "An error occurred while updating feedback" });
@@ -300,6 +320,7 @@ const getAssignedFeedBacks = async (req, res) => {
     });
 
     if (!isMentor) {
+      logger.error(`Unauthorized user`, {log: JSON.stringify(isMentor)});
       res.status(401).json({ msg: "Unauthorized user" });
       return;
     }
@@ -312,6 +333,8 @@ const getAssignedFeedBacks = async (req, res) => {
         },
       },
     });
+
+    logger.info(`List fetched successfully`, {log: JSON.stringify(assignedList)})
     res.status(200).json({ data: assignedList });
   } catch (err) {
     console.error(err);
@@ -330,18 +353,15 @@ const getSelectedFeedback = async (req, res) => {
     });
 
     if (!feedbackRequest) {
+      logger.error(`Feedback request not found`, {log: JSON.stringify(feedbackRequest)})
       res.status(404).json({ msg: "Feedback request not found" });
       return;
     }
-
+    
+    logger.info(`Fetched feedback successfully`, {log: JSON.stringify(feedbackRequest)})
     res.json({ data: feedbackRequest });
   } catch (error) {
-    console.error(error);
-    if (error.name === "JsonWebTokenError") {
-      res.status(401).json({ msg: "Invalid authentication token" });
-    } else {
-      res.status(500).json({ msg: "Internal Server Error" });
-    }
+    logger.error(`error:`, {log: JSON.stringify(error)});
   }
 };
 
@@ -360,6 +380,7 @@ const markFeedbackRequestComplete = async (req, res) => {
     });
 
     if (!isMentor) {
+      logger.error(`Unauthorized user`, {log: isMentor})
       res.status(401).json({ msg: "Unauthorized user" });
       return;
     }
@@ -369,6 +390,7 @@ const markFeedbackRequestComplete = async (req, res) => {
     });
 
     if (!markAsComplete) {
+      logger.error(`FeedbackRequest not found`, {log: markAsComplete})
       return res.status(404).json({ message: "FeedbackRequest not found" });
     }
 
@@ -381,6 +403,7 @@ const markFeedbackRequestComplete = async (req, res) => {
     });
 
     if (!exerciseInfo) {
+      logger.error(`ExerciseInfo not found`, {log: exerciseInfo})
       return res.status(404).json({ message: "ExerciseInfo not found" });
     }
 
@@ -389,9 +412,9 @@ const markFeedbackRequestComplete = async (req, res) => {
 
     // Update the status attribute of the FeedbackRequest record
     await markAsComplete.update({ status: true });
-
     res.status(200).json({ msg: "Exercise Marked As Complete" });
   } catch (err) {
+    logger.error(`Error:`, {log: JSON.stringify(err)})
     res.status(500).json({ msg: err });
   }
 };

@@ -8,11 +8,11 @@ const Users = db.User;
 const ExerciseInfo = db.ExerciseInfo;
 const FeedbackRequest = db.FeedbackRequest;
 const Feedbacks = db.Feedbacks;
-const admins = require('../admin.json');
+const admins = require("../admin.json");
 const { mentors } = admins;
 const loginValidator = require("../utility/inputValidator/loginValidator");
 const registerValidator = require("../utility/inputValidator/registerValidator");
-
+const logger = require("../utility/logger/logger");
 
 //Allows users to register to the app
 const registerUser = async (req, res) => {
@@ -20,10 +20,11 @@ const registerUser = async (req, res) => {
   const { errors, validationCheck } = registerValidator(req.body);
   const isUserExist = await Users.findOne({ where: { username: userName } });
   const isUserMentor = mentors.includes(userName);
-  const {v4: uuidv4} = require('uuid')
+  const { v4: uuidv4 } = require("uuid");
 
   // This checks that the inputs entered meet some criteria
   if (!validationCheck) {
+    logger.error(`input error:`, { log: JSON.stringify(errors) });
     res.status(400).json(errors);
     return;
   }
@@ -31,6 +32,9 @@ const registerUser = async (req, res) => {
   try {
     ////////Checking if the entered username already exists in our DB
     if (isUserExist) {
+      logger.error(`The email entered already exists`, {
+        log: JSON.stringify(isUserExist),
+      });
       return res
         .status(400)
         .json({ error: "The email entered already exists" });
@@ -45,7 +49,7 @@ const registerUser = async (req, res) => {
       username: userName,
       password: hashedPassword,
       mentor: isUserMentor,
-      mentorId: isUserMentor ? uuidv4() : null
+      mentorId: isUserMentor ? uuidv4() : null,
     };
 
     await Users.create(userData);
@@ -70,18 +74,23 @@ const registerUser = async (req, res) => {
           path: "/",
         })
       );
+      //Using this so we don't send the actual hash to the front-end
+
+      user.password = "******";
+
+      logger.info(`User Added Successfully`, { log: JSON.stringify(user) });
       return res
         .status(201)
         .json({ message: "User Added Successfully", user: user });
     }
   } catch (err) {
-    console.error(err);
+    logger.error(`Internal server error`, { log: JSON.stringify(err) });
     return res.status(500).json({ error: "Internal server error" });
   }
 };
 
 //This allows a user to login, into our application
-const loginUser = async (req, res) => { 
+const loginUser = async (req, res) => {
   try {
     const { userName, password } = req.body;
     const { errors, validationCheck } = loginValidator(req.body);
@@ -92,6 +101,7 @@ const loginUser = async (req, res) => {
     }
 
     if (!user) {
+      logger.error(`User Does Not Exist please create account`, {log: JSON.stringify(user)})
       return res
         .status(400)
         .json({ msg: "User Does Not Exist please create account" });
@@ -115,14 +125,17 @@ const loginUser = async (req, res) => {
           })
         );
         res.cookie;
+
+        //Using this so we don't send the actual hash to the front-end
+        // There definetly a better way to do this but can't rightnow maybe later?
+        user.password = "*****";
         res.status(200).json({ message: "User is Logged In", user: user });
       } else {
-        console.error(err);
         res.status(400).json({ password: "Password is incorrect" });
       }
     });
   } catch (err) {
-    console.error(err);
+    logger.error(`Error:`, {log: JSON.stringify(err)});
   }
 };
 
@@ -148,16 +161,16 @@ const authorized = (req, res) => {
 // This lets us update a users account information everywhere
 const updateAccount = async (req, res) => {
   const { authToken } = req.cookies;
-  const { fName, username, oldPassword, newPassword } = req.body; 
+  const { fName, username, oldPassword, newPassword } = req.body;
   const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
   const isUserExist = await Users.findOne({ where: { id: id } });
 
   try {
     if (!isUserExist) {
-      return res.json({msg: 'User does not exist'});
+      return res.json({ msg: "User does not exist" });
     }
 
-    const updates = {}; 
+    const updates = {};
     if (fName && fName !== isUserExist.fName) {
       updates.fName = fName;
     }
@@ -165,15 +178,19 @@ const updateAccount = async (req, res) => {
     if (username && username !== isUserExist.username) {
       updates.username = username;
     }
-  
 
     if (oldPassword && newPassword) {
-      const passwordIsCorrect = await bcrypt.compare(oldPassword, isUserExist.password);
+      const passwordIsCorrect = await bcrypt.compare(
+        oldPassword,
+        isUserExist.password
+      );
       if (!passwordIsCorrect) {
-        return res.status(400).json({ msg: 'Old password is incorrect' });
+        return res.status(400).json({ msg: "Old password is incorrect" });
       }
       if (oldPassword === newPassword) {
-        return res.status(400).json({ msg: 'Old password cannot be same as new password' });
+        return res
+          .status(400)
+          .json({ msg: "Old password cannot be same as new password" });
       }
       updates.password = await bcrypt.hash(newPassword, saltRounds);
     }
@@ -181,10 +198,20 @@ const updateAccount = async (req, res) => {
     await isUserExist.update(updates);
 
     // Since the full name is used in different tables and is called different names across tables, we are simply updating them below.
+    //Probably should have stuck to a naming scheme
     if (fName) {
-      await FeedbackRequest.update({ whoisAssigned: fName }, { where: { mentorId: isUserExist.mentorId } });
-      await FeedbackRequest.update({ studentName: fName }, { where: { userId: id } });
-      await ExerciseInfo.update({ internName: fName }, { where: { userId: id } });
+      await FeedbackRequest.update(
+        { whoisAssigned: fName },
+        { where: { mentorId: isUserExist.mentorId } }
+      );
+      await FeedbackRequest.update(
+        { studentName: fName },
+        { where: { userId: id } }
+      );
+      await ExerciseInfo.update(
+        { internName: fName },
+        { where: { userId: id } }
+      );
       await Feedbacks.update({ mentorName: fName }, { where: { userId: id } });
     }
 
@@ -195,18 +222,16 @@ const updateAccount = async (req, res) => {
   }
 };
 
-
 const getAllExerciseInfo = async (req, res) => {
   try {
     const exerciseInfos = await db.ExerciseInfo.findAll();
 
     res.status(200).json({ data: exerciseInfos });
   } catch (error) {
-    console.error(error);
+    logger.error(`Internal server error`, {log: JSON.stringify(error)});
     return res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 module.exports = {
   authorized,
