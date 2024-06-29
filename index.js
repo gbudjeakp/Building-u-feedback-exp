@@ -36,6 +36,10 @@ app.use('/api/users', usersRouter);
 app.use('/api/feedback', feedbackRouter);
 app.use('/api/password', passwordRouter);
 
+app.get('/',(req, res)=>{
+res.send(`<h1>HELLO WORLD</h1>`); 
+})
+
 
 app.listen(port, ()=>{
     console.log(`HTTP Server listening on port ${port}`);
