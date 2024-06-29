@@ -40,7 +40,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
           script: |
-            cd ${{secrets.FTP_API_PATH}}
+            cd /home/u959678651/domains/building-u.com/public_html/building-u-feedback-api
             npm install
             pm2 stop all || true
             pm2 start index.js
