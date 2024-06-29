@@ -59,7 +59,8 @@ const submitFeedBack = async (req, res) => {
       };
       await exerciseInfo.create(add_User_To_ExerciseInfo_Table);
       await FeedbackRequest.create(feedBackRequestData);
-      // await studentNotification(feedBackRequestData);
+      studentNotification(feedBackRequestData);
+
     }
 
     res.status(200).json({ data: feedBackRequestData });
