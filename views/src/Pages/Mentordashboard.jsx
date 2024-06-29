@@ -2,9 +2,9 @@ import React from 'react';
 import Sidebar from '../components/Sidebar';
 import { Routes, Route, useLocation } from 'react-router-dom'; 
 import { IconListDetails, IconCheckupList, IconUser } from '@tabler/icons-react';
-import FeedbackRequestQueue from '../pages/FeedbackQueue';
-import AssignedFeedback from '../pages/AssignedFeedback';
-import Account from '../pages/Account';
+import FeedbackRequestQueue from '../Pages/FeedbackQueue';
+import AssignedFeedback from '../Pages/AssignedFeedback';
+import Account from '../Pages/Account';
 import TopBar from '../components/TopBar';
 
 function Mentordashboard(props) {

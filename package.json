@@ -1,12 +1,13 @@
 {
-  "name": "my-program",
-  "version": "1.0.0",
-  "description": "",
+  "name": "building-u-feedback-api",
+  "version": "v0.1.0-alpha",
+  "description": "Contains packages for the server",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js",
-    "debug": "nodemon --inspect index.js"
+    "start": "node index.js",
+    "debug": "nodemon --inspect index.js",
+    "deploy": "node deploy-server.js"
   },
   "author": "",
   "license": "ISC",
@@ -20,15 +21,16 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
+    "ftp-deploy": "^2.4.7",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.1",
     "node": "^20.7.0",
     "nodemailer": "^6.9.7",
-    "nodemon": "^3.0.2",
     "sequelize": "^6.33.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "sequelize-cli": "^6.6.2"
+    "sequelize-cli": "^6.6.2",
+    "nodemon": "^3.0.2"
   }
 }
