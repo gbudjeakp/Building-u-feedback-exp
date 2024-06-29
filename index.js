@@ -10,6 +10,12 @@ const corsOptions = {
   credentials: true,
 };
 
+//Uncomment the cors options below for local development
+// const corsOptions = {
+//   origin: "http://localhost:5173",
+//   credentials: true,
+// };
+
 app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
