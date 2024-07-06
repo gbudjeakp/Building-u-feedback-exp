@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { baseUrl } from "../API/index";
 
 const AuthWrapper = ({ children: ChildComponent }) => {
   const [user, setUser] = useState(false);
@@ -12,7 +13,7 @@ const AuthWrapper = ({ children: ChildComponent }) => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5001/api/users/authorized",
+          `${baseUrl}/api/users/authorized`,
           {
             withCredentials: true,
           }

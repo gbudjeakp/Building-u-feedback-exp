@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import {baseUrl} from "../../API/index"
 
 const initialState = {
   feedbackRequests: [],
@@ -40,44 +41,44 @@ const createAsyncThunkWithJwt = (type, url, method = "get") =>
 
 const createFeedbackRequest = createAsyncThunkWithJwt(
   "feedback/create",
-  "http://localhost:5001/api/feedback/submitfeedback",
-  "post"
+  `${baseUrl}/api/feedback/submitfeedback",
+  "post`
 );
 
 const addFeedback = createAsyncThunkWithJwt(
   "feedback/add",
-  "http://localhost:5001/api/feedback/addFeedBack/",
+  `${baseUrl}/api/feedback/addFeedBack/`,
   "post"
 );
 
 const assignFeedbackRequest = createAsyncThunkWithJwt(
   "feedback/assign",
-  "http://localhost:5001/api/feedback/assignFeedBackToMentor/",
+  `${baseUrl}/api/feedback/assignFeedBackToMentor/`,
   "post"
 );
 
 const getAssignedFeedbackRequests = createAsyncThunkWithJwt(
   "feedback/getAssign",
-  "http://localhost:5001/api/feedback/getAssignedFeedBacks"
+  `${baseUrl}/api/feedback/getAssignedFeedBacks`
 );
 const fetchFeedbackRequests = createAsyncThunkWithJwt(
   "feedback/fetchAll",
-  "http://localhost:5001/api/feedback/getfeedbackrequestForms"
+  `${baseUrl}/api/feedback/getfeedbackrequestForms`
 );
 
 const fetchInternFeedbackRequests = createAsyncThunkWithJwt(
   "feedback/fetchAll",
-  "http://localhost:5001/api/feedback/getUserFeedBackRequestForms"
+  `${baseUrl}/api/feedback/getUserFeedBackRequestForms`
 );
 
 const getSelectedFeedbackRequest = createAsyncThunk(
   "feedback/getSelectedRequest",
-  "http://localhost:5001/api/feedback/getfeedbackid/"
+  `${baseUrl}/api/feedback/getfeedbackid/`
 );
 
 const markComplete = createAsyncThunkWithJwt(
   "feedback/markComplete",
-  "http://localhost:5001/api/feedback/markFeedBackRequestComplete/",
+  `${baseUrl}/api/feedback/markFeedBackRequestComplete/`,
   "get"
 );
 

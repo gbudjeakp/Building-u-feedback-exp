@@ -5,26 +5,20 @@ const app = express();
 const port = process.env.PORT || 5001
 
 //////Express MiddleWares//////////////
+
+const prodOrigin = "https://buildingu.github.io/Building-u-feedback"
+
+//Use for local development
+// const devOrigin = "http://localhost:5173"
+
 const corsOptions = {
-  origin: "https://buildingu.github.io/Building-u-feedback/",
+  origin: prodOrigin,
   credentials: true,
 };
-
-//Uncomment the cors options below for local development
-// const corsOptions = {
-//   origin: "http://localhost:5173",
-//   credentials: true,
-// };
 
 app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
-app.use(function(req, res, next) {  
-    res.header('Access-Control-Allow-Origin', req.headers.origin);
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-
 app.use(cookieParser());
 
 
@@ -37,7 +31,7 @@ app.use('/api/feedback', feedbackRouter);
 app.use('/api/password', passwordRouter);
 
 app.get('/',(req, res)=>{
-res.send(`<h1>HELLO WORLD</h1>`); 
+  res.redirect('https://buildingu.github.io/Building-u-feedback/'); 
 })
 
 

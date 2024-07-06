@@ -1,6 +1,7 @@
 // authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import {baseUrl} from "../../API/index"
 
 
 const initialState = {
@@ -15,7 +16,7 @@ export const logoutUser = createAsyncThunk('auth/logout', async (_, thunkAPI) =>
 
   try {
     await axios.get(
-      'http://localhost:5001/api/users/logout',
+      `${baseUrl}/api/users/logout'`,
       {
         withCredentials: true
       }
