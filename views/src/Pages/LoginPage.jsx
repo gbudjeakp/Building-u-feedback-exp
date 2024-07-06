@@ -14,6 +14,7 @@ import {
   Center,
   Group,
 } from "@mantine/core";
+import { baseUrl } from "../API/index";
 
 const homepageStyles = {
   display: "flex",
@@ -56,7 +57,7 @@ function LoginPage() {
 
       try {
         const response = await axios.post(
-          "http://localhost:5001/api/users/login",
+          `${baseUrl}/api/users/login`,
           userData,
           {
             withCredentials: true, 

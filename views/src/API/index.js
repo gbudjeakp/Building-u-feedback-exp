@@ -1,3 +1,6 @@
-export const feedBackAPI = "http://localhost:5001/api/feedback";
 
-export const userAPI = "http://localhost:5001/api/users";
+export const baseUrl = "https://building-u-feedback-api.building-u.com"
+
+
+//Use the below for local testing
+// export const baseUrl = "http://localhost:5001"

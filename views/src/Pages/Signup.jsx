@@ -14,6 +14,7 @@ import {
   Center,
   Group,
 } from "@mantine/core";
+import { baseUrl } from "../API/index";
 
 const homepageStyles = {
   display: "flex",
@@ -60,7 +61,7 @@ function Signup() {
 
       try {
         const response = await axios.post(
-          "http://localhost:5001/api/users/register",
+          `${baseUrl}/api/users/register`,
           userData
         );
 
@@ -80,7 +81,7 @@ function Signup() {
         console.error("Error submitting the form data:", error);
       }
     } else {
-      // Handle the case when the form is not valid
+      // Handle the case when the form is not valid (TBD)
       return;
     }
   };

@@ -10,6 +10,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import {baseUrl} from "../API/index"
 
 const paperStyle = {
   padding: 40,
@@ -63,7 +64,7 @@ function Account({ user }) {
       };
 
     const response = await axios.patch(
-        "http://localhost:5001/api/users/updateaccount",
+        `${baseUrl}/api/users/updateaccount`,
         formData,
         {
           withCredentials: true, 

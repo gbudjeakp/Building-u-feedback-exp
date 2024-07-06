@@ -6,6 +6,7 @@ import axios from "axios";
 import TextEditor from "../components/TextEditor";
 import formatCreatedAt from "../Utility/DateFormatter";
 import { addFeedback } from "../features/Feedbacks/feedbackSlice";
+import { baseUrl } from "../API/index";
 
 const feedbackContainer = {
   zIndex: "20",
@@ -43,7 +44,7 @@ function SingleFeedbackPage(props) {
     try {
       // Make the API call using axios
       const response = await axios.get(
-        `http://localhost:5001/api/feedback/getMentorFeedback/${id}`,
+        `${baseUrl}/api/feedback/getMentorFeedback/${id}`,
         {
           withCredentials: true,
         }
@@ -74,7 +75,7 @@ function SingleFeedbackPage(props) {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/feedback/getfeedbackid/${id}`,
+          `${baseUrl}/api/feedback/getfeedbackid/${id}`,
           {
             withCredentials: true,
           }
