@@ -6,7 +6,7 @@ const port = process.env.PORT || 5001
 
 //////Express MiddleWares//////////////
 
-const prodOrigin = "https://buildingu.github.io/Building-u-feedback"
+const prodOrigin = "https://buildingu.github.io"
 
 //Use for local development
 // const devOrigin = "http://localhost:5173"
