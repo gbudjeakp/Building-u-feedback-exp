@@ -75,7 +75,6 @@ const registerUser = async (req, res) => {
         })
       );
       //Using this so we don't send the actual hash to the front-end
-
       user.password = "******";
 
       logger.info(`User Added Successfully`, { log: JSON.stringify(user) });
@@ -142,7 +141,7 @@ const loginUser = async (req, res) => {
 //This logs the user out the app by removing the
 //Users token
 const logout = (req, res) => {
-  res.clearCookie("token", {
+  res.clearCookie("authToken", {
     httpOnly: true,
     secure: true,
     sameSite: "None",

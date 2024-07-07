@@ -6,7 +6,7 @@ const auth = require("../middleware/auth")
 
 
 router.get("/authorized", auth, userController.authorized);
-router.get("/logout", userController.logout);
+router.post("/logout", userController.logout);
 router.post("/login",  rateLimiter, userController.loginUser);
 router.post("/register", rateLimiter, userController.registerUser);
 router.patch("/updateaccount", auth,  userController.updateAccount);

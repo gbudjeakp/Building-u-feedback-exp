@@ -15,8 +15,8 @@ const initialState = {
 export const logoutUser = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
 
   try {
-    await axios.get(
-      `${baseUrl}/api/users/logout'`,
+    await axios.post(
+      `${baseUrl}/api/users/logout`,
       {
         withCredentials: true
       }
