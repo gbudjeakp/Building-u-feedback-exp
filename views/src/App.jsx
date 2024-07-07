@@ -22,7 +22,9 @@ function App() {
           <Route path="/mentor/*" element={<AuthWrapper>{({ user }) => <Mentordashboard user={user} />}</AuthWrapper>} />
           <Route path="/feedback/:id" element={<AuthWrapper>{({ user }) => <SingleFeedBack user={user} />}</AuthWrapper>} />
           <Route path="/403" element={<Unauthorized />} />
-          <Route path="/404" element={<Notfound />} />
+          {/* wasnt sure how to do this correctly but this route enables pages that dont match our routes to land
+          on the 404 page */}
+          <Route path="*" element={<Notfound />} />
         </Routes>
     </MantineProvider>
   );

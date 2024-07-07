@@ -9,7 +9,7 @@ import Account from '../Pages/Account/';
 import TopBar from '../components/TopBar';
 
 function Interndashboard(props) {
-  const mockdata = [
+  const navItems = [
     { icon: IconFilePlus, label: 'Create Feedback request', to: 'requestform' },
     { icon: IconClipboardText, label: 'Feedback Requests', to: 'myrequests'  },
     { icon: IconUser, label: 'Account', to: 'account' },
@@ -20,7 +20,7 @@ function Interndashboard(props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column-reverse' }}>
       <TopBar user={props.user} />
-      <Sidebar navItems={mockdata} /> 
+      <Sidebar navItems={navItems} /> 
       <Routes location={location}>
         <Route path="/requestform" element={<FeedbackRequestForm active={0} user={props.user}/>} />
         <Route path="/myrequests" element={<CreatedRequests active={1} user={props.user}/>} />

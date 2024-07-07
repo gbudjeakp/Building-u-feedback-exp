@@ -1,8 +1,8 @@
 import React from "react";
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux"; // Import useDispatch
-import { setUser } from "../features/Auth/authSlice"; // Import your auth slice actions
+import { useDispatch } from "react-redux";
+import { setUser } from "../features/Auth/authSlice";
 import axios from "axios";
 import {
   TextInput,
@@ -49,10 +49,9 @@ function Signup() {
   });
 
   const handleFormSubmit = async () => {
-    // Trigger form validation
     form.validate();
 
-    if (form.isValid) {
+    if (form.isValid()) {
       const userData = {
         fName: form.values.fName,
         userName: form.values.userName,
@@ -62,7 +61,8 @@ function Signup() {
       try {
         const response = await axios.post(
           `${baseUrl}/api/users/register`,
-          userData
+          userData,
+          { withCredentials: true }
         );
 
         if (response.status === 201) {
@@ -80,9 +80,6 @@ function Signup() {
       } catch (error) {
         console.error("Error submitting the form data:", error);
       }
-    } else {
-      // Handle the case when the form is not valid (TBD)
-      return;
     }
   };
 
