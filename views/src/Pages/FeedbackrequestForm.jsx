@@ -45,13 +45,13 @@ const topics = [
   "CSS",
   "Media Queries/Responsive Design",
   "Bootstrap",
+  "JavaScript",
   "JavaScript and the DOM",
   "jQuery",
   "React",
   "Structured/Unstructured Data (MySQL)",
   "MVC Architecture (Express JS)",
   "API Integration",
-  "React/jQuery",
 ];
 
 function FeedbackRequestForm() {
