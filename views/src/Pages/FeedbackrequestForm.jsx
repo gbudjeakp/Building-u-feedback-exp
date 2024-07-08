@@ -60,10 +60,8 @@ function FeedbackRequestForm() {
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm({
-    initialValues: { name: "", topicOfLearningSession: null, codeLink: "" },
+    initialValues: { topicOfLearningSession: null, codeLink: "" },
     validate: {
-      name: (value) =>
-        value.length < 3 ? "Name must have at least 3 letters" : null,
       topicOfLearningSession: (value) =>
         topics.some((item) => value?.includes(item))
           ? null
@@ -74,10 +72,11 @@ function FeedbackRequestForm() {
   const handleSubmitRequest = () => {
     dispatch(createFeedbackRequest(form.values));
     dispatch(fetchFeedbackRequests());
+    
     if (loading === "succeeded"){
       open()
     }
-    form.setValues({ name: "", topicOfLearningSession: null, codeLink: "" });
+    form.setValues({ topicOfLearningSession: null, codeLink: "" });
   };
   
   return (
@@ -100,14 +99,6 @@ function FeedbackRequestForm() {
               Request Feedback
             </Text>
             <div style={formStyle}>
-              <TextInput
-                variant="filled"
-                style={inputStyle}
-                id="internName"
-                label="Intern Name"
-                placeholder="Enter intern's name"
-                {...form.getInputProps("name")}
-              />
               <Select
                 label="Topic of Learning Session"
                 placeholder="Select the topic of the learning session"

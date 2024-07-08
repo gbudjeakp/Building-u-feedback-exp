@@ -41,8 +41,8 @@ const createAsyncThunkWithJwt = (type, url, method = "get") =>
 
 const createFeedbackRequest = createAsyncThunkWithJwt(
   "feedback/create",
-  `${baseUrl}/api/feedback/submitfeedback",
-  "post`
+  `${baseUrl}/api/feedback/submitfeedback`,
+  "post"
 );
 
 const addFeedback = createAsyncThunkWithJwt(
