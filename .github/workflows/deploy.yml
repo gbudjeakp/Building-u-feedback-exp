@@ -47,7 +47,8 @@ jobs:
             nvm install node
             npm install -g pm2
             pm2 stop all || true
-            pm2 start index.js
+            pm2 startup index.js --name building-u-feedback-api --watch --max-restarts=50 --restart-delay=5000 --log-date-format="YYYY-MM-DD HH:mm Z"
+            pm2 save
 
   deploy-frontend:
     name: Deploy Frontend
