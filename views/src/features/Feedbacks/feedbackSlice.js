@@ -135,6 +135,20 @@ const feedbackSlice = createSlice({
           : "Error creating feedback request";
       })
       // mentor's "MY ASSIGNED FEEDBACKS"
+      //This is bad code. Will need to refactor 
+      .addCase(assignFeedbackRequest.fulfilled, (state, action) => {
+        const { msg, data } = action.payload;
+        if (msg === "Feedback assigned to mentor") {
+          const { id, whoisAssigned } = data;
+          const feedbackIndex = state.feedbackRequests.findIndex(
+            (feedback) => feedback.id === id
+          );
+          if (feedbackIndex !== -1) {
+            state.feedbackRequests[feedbackIndex].whoisAssigned = whoisAssigned;
+          }
+        }
+      })
+      
       .addCase(getAssignedFeedbackRequests.fulfilled, (state, action) => {
         const { data } = action.payload;
         if (data) {

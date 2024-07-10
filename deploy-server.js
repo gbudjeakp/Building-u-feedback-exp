@@ -10,7 +10,7 @@ const config = {
   localRoot: path.join(__dirname),
   remoteRoot: '/domains/building-u.com/public_html/building-u-feedback-api', 
   include: ['*', '**/*'], 
-  exclude: ['.git', '.github', 'views/**', 'node_modules/**', 'deploy-server.js', '.env'],
+  exclude: ['.git', '.github/**', 'views/**', 'node_modules/**', 'deploy-server.js', '.env'],
   deleteRemote: false,
   forcePasv: true,
   sftp: false

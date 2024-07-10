@@ -288,8 +288,8 @@ const assignFeedBackToMentor = async (req, res) => {
     feedbackRecord.whoisAssigned = isMentor.fName;
     await feedbackRecord.save();
 
-    logger.info(`Feedback assigned to mentor`, {log: JSON.stringify()})
-    res.json({ msg: "Feedback assigned to mentor" });
+    logger.info(`Feedback assigned to mentor`, {log: JSON.stringify(feedbackRecord)})
+    res.json({ msg: "Feedback assigned to mentor", data:  feedbackRecord });
   } catch (err) {
     logger.error(`An error occurred while updating feedback`, {log: JSON.stringify(err)})
     res
