@@ -44,11 +44,7 @@ jobs:
             wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
             nvm install v20.10.0
             nvm use v20.10.0
-            nvm install node
-            npm install -g pm2
-            pm2 stop all || true
-            pm2 start index.js --name building-u-feedback-api --watch --max-restarts=50 --restart-delay=5000 --log-date-format="YYYY-MM-DD HH:mm Z"
-            pm2 save
+            nohup node index.js > output.log 2>&1 &
 
   deploy-frontend:
     name: Deploy Frontend
