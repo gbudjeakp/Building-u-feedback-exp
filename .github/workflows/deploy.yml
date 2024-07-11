@@ -46,7 +46,7 @@ jobs:
             nvm use v20.10.0
             rm -rf node_modules
             npm install
-            node index.js > output.log 
+            node index.js 
 
   deploy-frontend:
     name: Deploy Frontend
