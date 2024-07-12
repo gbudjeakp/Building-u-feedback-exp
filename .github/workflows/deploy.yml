@@ -32,7 +32,28 @@ jobs:
           FTP_HOST: ${{ secrets.FTP_HOST }}
         run: node deploy-server.js
 
-      - name: SSH and Start API
+      - name: SSH and Stop API
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          script: |
+            cd /home/u959678651/domains/building-u.com/public_html/building-u-feedback-api
+            forever stopall || true
+
+      - name: Install Forever
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          script: |
+            npm install -g forever
+
+      - name: Start API with Forever
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.FTP_HOST }}
@@ -44,9 +65,8 @@ jobs:
             wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
             nvm install v20.10.0
             nvm use v20.10.0
-            rm -rf node_modules
             npm install
-            node index.js 
+            forever start index.js
 
   deploy-frontend:
     name: Deploy Frontend

@@ -4,18 +4,8 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const port = process.env.PORT || 5001;
 
-// Global error handling
-process.on('uncaughtException', (err) => {
-  console.error('There was an uncaught error', err);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  process.exit(1); 
-});
-
-
+// Set trust proxy
+app.set('trust proxy', true);
 
 //////Express MiddleWares//////////////
 const prodOrigin = "https://buildingu.github.io";
