@@ -41,17 +41,9 @@ jobs:
           port: ${{ secrets.FTP_PORT }}
           script: |
             cd /home/u959678651/domains/building-u.com/public_html/building-u-feedback-api
+            npm install -g forever
             forever stopall || true
 
-      - name: Install Forever
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          script: |
-            npm install -g forever
 
       - name: Start API with Forever
         uses: appleboy/ssh-action@v0.1.8
