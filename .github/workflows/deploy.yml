@@ -54,9 +54,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'  
+          node-version: '20'
 
-      - name: Install dependencies
+      - name: Check if views directory exists
+        run: |
+          if [ -d "views" ]; then
+            echo "Views directory exists."
+          else
+            echo "Views directory does not exist."
+            mkdir views
+          fi
+
+      - name: Install frontend dependencies
         run: cd views && npm install
 
       - name: Build frontend
