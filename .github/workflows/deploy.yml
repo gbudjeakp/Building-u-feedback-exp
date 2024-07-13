@@ -17,49 +17,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Deploy to FTP
+      - name: Deploy to VPS
         env:
-          FTP_USER: ${{ secrets.FTP_USER }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_HOST: ${{ secrets.FTP_HOST }}
-        run: node deploy-server.js
-
-      - name: SSH and Stop API
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          script: |
-            cd /home/u959678651/domains/building-u.com/public_html/building-u-feedback-api
-            npm install -g forever
-            forever stopall || true
-
-
-      - name: Start API with Forever
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          script: |
-            cd /home/u959678651/domains/building-u.com/public_html/building-u-feedback-api
-            wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-            nvm install v20.10.0
-            nvm use v20.10.0
-            npm install -g forever
-            forever stopall || true
-            forever start index.js
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key
+          chmod 600 private_key
+          ssh -i private_key -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd /root/home/Building-u-feedback
+            git pull origin main
+            npm install
+            pm2 stop all || true
+            pm2 start index.js --name building-u-feedback-api --watch
+            pm2 save
+            pm2 startup -u ${{ secrets.SSH_USER }} --hp /home/${{ secrets.SSH_USER }}
+          EOF
+          rm private_key
 
   deploy-frontend:
     name: Deploy Frontend
