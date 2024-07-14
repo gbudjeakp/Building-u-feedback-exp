@@ -9,40 +9,6 @@ permissions:
   contents: write
 
 jobs:
-  deploy-backend:
-    name: Deploy Backend
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: SSH and Stop API
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /root/home/Building-u-feedback
-            git pull origin main
-            npm install
-            pm2 stop all || true
-            pm2 install pm2-logrotate
-            pm2 set pm2-logrotate:max_size 1M
-            pm2 set pm2-logrotate:retain 7
-            pm2 start index.js --name building-u-feedback-api --watch
-            pm2 save
-            pm2 startup -u ${{ secrets.SSH_USER }} --hp /home/${{ secrets.SSH_USER }}
-
   deploy-frontend:
     name: Deploy Frontend
     runs-on: ubuntu-latest
@@ -55,15 +21,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '20'
-
-      - name: Check if views directory exists
-        run: |
-          if [ -d "views" ]; then
-            echo "Views directory exists."
-          else
-            echo "Views directory does not exist."
-            mkdir views
-          fi
 
       - name: Install frontend dependencies
         run: cd views && npm install
