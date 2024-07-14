@@ -1,5 +1,5 @@
 
-export const baseUrl = "https://building-u-feedback-api.building-u.com"
+export const baseUrl = process.env.REACT_APP_BASE_URL;
 
 
 //Use the below for local testing

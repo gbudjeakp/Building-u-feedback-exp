@@ -4,8 +4,6 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const port = process.env.PORT || 5001;
 
-// Set trust proxy
-app.set('trust proxy', true);
 
 //////Express MiddleWares//////////////
 const prodOrigin = "https://buildingu.github.io";
