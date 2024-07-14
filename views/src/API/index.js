@@ -1,5 +1,5 @@
 
-export const baseUrl = process.env.REACT_APP_BASE_URL;
+export const baseUrl = "https://building-u-feedback-api.onrender.com"
 
 
 //Use the below for local testing
