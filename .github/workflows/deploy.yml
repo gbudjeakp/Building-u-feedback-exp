@@ -31,13 +31,14 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd /root/home/Building-u-feedback
             git pull origin main
             npm install
-            npm install pm2 -g
             pm2 stop all || true
+            pm2 install pm2-logrotate
+            pm2 set pm2-logrotate:max_size 1M
+            pm2 set pm2-logrotate:retain 7
             pm2 start index.js --name building-u-feedback-api --watch
             pm2 save
             pm2 startup -u ${{ secrets.SSH_USER }} --hp /home/${{ secrets.SSH_USER }}
