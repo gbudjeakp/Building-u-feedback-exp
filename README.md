@@ -2,8 +2,7 @@
  A feeback application that allows the interns at building-u, receive feedbacks on their projects (Project is currently being worked on for the Non-Profit Organization called Building-U.
 
 
-# Alpha Release is coming
-Feel free to browse through the code though
+# App is now live
 
 # Preview of Available Pages
 ![Feedback-u](https://github.com/gbudjeakp/Building-u-feedback/assets/61554248/1608df27-c49e-4791-9942-6ea4f24b429b)

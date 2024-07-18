@@ -12,6 +12,7 @@ const FeedbackRequest = require('./Feedbackrequest')(sequelize, DataTypes);
 const Feedbacks = require('./Feedbacks')(sequelize, DataTypes);
 const Otptoken = require('./Otptoken')(sequelize, DataTypes);
 const ExerciseInfo = require('./ExerciseInfo')(sequelize, DataTypes); 
+const Mentors = require('./mentors')(sequelize, DataTypes);
 
 // Define associations between models
 User.hasMany(FeedbackRequest, { foreignKey: 'userId' });
@@ -35,7 +36,7 @@ User.hasMany(Feedbacks, { foreignKey: 'userId' });
 
 async function syncDatabase() {
   try {
-    await sequelize.sync({force: false });
+    await sequelize.sync({alter: true });
     console.log('Database synchronized.');
   } catch (error) {
     console.error('Error syncing database:', error);
@@ -53,4 +54,4 @@ async function syncDatabase() {
 })();
 
 // Export models
-module.exports = { sequelize, User, FeedbackRequest, Feedbacks, Otptoken, ExerciseInfo };
+module.exports = { sequelize, User, FeedbackRequest, Feedbacks, Otptoken, ExerciseInfo, Mentors };

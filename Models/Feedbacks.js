@@ -1,5 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
   const Feedbacks = sequelize.define("Feedbacks", {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true,
+    },
     mentorName: {
       type: DataTypes.STRING,
     },
@@ -12,5 +18,5 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  return Feedbacks
+  return Feedbacks;
 };
