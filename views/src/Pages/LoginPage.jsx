@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState }  from "react";
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux"; 
+import { useDisclosure } from "@mantine/hooks";
 import { setUser } from "../features/Auth/authSlice"; 
 import axios from "axios";
 import {
@@ -13,6 +14,7 @@ import {
   Anchor,
   Center,
   Group,
+  Modal,
 } from "@mantine/core";
 import { baseUrl } from "../API/index";
 
@@ -35,6 +37,13 @@ function LoginPage() {
   const navigateToLogin = () => {
     navigate("/signup");
   };
+  const [
+    openedLoginInfoModal,
+    { open: openLoginInfoModal, close: closeLoginInfoModal },
+  ] = useDisclosure(false);
+
+  const [errorMessage, setErrorMessage] = useState("");
+
 
   const form = useForm({
     initialValues: { userName: "", password: "" },
@@ -72,15 +81,10 @@ function LoginPage() {
           } else {
             navigate("/intern/myrequests");
           }
-        } else {
-          console.log("API request failed");
-          console.log(response);
-          alert("Something went wrong, try again");
-        }
+        } 
       } catch (error) {
-        console.error("Error submitting the form data:", error);
-        console.log(error.response); 
-        alert("Something went wrong, try again");
+        setErrorMessage(error.response.data.error);
+        openLoginInfoModal()
       }
     } else {
       return;
@@ -90,6 +94,13 @@ function LoginPage() {
   return (
     <Container style={homepageStyles}>
       <Center>
+      <Modal
+          opened={openedLoginInfoModal}
+          onClose={closeLoginInfoModal}
+          withCloseButton={false}
+        >
+          {errorMessage}
+        </Modal>
         <Paper shadow="xs" p="xl">
           <Text size="xxl" weight={700} align="center" mb="xl">
             Login to Account

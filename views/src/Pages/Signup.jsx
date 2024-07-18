@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/Auth/authSlice";
@@ -13,6 +14,7 @@ import {
   Anchor,
   Center,
   Group,
+  Modal,
 } from "@mantine/core";
 import { baseUrl } from "../API/index";
 
@@ -32,6 +34,11 @@ const buttonStyles = {
 function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [
+    openedSignupInfoModal,
+    { open: openSignupInfoModal, close: closeSignupInfoModal },
+  ] = useDisclosure(false);
 
   const navigateToLogin = () => {
     navigate("/login");
@@ -73,12 +80,10 @@ function Signup() {
           } else {
             navigate("/intern/myrequests");
           }
-        } else {
-          console.log("API request failed");
-          alert("Something went wrong, try again");
         }
       } catch (error) {
-        console.error("Error submitting the form data:", error);
+        setErrorMessage(error.response.data.error);
+        openSignupInfoModal();
       }
     }
   };
@@ -86,6 +91,13 @@ function Signup() {
   return (
     <Container style={homepageStyles}>
       <Center>
+        <Modal
+          opened={openedSignupInfoModal}
+          onClose={closeSignupInfoModal}
+          withCloseButton={false}
+        >
+          {errorMessage}
+        </Modal>
         <Paper shadow="xs" p="xl">
           <Text size="xxl" weight={700} align="center" mb="xl">
             Create an Account
