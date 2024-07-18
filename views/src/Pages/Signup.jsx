@@ -49,7 +49,7 @@ function Signup() {
     validate: {
       fName: (value) =>
         value.length < 2 ? "Name must have at least 2 letters" : null,
-      userName: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      userName: (value) => (/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value) ? null : "Invalid email"),
       password: (value) =>
         value.length < 8 ? "Your password must be at least 8 characters" : null,
     },
@@ -82,7 +82,7 @@ function Signup() {
           }
         }
       } catch (error) {
-        setErrorMessage(error.response.data.error);
+        setErrorMessage(error.response.data.error  ?? "An error occurred");
         openSignupInfoModal();
       }
     }
