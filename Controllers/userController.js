@@ -103,7 +103,7 @@ const loginUser = async (req, res) => {
       logger.error(`User Does Not Exist please create account`, {log: JSON.stringify(user)})
       return res
         .status(400)
-        .json({ msg: "User Does Not Exist please create account" });
+        .json({ error: "User Does Not Exist please create account" });
     }
 
     const hashPassword = await user.password;
@@ -130,7 +130,7 @@ const loginUser = async (req, res) => {
         user.password = "*****";
         res.status(200).json({ message: "User is Logged In", user: user });
       } else {
-        res.status(400).json({ password: "Password is incorrect" });
+        res.status(400).json({ error: "Password is incorrect" });
       }
     });
   } catch (err) {
