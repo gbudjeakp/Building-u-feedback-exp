@@ -1,9 +1,9 @@
-import React, { useState }  from "react";
+import React, { useState } from "react";
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux"; 
+import { useDispatch } from "react-redux";
 import { useDisclosure } from "@mantine/hooks";
-import { setUser } from "../features/Auth/authSlice"; 
+import { setUser } from "../features/Auth/authSlice";
 import axios from "axios";
 import {
   TextInput,
@@ -22,21 +22,18 @@ const homepageStyles = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  minHeight: "100vh", 
+  minHeight: "100vh",
 };
 
 const buttonStyles = {
   borderRadius: "20px",
   background: "#F9EB02",
-  color: "black", 
+  color: "black",
 };
 
 function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const navigateToLogin = () => {
-    navigate("/signup");
-  };
   const [
     openedLoginInfoModal,
     { open: openLoginInfoModal, close: closeLoginInfoModal },
@@ -44,32 +41,34 @@ function LoginPage() {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-
   const form = useForm({
     initialValues: { userName: "", password: "" },
 
     validate: {
-      userName: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      userName: (value) =>
+        /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+          ? null
+          : "Invalid email",
       password: (value) =>
         value.length < 8 ? "Your password must be at least 8 characters" : null,
     },
   });
 
   const handleFormSubmit = async () => {
-    form.validate();
+    try {
+      form.validate();
 
-    if (form.isValid) {
-      const userData = {
-        userName: form.values.userName,
-        password: form.values.password,
-      };
+      if (form.isValid) {
+        const userData = {
+          userName: form.values.userName,
+          password: form.values.password,
+        };
 
-      try {
         const response = await axios.post(
           `${baseUrl}/api/users/login`,
           userData,
           {
-            withCredentials: true, 
+            withCredentials: true,
           }
         );
 
@@ -81,20 +80,18 @@ function LoginPage() {
           } else {
             navigate("/intern/myrequests");
           }
-        } 
-      } catch (error) {
-        setErrorMessage(error.response.data.error);
-        openLoginInfoModal()
+        }
       }
-    } else {
-      return;
+    } catch (error) {
+      setErrorMessage(error.response?.data?.error ?? "An error occurred");
+      openLoginInfoModal();
     }
   };
 
   return (
     <Container style={homepageStyles}>
       <Center>
-      <Modal
+        <Modal
           opened={openedLoginInfoModal}
           onClose={closeLoginInfoModal}
           withCloseButton={false}
@@ -145,7 +142,11 @@ function LoginPage() {
               <Text size="lg" c="dimmed">
                 Don't Have An Account?
               </Text>
-              <Anchor onClick={navigateToLogin} size="lg" component="button">
+              <Anchor
+                onClick={() => navigate("/signup")}
+                size="lg"
+                component="button"
+              >
                 Sign Up
               </Anchor>
             </Group>

@@ -1,9 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
   const Feedbackrequest = sequelize.define("Feedbackrequest", {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4, 
       allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
     },
     studentName: {
@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     topicOfLearningSession: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     codeLink: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     whoisAssigned: {
       type: DataTypes.TEXT,
