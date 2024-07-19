@@ -28,8 +28,6 @@ jobs:
         run: cd views && npm install
 
       - name: Build frontend
-        env:
-          VITE_API_ENDPOINT_PROD: ${{ secrets.VITE_API_ENDPOINT_PROD }}
         run: cd views && npm run build
 
       - name: Configure Git
