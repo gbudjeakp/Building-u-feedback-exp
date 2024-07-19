@@ -22,26 +22,6 @@
 2. UI frame work being used is mantine
 
 
-### Branch Naming Convention
-#### Create your branch with the below convention
-     Please see the allowed commit terms: fix, feature, hotfix
-   For Front-End: `commit -m "FE-feature-add-footer"`
-
-   For Back-End: `commit -m "BE-feature-add-rate-limiter"`  
-
-### Contribution Rule
- 1. Create a branch
- 2. Create PR and request  code review
- 3. Merge code once review has been approved
-
-### Backend Stack
-1. The backend is currently being built with Nodejs and express
-2. The database is a MySQL database.
-3. Software architectural pattern is that of an MVC (Model-View-Controller)
-4. architectural constraint being used is that of REST (representational state transfer) API.
-5. Redis Cache (Incoming addition) 
-
-
 ## How to Start App
 
 ### Front-End
