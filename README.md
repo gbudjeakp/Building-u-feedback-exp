@@ -16,6 +16,9 @@
 5. Integration with Floc App webhooks to send out notification upon creation of
    feedback requests and creation of feedbacks. (Incoming feature)
 
+# Contribution
+If you would like to contribute, please read the [Contribution guide](https://github.com/buildingu/Building-u-feedback/blob/main/CONTRIBUTION.md)
+
 # Tech Stack
 ### Front-End Stack
 1. The Front-End is being built in react.js
