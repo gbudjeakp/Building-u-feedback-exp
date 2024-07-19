@@ -15,6 +15,7 @@ import {
   Center,
   Group,
   Modal,
+  PasswordInput,
 } from "@mantine/core";
 import { baseUrl } from "../API/index";
 
@@ -34,6 +35,7 @@ const buttonStyles = {
 function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [errorMessage, setErrorMessage] = useState("");
   const [
     openedSignupInfoModal,
@@ -45,13 +47,49 @@ function Signup() {
   };
 
   const form = useForm({
-    initialValues: { fName: "", userName: "", password: "" },
+    initialValues: {
+      fName: "",
+      userName: "",
+      password: "",
+      confirmPassword: "",
+    },
     validate: {
       fName: (value) =>
         value.length < 2 ? "Name must have at least 2 letters" : null,
-      userName: (value) => (/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value) ? null : "Invalid email"),
-      password: (value) =>
-        value.length < 8 ? "Your password must be at least 8 characters" : null,
+      userName: (value) =>
+        /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+          ? null
+          : "Invalid email",
+      password: (value) => {
+        const minLength = 12;
+        const maxLength = 32;
+        const hasUpperCase = /[A-Z]/.test(value);
+        const hasLowerCase = /[a-z]/.test(value);
+        const hasNumber = /[0-9]/.test(value);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+
+        if (value.length < minLength) {
+          return `Password must be at least ${minLength} characters long`;
+        }
+        if (value.length > maxLength) {
+          return `Password must not exceed ${maxLength} characters`;
+        }
+        if (!hasUpperCase) {
+          return "Password must contain at least one uppercase letter";
+        }
+        if (!hasLowerCase) {
+          return "Password must contain at least one lowercase letter";
+        }
+        if (!hasNumber) {
+          return "Password must contain at least one number";
+        }
+        if (!hasSpecialChar) {
+          return "Password must contain at least one special character";
+        }
+        return null;
+      },
+      confirmPassword: (value, values) =>
+        value !== values.password ? "Passwords do not match" : null,
     },
   });
 
@@ -82,7 +120,7 @@ function Signup() {
           }
         }
       } catch (error) {
-        setErrorMessage(error.response.data.error  ?? "An error occurred");
+        setErrorMessage(error.response.data.error ?? "An error occurred");
         openSignupInfoModal();
       }
     }
@@ -122,7 +160,7 @@ function Signup() {
               />
             </div>
             <div style={{ marginTop: "1.5rem" }}>
-              <TextInput
+              <PasswordInput
                 withAsterisk
                 required
                 name="password"
@@ -130,6 +168,18 @@ function Signup() {
                 type="password"
                 placeholder="Enter Password"
                 {...form.getInputProps("password")}
+                {...form.getInputProps("password")}
+              />
+            </div>
+            <div style={{ marginTop: "1.5rem" }}>
+              <PasswordInput
+                withAsterisk
+                required
+                name="confirmPassword"
+                label="Confirm Password"
+                placeholder="Confirm Password"
+                {...form.getInputProps("confirmPassword")}
+                {...form.getInputProps("confirmPassword")}
               />
             </div>
             <div
