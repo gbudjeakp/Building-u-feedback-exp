@@ -12,6 +12,10 @@ export default defineConfig(({ mode }) => {
       'process.env.VITE_API_ENDPOINT_PROD': JSON.stringify(env.VITE_API_ENDPOINT_PROD),
       'process.env.NODE_ENV': JSON.stringify(mode),
     },
-b 
+    // server: {
+    //   watch: {
+    //     usePolling: true,
+    //   },
+    // },
   };
 });
