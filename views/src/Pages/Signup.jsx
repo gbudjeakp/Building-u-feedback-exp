@@ -15,6 +15,7 @@ import {
   Center,
   Group,
   Modal,
+  PasswordInput,
 } from "@mantine/core";
 import { baseUrl } from "../API/index";
 
@@ -34,6 +35,7 @@ const buttonStyles = {
 function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [errorMessage, setErrorMessage] = useState("");
   const [
     openedSignupInfoModal,
@@ -45,7 +47,12 @@ function Signup() {
   };
 
   const form = useForm({
-    initialValues: { fName: "", userName: "", password: "" },
+    initialValues: {
+      fName: "",
+      userName: "",
+      password: "",
+      confirmPassword: "",
+    },
     validate: {
       fName: (value) =>
         value.length < 2 ? "Name must have at least 2 letters" : null,
@@ -81,6 +88,8 @@ function Signup() {
         }
         return null;
       },
+      confirmPassword: (value, values) =>
+        value !== values.password ? "Passwords do not match" : null,
     },
   });
 
@@ -151,7 +160,7 @@ function Signup() {
               />
             </div>
             <div style={{ marginTop: "1.5rem" }}>
-              <TextInput
+              <PasswordInput
                 withAsterisk
                 required
                 name="password"
@@ -159,6 +168,18 @@ function Signup() {
                 type="password"
                 placeholder="Enter Password"
                 {...form.getInputProps("password")}
+                {...form.getInputProps("password")}
+              />
+            </div>
+            <div style={{ marginTop: "1.5rem" }}>
+              <PasswordInput
+                withAsterisk
+                required
+                name="confirmPassword"
+                label="Confirm Password"
+                placeholder="Confirm Password"
+                {...form.getInputProps("confirmPassword")}
+                {...form.getInputProps("confirmPassword")}
               />
             </div>
             <div
