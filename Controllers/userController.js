@@ -214,7 +214,7 @@ const updateAccount = async (req, res) => {
       await Feedbacks.update({ mentorName: fName }, { where: { userId: id } });
     }
 
-    return res.json({ msg: "Account details have successfully been updated" });
+    return res.status(200).json({ msg: "Account details have successfully been updated" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "Internal server error" });
