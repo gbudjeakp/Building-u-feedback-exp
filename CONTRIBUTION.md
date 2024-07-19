@@ -2,6 +2,8 @@
 
 We welcome contributions to Building-u-feedback! Please follow these guidelines to ensure a smooth contribution process.
 
+**NOTE: BEFORE OPENING UP A PR, MAKE SURE TO CLAIM THE ISSUE YOU WOULD LIKE TO WORK ON.**
+
 ## Getting Started
 
 1. **Fork the Repository**
