@@ -9,12 +9,9 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     base: '/Building-u-feedback/',
     define: {
-      'process.env': env,
+      'process.env.VITE_API_ENDPOINT_PROD': JSON.stringify(env.VITE_API_ENDPOINT_PROD),
+      'process.env.NODE_ENV': JSON.stringify(mode),
     },
-    server: {
-      watch: {
-        usePolling: true,
-      },
-    },
+b 
   };
 });
