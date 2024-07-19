@@ -1,6 +1,6 @@
 {
   "name": "building-u-feedback",
-  "version": "v2.0.0",
+  "version": "v3.0.0",
   "homepage": "https://buildingu.github.io/Building-u-feedback",
   "type": "module",
   "scripts": {
