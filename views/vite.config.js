@@ -1,15 +1,20 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  base: '/Building-u-feedback/',
+export default defineConfig(({ mode }) => {
+  // Load environment variables based on the mode (development or production)
+  const env = loadEnv(mode, process.cwd());
 
-  ////Uncomment for local development only
-  // server: {
-  //   watch: {
-  //     usePolling: true,
-  //   },
-  // },
-})
+  return {
+    plugins: [react()],
+    base: '/Building-u-feedback/',
+    define: {
+      'process.env': env,
+    },
+    server: {
+      watch: {
+        usePolling: true,
+      },
+    },
+  };
+});
