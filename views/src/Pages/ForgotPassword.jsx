@@ -48,7 +48,7 @@ function ForgotPassword() {
         color="#F9EB02"
         sizes={{ xs: "md", sm: "lg" }}
       >
-        <Stepper.Step label="First step" description="Create an account">
+        <Stepper.Step label="First step" description="Enter Email">
           <div>
             <p>Step 1 content: Request For OTP enter email below</p>
             <TextInput
@@ -61,14 +61,14 @@ function ForgotPassword() {
             />
           </div>
         </Stepper.Step>
-        <Stepper.Step label="Second step" description="Verify email">
+        <Stepper.Step label="Second step" description="Verify OTP">
           <div>
             <p>Step 2 content: Verify email</p>
             <p>Enter the OTP from email below.</p>
             <Otpinput />
           </div>
         </Stepper.Step>
-        <Stepper.Step label="Final step" description="Get full access">
+        <Stepper.Step label="Final step" description="Enter New Password">
           <div>
             <p>Step 3 content: Enter new password</p>
             <TextInput
