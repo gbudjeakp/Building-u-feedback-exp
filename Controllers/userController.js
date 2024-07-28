@@ -205,11 +205,11 @@ const updateAccount = async (req, res) => {
       );
       await FeedbackRequest.update(
         { studentName: fName },
-        { where: { userId: id } }
+        { where: { id: id } }
       );
       await ExerciseInfo.update(
         { internName: fName },
-        { where: { userId: id } }
+        { where: { id: id } }
       );
       await Feedbacks.update({ mentorName: fName }, { where: { userId: id } });
     }

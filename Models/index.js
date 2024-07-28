@@ -14,6 +14,8 @@ const Otptoken = require("./Otptoken")(sequelize, DataTypes);
 const ExerciseInfo = require("./ExerciseInfo")(sequelize, DataTypes);
 const Mentors = require("./Mentors")(sequelize, DataTypes);
 
+
+//This was poorly desgined. Should spent more time fixing this
 User.hasMany(FeedbackRequest, { foreignKey: "userId" });
 FeedbackRequest.belongsTo(User, { foreignKey: "userId" });
 
@@ -25,7 +27,7 @@ User.hasMany(FeedbackRequest, {
 
 FeedbackRequest.hasMany(Feedbacks, { foreignKey: "feedbackRequestId" });
 Feedbacks.belongsTo(FeedbackRequest, { foreignKey: "feedbackRequestId" });
-
+User.hasMany(Feedbacks, { foreignKey: 'userId' }); 
 ExerciseInfo.belongsTo(User, { foreignKey: "userId" });
 User.hasMany(ExerciseInfo, { foreignKey: "userId" });
 
