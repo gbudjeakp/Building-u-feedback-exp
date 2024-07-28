@@ -171,8 +171,7 @@ function FeedbackCard({
                     </Button>
                   </Link>
                 )}
-                {/* notification button location.pathname for testing*/}
-                {location.pathname === "/intern/myrequests" &&
+                {!user?.mentor &&
                   checkTimeLapse(item.createdAt) && (
                     <Button
                       onClick={() => handleNotifyMentor(item.id, index)}
