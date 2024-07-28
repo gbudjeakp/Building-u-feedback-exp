@@ -209,7 +209,7 @@ const updateAccount = async (req, res) => {
       );
       await ExerciseInfo.update(
         { internName: fName },
-        { where: { id: id } }
+        { where: { userId: id } }
       );
       await Feedbacks.update({ mentorName: fName }, { where: { userId: id } });
     }
