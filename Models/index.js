@@ -31,7 +31,7 @@ User.hasMany(ExerciseInfo, { foreignKey: "userId" });
 
 async function syncDatabase() {
   try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({});
     console.log("Database synchronized.");
   } catch (error) {
     console.error("Error syncing database:", error);
