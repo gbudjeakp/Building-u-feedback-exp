@@ -140,7 +140,7 @@ function LoginPage() {
           <div style={{ marginTop: "1.5rem" }}>
             <Group position="center" align="center" spacing="xs">
               <Text size="lg" c="dimmed">
-                Don't Have An Account?
+                Don't have an account?
               </Text>
               <Anchor
                 onClick={() => navigate("/signup")}
