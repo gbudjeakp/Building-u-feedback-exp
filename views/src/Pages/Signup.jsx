@@ -197,7 +197,7 @@ function Signup() {
           <div style={{ marginTop: "1.5rem" }}>
             <Group position="center" align="center" spacing="xs">
               <Text size="lg" c="dimmed">
-                Already Have An Account?
+                Already have an account?
               </Text>
               <Anchor onClick={navigateToLogin} size="lg" component="button">
                 Log In
