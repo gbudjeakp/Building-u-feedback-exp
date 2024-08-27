@@ -178,13 +178,10 @@ function SingleFeedbackPage(props) {
           </div>
         </div>
       )}
-      {props.user?.mentor && (
           <TextEditor
-            isMentor={props.user?.mentor}
+
             submittedContent={handleSubmittedContent}
           />
-
-      )}
     </Container>
   );
 }

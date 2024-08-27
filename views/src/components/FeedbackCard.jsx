@@ -24,7 +24,7 @@ function FeedbackCard({
   pageTitle,
   showViewFeedback,
   data,
-  isMentor,
+  notifyMentor,
   gotoDashboard,
   isLoading,
   user
@@ -171,7 +171,7 @@ function FeedbackCard({
                     </Button>
                   </Link>
                 )}
-                {!user?.mentor &&
+                {notifyMentor &&
                   checkTimeLapse(item.createdAt) && (
                     <Button
                       onClick={() => handleNotifyMentor(item.id, index)}

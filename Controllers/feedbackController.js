@@ -73,16 +73,8 @@ const submitFeedBack = async (req, res) => {
 /*This retrieves every single feedback (only requests that are not marked as complete requests made by the interns
  */
 const getAllFeedBackRequestsForms = async (req, res) => {
-  const { authToken } = req.cookies;
-  const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
   try {
-    const isMentor = await User.findOne({
-      where: {
-        id: id,
-        mentor: true,
-      },
-    });
-    if (isMentor) {
+
       const feedBackrequests = await FeedbackRequest.findAll({
         where: {
           status: {
@@ -91,19 +83,7 @@ const getAllFeedBackRequestsForms = async (req, res) => {
         },
       });
       res.status(200).json({ data: feedBackrequests });
-    }
-    //Not sure why this was added. Might not be useful. Will revisit to make sure it's needed.
-    if (!isMentor) {
-      const feedBackrequests = await FeedbackRequest.findAll({
-        where: {
-          studentName: username,
-          status: {
-            [Op.not]: true,
-          },
-        },
-      });
-      res.status(200).json({ data: feedBackrequests });
-    }
+
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
     logger.error(`Server Error`, {error: JSON.stringify(err)})
@@ -184,13 +164,49 @@ const flockNotification = async (req, res) => {
   }
 };
 
-//////////////////////////////////////////
-/* Code below here are basically controller functions 
-for the Code leads or mentor endpoints 
-*/
-///////////////////////////////////////////////
 
-/*This controller allows the Code leads to add feedbacks to the feedback requests made  by the interns */
+/*This controller allows users to assign feedback requests to themselves
+for 
+ */
+const assignFeedBack = async (req, res) => {
+  try {
+    const { feedbackrequestId } = req.params;
+    const { authToken } = req.cookies;
+    const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
+
+
+    // Grab the user information based on the id for updates of the request form.
+    const userDetail = await User.findOne({
+      where: username,
+      where: {id: id}
+    })
+
+    // Find the specific feedback request record based on feedbackrequestId
+    const feedbackRecord = await FeedbackRequest.findOne({
+      where: { id: feedbackrequestId },
+    });
+
+    if (!feedbackRecord) {
+      logger.error(`Feedback record not found`, {log: JSON.stringify(feedbackRecord)})
+      return res.status(404).json({ msg: "Feedback record not found" }); 
+    }
+
+    feedbackRecord.isAssigned = true;
+    feedbackRecord.whoisAssigned = userDetail.fName;
+    await feedbackRecord.save();
+
+    logger.info(`Feedback assigned to mentor`, {log: JSON.stringify(feedbackRecord)})
+    res.json({ msg: "Feedback assigned to mentor", data:  feedbackRecord });
+  } catch (err) {
+    logger.error(`An error occurred while updating feedback`, {log: JSON.stringify(err)})
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating feedback" });
+  }
+};
+
+
+/*This controller allows users to add feedbacks to the feedback requests in the queue */
 const addFeedBack = async (req, res) => {
   try {
     const { feedback } = req.body;
@@ -204,18 +220,6 @@ const addFeedBack = async (req, res) => {
       return res.status(400).json(errors);
     }
 
-    // Check if the user is a mentor
-    const isMentor = await User.findOne({
-      where: {
-        id: id,
-        mentor: true,
-      },
-    });
-
-    if (!isMentor) {
-      logger.error(`Unauthorized user`, {log: JSON.stringify(isMentor)})
-      return res.status(401).json({ msg: "Unauthorized user" });
-    }
 
     // Find the specific feedback request record based on feedbackrequestId
     const feedbackRequest = await FeedbackRequest.findOne({
@@ -252,51 +256,12 @@ const addFeedBack = async (req, res) => {
   }
 };
 
-/*This controller allows the Code leads to assign feedback requests to themselves
- */
-const assignFeedBackToMentor = async (req, res) => {
-  try {
-    const { feedbackrequestId } = req.params;
-    const { authToken } = req.cookies;
-    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
-    // Check if the user is a mentor
-    const isMentor = await User.findOne({
-      where: {
-        id: id,
-        mentor: true,
-      },
-    });
-
-    if (!isMentor) {
-      logger.error(`Unauthorized user`, {log: JSON.stringify(isMentor)})
-      return res.status(401).json({ msg: "Unauthorized user" });
-    }
-
-    // Find the specific feedback request record based on feedbackrequestId
-    const feedbackRecord = await FeedbackRequest.findOne({
-      where: { id: feedbackrequestId },
-    });
-
-    if (!feedbackRecord) {
-      logger.error(`Feedback record not found`, {log: JSON.stringify(feedbackRecord)})
-      return res.status(404).json({ msg: "Feedback record not found" }); 
-    }
-
-    feedbackRecord.isAssigned = true;
-    feedbackRecord.mentorId = isMentor.mentorId;
-    feedbackRecord.whoisAssigned = isMentor.fName;
-    await feedbackRecord.save();
-
-    logger.info(`Feedback assigned to mentor`, {log: JSON.stringify(feedbackRecord)})
-    res.json({ msg: "Feedback assigned to mentor", data:  feedbackRecord });
-  } catch (err) {
-    logger.error(`An error occurred while updating feedback`, {log: JSON.stringify(err)})
-    res
-      .status(500)
-      .json({ error: "An error occurred while updating feedback" });
-  }
-};
+//////////////////////////////////////////
+/* Code below here are basically controller functions 
+for the Code leads or mentor endpoints 
+*/
+///////////////////////////////////////////////
 
 /*This controller retrieves all the assigned Feedback Requests
 of the code lead logged in.
@@ -422,7 +387,7 @@ module.exports = {
   submitFeedBack,
   getAllFeedBackRequestsForms,
   getUserFeedBackRequestForms,
-  assignFeedBackToMentor,
+  assignFeedBack,
   addFeedBack,
   getAssignedFeedBacks,
   getMentorFeedback,
