@@ -52,7 +52,7 @@ const addFeedback = createAsyncThunkWithJwt(
 
 const assignFeedbackRequest = createAsyncThunkWithJwt(
   "feedback/assign",
-  `${baseUrl}/api/feedback/assignFeedBackToMentor/`,
+  `${baseUrl}/api/feedback/assignFeedBack/`,
   "post"
 );
 

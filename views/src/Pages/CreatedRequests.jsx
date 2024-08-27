@@ -14,6 +14,7 @@ function CreatedRequests(props) {
   return (
     <div>
       <FeedbackCard
+        notifyMentor={true}
         showViewFeedback={true}
         data={internFeedbackRequests}
         pageTitle="MY FEEDBACK REQUESTS"

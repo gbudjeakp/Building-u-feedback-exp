@@ -8,7 +8,7 @@ const Users = db.User;
 const ExerciseInfo = db.ExerciseInfo;
 const FeedbackRequest = db.FeedbackRequest;
 const Feedbacks = db.Feedbacks;
-const Mentors = db.Mentors;
+const Mentors = require("../admin.json");
 const loginValidator = require("../utility/inputValidator/loginValidator");
 const registerValidator = require("../utility/inputValidator/registerValidator");
 const logger = require("../utility/logger/logger");
@@ -18,8 +18,9 @@ const registerUser = async (req, res) => {
   const { fName, userName, password } = req.body;
   const { errors, validationCheck } = registerValidator(req.body);
   const isUserExist = await Users.findOne({ where: { username: userName } });
-  const isMentorEmail = await Mentors.findOne({ where: { email: userName } });
-  const isUserMentor = !!isMentorEmail;  
+
+  //Check if the user should be a mentor based on the email
+  const isMentor = Mentors.Mentors.include(userName);
   const { v4: uuidv4 } = require("uuid");
 
   // This checks that the inputs entered meet some criteria
@@ -48,8 +49,8 @@ const registerUser = async (req, res) => {
       fName: fName,
       username: userName,
       password: hashedPassword,
-      mentor: isUserMentor,
-      mentorId: isUserMentor ? uuidv4() : null,
+      mentor: isMentor,
+      mentorId: isMentor ? uuidv4() : null,
     };
 
     await Users.create(userData);

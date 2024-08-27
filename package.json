@@ -1,6 +1,6 @@
 {
   "name": "building-u-feedback-api",
-  "version": "v3.0.0",
+  "version": "v4.0.0",
   "description": "This is for the server api that serves the app",
   "main": "index.js",
   "scripts": {

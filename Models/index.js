@@ -12,7 +12,6 @@ const FeedbackRequest = require("./Feedbackrequest")(sequelize, DataTypes);
 const Feedbacks = require("./Feedbacks")(sequelize, DataTypes);
 const Otptoken = require("./Otptoken")(sequelize, DataTypes);
 const ExerciseInfo = require("./ExerciseInfo")(sequelize, DataTypes);
-const Mentors = require("./Mentors")(sequelize, DataTypes);
 
 
 //This was poorly desgined. Should spent more time fixing this
@@ -58,5 +57,4 @@ module.exports = {
   Feedbacks,
   Otptoken,
   ExerciseInfo,
-  Mentors,
 };

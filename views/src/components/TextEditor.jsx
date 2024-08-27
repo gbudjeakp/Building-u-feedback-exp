@@ -5,7 +5,7 @@ import { StarterKit } from "@tiptap/starter-kit";
 import { Button, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
-function TextEditor({ isMentor, submittedContent }) {
+function TextEditor({ submittedContent }) {
   const [editorContent, setEditorContent] = useState("");
   const [opened, { open, close }] = useDisclosure(false);
   // const [submittedContent, setSubmittedContent] = useState([]);
@@ -30,7 +30,6 @@ function TextEditor({ isMentor, submittedContent }) {
 
   return (
     <>
-      {isMentor && (
         <div>
         <Modal opened={opened} onClose={close} withCloseButton={false}>
           Feedback Added !!!!
@@ -86,7 +85,6 @@ function TextEditor({ isMentor, submittedContent }) {
             Submit Feedback
           </Button>
         </div>
-      )}
     </>
   );
 }

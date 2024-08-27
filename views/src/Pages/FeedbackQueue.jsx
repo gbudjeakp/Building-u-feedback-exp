@@ -15,6 +15,7 @@ function FeedbackQueue(props) {
     <div>
       <FeedbackCard
         isAssign={true}
+        showAddFeedback={true}
         data={feedbackData}
         pageTitle="FEEDBACK QUEUE"
         user={props.user}

@@ -1,10 +1,7 @@
 // Sidebar.js
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Stack, rem, Tooltip } from "@mantine/core";
-import { Link, useLocation } from "react-router-dom";
-import { IconLogout } from "@tabler/icons-react";
-import { useDispatch } from "react-redux";
-import { clearUser, logoutUser } from "../features/Auth/authSlice";
+import { Link } from "react-router-dom";
 
 function NavbarLink({ to, icon, label, active, onClick }) {
   const linkStyle = {
@@ -24,7 +21,6 @@ function NavbarLink({ to, icon, label, active, onClick }) {
   }
 
   return (
-    // Feel free to change position / offset
     <Tooltip label={label} position="bottom-start" offset={5}>
       <Link to={to}>
         <div
@@ -42,28 +38,8 @@ function NavbarLink({ to, icon, label, active, onClick }) {
 }
 
 export function Sidebar({ navItems }) {
-  // this default active state of 0 selects sidebar NavLink at 0 index
   const [active, setActive] = useState(0);
-  const location = useLocation();
-  const dispatch = useDispatch(); // Get access to dispatch function
 
-  // temporary fix for wrong sidebar icon selected
-  useEffect(() => {
-    if (
-      location.pathname === "/intern/requestform" ||
-      location.pathname === "/mentor/feedbackqueue"
-    ) {
-      setActive(0);
-    } else if (
-      location.pathname === "/intern/myrequests" ||
-      location.pathname === "/mentor/assigned"
-    ) {
-      setActive(1);
-    } else {
-      setActive(2);
-    }
-    // console.log("locatoin changed")
-  }, [location.pathname]);
 
   const links = navItems.map((link, index) => (
     <NavbarLink
@@ -76,45 +52,27 @@ export function Sidebar({ navItems }) {
     />
   ));
 
-  const handleLogout = () => {
-    // Use logoutUser to perform logout logic, including making the request
-    dispatch(logoutUser());
-  };
-
   const sidebarStyle = {
     width: rem(80),
     height: "100vh",
     padding: "var(--mantine-spacing-md)",
     display: "flex",
     flexDirection: "column",
+    justifyContent: "space-between", 
     backgroundColor: "#F9EB02",
-    position: "fixed",
-    top: "0",
-    bottom: "0"
-  };
-
-  const navbarMainStyle = {
-    flex: 1,
-    marginTop: rem(50),
+    position: "fixed",  
+    top: 0,
+    bottom: 0, 
   };
 
   return (
     <nav style={sidebarStyle}>
-      <div style={navbarMainStyle}>
-        <Stack justify="center" gap={160}>
-          {links}
-        </Stack>
-      </div>
-
-      <Stack justify="center" gap={0}>
-        {/* Use handleLogout as onClick handler */}
-        <NavbarLink
-          to="/"
-          icon={IconLogout}
-          label="Logout"
-          onClick={handleLogout}
-        />
+      <Stack justify="flex-start" spacing="md" gap={90}>
+        {links.slice(0, -1)} {/* Render all links except logout since we want it at the bottom */}
       </Stack>
+      <div>
+        {links[links.length - 1]} {/* This renders the logout link at the very bottom */}
+      </div>
     </nav>
   );
 }
