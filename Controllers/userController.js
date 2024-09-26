@@ -20,7 +20,7 @@ const registerUser = async (req, res) => {
   const isUserExist = await Users.findOne({ where: { username: userName } });
 
   //Check if the user should be a mentor based on the email
-  const isMentor = Mentors.Mentors.include(userName);
+  const isMentor = Mentors.Mentors.includes(userName);
   const { v4: uuidv4 } = require("uuid");
 
   // This checks that the inputs entered meet some criteria
@@ -101,7 +101,9 @@ const loginUser = async (req, res) => {
     }
 
     if (!user) {
-      logger.error(`User Does Not Exist please create account`, {log: JSON.stringify(user)})
+      logger.error(`User Does Not Exist please create account`, {
+        log: JSON.stringify(user),
+      });
       return res
         .status(400)
         .json({ error: "User Does Not Exist please create account" });
@@ -135,7 +137,7 @@ const loginUser = async (req, res) => {
       }
     });
   } catch (err) {
-    logger.error(`Error:`, {log: JSON.stringify(err)});
+    logger.error(`Error:`, { log: JSON.stringify(err) });
   }
 };
 
@@ -215,7 +217,9 @@ const updateAccount = async (req, res) => {
       await Feedbacks.update({ mentorName: fName }, { where: { userId: id } });
     }
 
-    return res.status(200).json({ msg: "Account details have successfully been updated" });
+    return res
+      .status(200)
+      .json({ msg: "Account details have successfully been updated" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "Internal server error" });
@@ -228,7 +232,7 @@ const getAllExerciseInfo = async (req, res) => {
 
     res.status(200).json({ data: exerciseInfos });
   } catch (error) {
-    logger.error(`Internal server error`, {log: JSON.stringify(error)});
+    logger.error(`Internal server error`, { log: JSON.stringify(error) });
     return res.status(500).json({ error: "Internal server error" });
   }
 };
