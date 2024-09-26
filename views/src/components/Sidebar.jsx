@@ -40,7 +40,6 @@ function NavbarLink({ to, icon, label, active, onClick }) {
 export function Sidebar({ navItems }) {
   const [active, setActive] = useState(0);
 
-
   const links = navItems.map((link, index) => (
     <NavbarLink
       to={link.to}
@@ -58,20 +57,22 @@ export function Sidebar({ navItems }) {
     padding: "var(--mantine-spacing-md)",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between", 
+    justifyContent: "space-between",
     backgroundColor: "#F9EB02",
-    position: "fixed",  
+    position: "fixed",
     top: 0,
-    bottom: 0, 
+    bottom: 0,
   };
 
   return (
     <nav style={sidebarStyle}>
-      <Stack justify="flex-start" spacing="md" gap={90}>
-        {links.slice(0, -1)} {/* Render all links except logout since we want it at the bottom */}
+      <Stack justify="flex-start" spacing="sm" gap={75}>
+        {links.slice(0, -1)}{" "}
+        {/* Render all links except logout since we want it at the bottom */}
       </Stack>
       <div>
-        {links[links.length - 1]} {/* This renders the logout link at the very bottom */}
+        {links[links.length - 1]}{" "}
+        {/* This renders the logout link at the very bottom */}
       </div>
     </nav>
   );
