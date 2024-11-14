@@ -7,8 +7,8 @@ import {
   TableTr,
   TableTd,
 } from "@mantine/core";
-import { IconLoader } from "@tabler/icons-react";
 import axios from "axios";
+import Loader from "../components/Loader";
 
 // const getData = async () => {
 //   const response = await axios.get(
@@ -34,7 +34,9 @@ const Checklist = () => {
         );
         console.log(response.data.data);
         setData(response.data.data);
-        setisLoading(false);
+        setTimeout(() => {
+          setisLoading(false);
+        }, 100000);
       } catch {
         (error) => {
           setisLoading(false);
@@ -72,23 +74,6 @@ const Checklist = () => {
     justifyContent: "center",
     height: "100vh",
   };
-  const LoadingScreen = () => {
-    return (
-      <div>
-        <IconLoader
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            width: "120px",
-            height: "120px",
-            margin: "-60px 0 0 -60px",
-            animation: "spin 4s linear infinite",
-          }}
-        />
-      </div>
-    );
-  };
   const ChecklistTable = () => {
     <ScrollArea w="75vw" h="80vh">
       <Table></Table>
@@ -96,7 +81,7 @@ const Checklist = () => {
   };
   return (
     <Container style={stylingTable}>
-      {isLoading ? <LoadingScreen /> : <ChecklistTable />}
+      {isLoading ? <Loader /> : <ChecklistTable />}
     </Container>
   );
 };
