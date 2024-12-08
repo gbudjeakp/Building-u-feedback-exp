@@ -1,31 +1,40 @@
-import React, { useState } from "react";
-import { Stepper, Button, Group, TextInput } from "@mantine/core";
+import React, { useEffect, useState, useRef } from "react";
+import { Stepper, Button, Group, TextInput, Container } from "@mantine/core";
 import Otpinput from "../components/Otpinput";
 import axios from "axios";
 
 function ForgotPassword() {
-  const [active, setActive] = useState(3);
+  const [active, setActive] = useState(0);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [otpValidated, setOtpValidated] = useState(false);
+  const errorMsg = useRef(null);
 
   const nextStep = async () => {
     try {
       let response;
       if (active === 0) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         // Make the API call to sendToken endpoint
-        response = await axios.post("/forgotPassword", { username: email });
-        if (response.status === 200) {
-          setEmailSubmitted(true);
+        if (emailRegex.test(email)) {
+          errorMsg.current.textContent = ``;
+          response = await axios.post("/forgotPassword", { username: email });
+          if (response.status === 200) {
+            setEmailSubmitted(true);
+          } else if (response.status === 404) {
+            errorMsg.current.textContent = `Email not registered!`;
+          }
+        } else {
+          errorMsg.current.textContent = `Error! Enter valid email format.`;
         }
       } else if (active === 1) {
-        // Make the API call to checkToken endpoint
+        // Make the API call to check Token endpoint
         response = await axios.get("/checkToken");
         if (response.status === 200) {
           setOtpValidated(true);
         }
       }
-      
+
       // Check if response status is 200
       if (response && response.status === 200) {
         setActive((current) => (current < 3 ? current + 1 : current));
@@ -34,10 +43,14 @@ function ForgotPassword() {
       }
     } catch (error) {
       console.error("Error:", error);
+      if (error == "AxiosError: Request failed with status code 404") {
+        errorMsg.current.textContent = `Error: Email not registered!`;
+      }
     }
   };
 
-  const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
+  const prevStep = () =>
+    setActive((current) => (current > 0 ? current - 1 : current));
 
   return (
     <div style={{ maxWidth: 600, margin: "auto", marginTop: 20 }}>
@@ -50,7 +63,7 @@ function ForgotPassword() {
       >
         <Stepper.Step label="First step" description="Enter Email">
           <div>
-            <p>Step 1 content: Request For OTP enter email below</p>
+            <p>Step 1: Request For OTP</p>
             <TextInput
               type="email"
               placeholder="Enter your email"
@@ -83,16 +96,18 @@ function ForgotPassword() {
           <p>Completed, click back button to get to previous step</p>
         </Stepper.Completed>
       </Stepper>
-
+      <Container style={{ color: "red" }} ref={errorMsg}></Container>
       <Group style={{ marginTop: 20 }} position="center">
-        <Button onClick={prevStep} color="#F9EB02">
-          Back
-        </Button>
-        {(active === 0 && emailSubmitted) || (active === 1 && otpValidated) && (
-          <Button onClick={nextStep} color="#F9EB02">
+        {active != 0 ? (
+          <Button onClick={prevStep} color="#F9EB02" style={{ color: "black" }}>
+            Back
+          </Button>
+        ) : null}
+        {active === 0 || active === 1 ? (
+          <Button onClick={nextStep} color="#F9EB02" style={{ color: "black" }}>
             Next step
           </Button>
-        )}
+        ) : null}
       </Group>
     </div>
   );
