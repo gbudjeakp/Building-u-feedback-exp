@@ -55,7 +55,7 @@ function ForgotPassword() {
         // Make the API call to sendToken endpoint
         if (emailRegex.test(email)) {
           errorMsg.current.textContent = ``;
-          response = await axios.post(`${baseurl}/api/password/forgotPassword`, { username: email });
+          response = await axios.post(`${baseUrl}/api/password/forgotPassword`, { username: email });
           if (response.status === 200) {
             setEmailSubmitted(true);
           } else if (response.status === 404) {
