@@ -18,7 +18,6 @@ function ForgotPassword() {
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [otpValidated, setOtpValidated] = useState(false);
   const errorMsg = useRef(null);
-  const otpInput = useRef();
   const [otp, setOtp] = useState(0);
 
   const nextStep = async () => {
@@ -29,7 +28,7 @@ function ForgotPassword() {
         // Make the API call to sendToken endpoint
         if (emailRegex.test(email)) {
           errorMsg.current.textContent = ``;
-
+          console.log(email);
           response = await axios.post(
             `${baseUrl}/api/password/forgotPassword`,
             { username: email }
@@ -44,8 +43,7 @@ function ForgotPassword() {
         }
       } else if (active === 1) {
         // Make the API call to check Token endpoint
-        setOtp(otpInput.value);
-        console.log(otp);
+        console.log(otp, email);
         response = await axios.get(`${baseUrl}/api/password/checkToken`, {
           params: { username: email, resetToken: otp },
         });
@@ -99,7 +97,13 @@ function ForgotPassword() {
           <div>
             <p>Step 2 content: Verify email</p>
             <p>Enter the OTP from email below.</p>
-            <PinInput oneTimeCode inputMode="numeric" ref={otpInput} />
+            <PinInput
+              oneTimeCode
+              inputMode="numeric"
+              onChange={(value) => {
+                setOtp(value);
+              }}
+            />
           </div>
         </Stepper.Step>
         <Stepper.Step label="Final step" description="Enter New Password">
