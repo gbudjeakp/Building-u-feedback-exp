@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import Otpinput from "../components/Otpinput";
 import axios from "axios";
+
 import { baseUrl } from "../API/index";
 
 function ForgotPassword() {
@@ -28,6 +29,7 @@ function ForgotPassword() {
         // Make the API call to sendToken endpoint
         if (emailRegex.test(email)) {
           errorMsg.current.textContent = ``;
+
           response = await axios.post(
             `${baseUrl}/api/password/forgotPassword`,
             { username: email }
