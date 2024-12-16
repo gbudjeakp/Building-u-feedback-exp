@@ -11,6 +11,7 @@ import axios from "axios";
 
 import { baseUrl } from "../API/index";
 
+
 function ForgotPassword() {
   const [active, setActive] = useState(0);
   const [email, setEmail] = useState("");
@@ -53,11 +54,7 @@ function ForgotPassword() {
         // Make the API call to sendToken endpoint
         if (emailRegex.test(email)) {
           errorMsg.current.textContent = ``;
-          console.log(email);
-          response = await axios.post(
-            `${baseUrl}/api/password/forgotPassword`,
-            { username: email }
-          );
+          response = await axios.post(`${baseurl}/api/password/forgotPassword`, { username: email });
           if (response.status === 200) {
             setEmailSubmitted(true);
           } else if (response.status === 404) {
