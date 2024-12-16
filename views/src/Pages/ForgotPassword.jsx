@@ -7,7 +7,7 @@ import {
   Container,
   PinInput,
 } from "@mantine/core";
-import Otpinput from "../components/Otpinput";
+// import updatepasswordValidator from "../../../utility/inputValidator/updatepasswordValidator";
 import axios from "axios";
 
 import { baseUrl } from "../API/index";
@@ -19,9 +19,35 @@ function ForgotPassword() {
   const [otpValidated, setOtpValidated] = useState(false);
   const errorMsg = useRef(null);
   const [otp, setOtp] = useState(0);
+  const [newPwd, setNewPwd] = useState(null);
+  const [confirmPwd, setConfirmPwd] = useState(null);
+  const updatepasswordValidator = (input, confirmation) => {
+    errorMsg.current.textContent = ``;
+    let newPwd = input;
+    let confirmPwd = confirmation;
+    if (!newPwd || !confirmPwd) {
+      errorMsg.current.textContent =
+        "Please enter and confirm your new password";
+    }
+    if (typeof newPwd !== "string") {
+      errorMsg.current.textContent = "New password must be a string";
+    }
+    if (newPwd !== confirmPwd) {
+      errorMsg.current.textContent = "Passwords do not match";
+    }
+    if (newPwd.length < 8) {
+      errorMsg.current.textContent =
+        "Password must be at least 8 characters long";
+    }
 
+    if (newPwd.length > 30) {
+      errorMsg.current.textContent =
+        "Password cannot be more than 30 characters long";
+    }
+  };
   const nextStep = async () => {
     try {
+      errorMsg.current.textContent = ``;
       let response;
       if (active === 0) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -44,8 +70,9 @@ function ForgotPassword() {
       } else if (active === 1) {
         // Make the API call to check Token endpoint
         console.log(otp, email);
-        response = await axios.get(`${baseUrl}/api/password/checkToken`, {
-          params: { username: email, resetToken: otp },
+        response = await axios.post(`${baseUrl}/api/password/checkToken`, {
+          username: email,
+          resetToken: otp,
         });
         if (response.status === 200) {
           setOtpValidated(true);
@@ -68,9 +95,29 @@ function ForgotPassword() {
     }
   };
 
-  const prevStep = () =>
+  const prevStep = () => {
+    errorMsg.current.textContent = ``;
     setActive((current) => (current > 0 ? current - 1 : current));
-
+  };
+  const finishUp = async () => {
+    console.log(newPwd, confirmPwd);
+    errorMsg.current.textContent = ``;
+    updatepasswordValidator(newPwd, confirmPwd);
+    if (errorMsg.current.textContent === "") {
+      try {
+        response = await axios.patch(`${baseUrl}/api/password/updatePassword`, {
+          username: email,
+          resetToken: otp,
+          newPassword: newPwd,
+        });
+        if (response && response.status === 200) {
+          setActive((current) => (current < 3 ? current + 1 : current));
+        }
+      } catch (error) {
+        errorMsg.current.textContent = `Error: ${error}`;
+      }
+    }
+  };
   return (
     <div style={{ maxWidth: 600, margin: "auto", marginTop: 20 }}>
       <Stepper
@@ -108,17 +155,32 @@ function ForgotPassword() {
         </Stepper.Step>
         <Stepper.Step label="Final step" description="Enter New Password">
           <div>
-            <p>Step 3 content: Enter new password</p>
+            <p>Enter new password</p>
             <TextInput
+              onChange={(event) => {
+                setNewPwd(event.target.value);
+              }}
               type="password"
               placeholder="Enter your new password"
+              radius="md"
+              size="lg"
+            />
+            <p>Confirm new password</p>
+            <TextInput
+              onChange={(event) => {
+                setConfirmPwd(event.target.value);
+              }}
+              type="password"
+              placeholder="Confirm password"
               radius="md"
               size="lg"
             />
           </div>
         </Stepper.Step>
         <Stepper.Completed>
-          <p>Completed, click back button to get to previous step</p>
+          <p style={{ color: "green" }}>
+            Your Password has been updated successfully!
+          </p>
         </Stepper.Completed>
       </Stepper>
       <Container style={{ color: "red" }} ref={errorMsg}></Container>
@@ -131,6 +193,11 @@ function ForgotPassword() {
         {active === 0 || active === 1 ? (
           <Button onClick={nextStep} color="#F9EB02" style={{ color: "black" }}>
             Next step
+          </Button>
+        ) : null}
+        {active === 2 ? (
+          <Button onClick={finishUp} color="#F9EB02" style={{ color: "black" }}>
+            Submit
           </Button>
         ) : null}
       </Group>
