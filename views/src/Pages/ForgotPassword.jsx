@@ -1,7 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Stepper, Button, Group, TextInput, Container } from "@mantine/core";
+import {
+  Stepper,
+  Button,
+  Group,
+  TextInput,
+  Container,
+  PinInput,
+} from "@mantine/core";
 import Otpinput from "../components/Otpinput";
 import axios from "axios";
+import { baseUrl } from "../API/index";
 
 function ForgotPassword() {
   const [active, setActive] = useState(0);
@@ -9,6 +17,8 @@ function ForgotPassword() {
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [otpValidated, setOtpValidated] = useState(false);
   const errorMsg = useRef(null);
+  const otpInput = useRef();
+  const [otp, setOtp] = useState(0);
 
   const nextStep = async () => {
     try {
@@ -18,7 +28,10 @@ function ForgotPassword() {
         // Make the API call to sendToken endpoint
         if (emailRegex.test(email)) {
           errorMsg.current.textContent = ``;
-          response = await axios.post("/forgotPassword", { username: email });
+          response = await axios.post(
+            `${baseUrl}/api/password/forgotPassword`,
+            { username: email }
+          );
           if (response.status === 200) {
             setEmailSubmitted(true);
           } else if (response.status === 404) {
@@ -29,9 +42,15 @@ function ForgotPassword() {
         }
       } else if (active === 1) {
         // Make the API call to check Token endpoint
-        response = await axios.get("/checkToken");
+        setOtp(otpInput.value);
+        console.log(otp);
+        response = await axios.get(`${baseUrl}/api/password/checkToken`, {
+          params: { username: email, resetToken: otp },
+        });
         if (response.status === 200) {
           setOtpValidated(true);
+        } else {
+          errorMsg.current.textContent = `Invalid OTP`;
         }
       }
 
@@ -78,7 +97,7 @@ function ForgotPassword() {
           <div>
             <p>Step 2 content: Verify email</p>
             <p>Enter the OTP from email below.</p>
-            <Otpinput />
+            <PinInput oneTimeCode inputMode="numeric" ref={otpInput} />
           </div>
         </Stepper.Step>
         <Stepper.Step label="Final step" description="Enter New Password">
