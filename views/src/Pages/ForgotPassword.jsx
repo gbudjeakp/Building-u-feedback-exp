@@ -7,7 +7,6 @@ import {
   Container,
   PinInput,
 } from "@mantine/core";
-// import updatepasswordValidator from "../../../utility/inputValidator/updatepasswordValidator";
 import axios from "axios";
 
 import { baseUrl } from "../API/index";
@@ -105,11 +104,14 @@ function ForgotPassword() {
     updatepasswordValidator(newPwd, confirmPwd);
     if (errorMsg.current.textContent === "") {
       try {
-        response = await axios.patch(`${baseUrl}/api/password/updatePassword`, {
-          username: email,
-          resetToken: otp,
-          newPassword: newPwd,
-        });
+        const response = await axios.patch(
+          `${baseUrl}/api/password/updatePassword`,
+          {
+            username: email,
+            resetToken: otp,
+            newPassword: newPwd,
+          }
+        );
         if (response && response.status === 200) {
           setActive((current) => (current < 3 ? current + 1 : current));
         }
@@ -185,7 +187,7 @@ function ForgotPassword() {
       </Stepper>
       <Container style={{ color: "red" }} ref={errorMsg}></Container>
       <Group style={{ marginTop: 20 }} position="center">
-        {active != 0 ? (
+        {active != 0 && active != 3 ? (
           <Button onClick={prevStep} color="#F9EB02" style={{ color: "black" }}>
             Back
           </Button>
