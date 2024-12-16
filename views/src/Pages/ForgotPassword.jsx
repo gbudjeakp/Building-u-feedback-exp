@@ -12,6 +12,7 @@ import axios from "axios";
 import { baseUrl } from "../API/index";
 
 
+
 function ForgotPassword() {
   const [active, setActive] = useState(0);
   const [email, setEmail] = useState("");
