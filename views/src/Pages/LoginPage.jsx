@@ -41,6 +41,10 @@ function LoginPage() {
 
   const [errorMessage, setErrorMessage] = useState("");
 
+  const navigateToForgotpassword  = ()=>{
+    navigate("/forgotpassword")
+  }
+
   const form = useForm({
     initialValues: { userName: "", password: "" },
 
@@ -150,6 +154,9 @@ function LoginPage() {
                 Sign Up
               </Anchor>
             </Group>
+            <Anchor onClick={navigateToForgotpassword} size="md">
+                Forgot password
+              </Anchor>
           </div>
         </Paper>
       </Center>

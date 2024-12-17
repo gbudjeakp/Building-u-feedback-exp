@@ -1,12 +1,12 @@
 require("dotenv").config();
 const db = require("../Models/index");
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
+const saltRounds = parseInt(process.env.SALT_ROUNDS);
 const Users = db.User;
 const Token = db.Otptoken;
 const { tokenValidator } = require("./helpers/tokenValidator");
 const { sendOTP } = require("../utility/email/email");
-const updatepasswordValidator = require("../utility/inputValidator/updatepasswordValidator")
+const updatepasswordValidator = require("../utility/inputValidator/updatepasswordValidator");
 
 const sendToken = async (req, res) => {
   const { username } = req.body;
@@ -85,28 +85,29 @@ const updatePassword = async (req, res) => {
   try {
     const { username, resetToken, newPassword } = req.body;
     const { errors, validationCheck } = updatepasswordValidator(req.body);
-    
     const userInDB = await Users.findOne({ where: { username: username } });
-    const userInTokenDB = await Token.findOne({ where: { username: username } });
+    const userInTokenDB = await Token.findOne({
+      where: { username: username },
+    });
 
     const isTokenAndUserValid = await tokenValidator(username, resetToken);
 
     const hashednewPassword = await bcrypt.hash(newPassword, saltRounds);
 
-
     if (!validationCheck) {
       res.status(400).json(errors);
       return;
     }
-  
 
     if (isTokenAndUserValid.success) {
-      await userInDB.update(
-        { password: hashednewPassword },
-        { where: { username: username } }
-      ).then( async()=>{
-        await userInTokenDB.destroy();
-      });
+      await userInDB
+        .update(
+          { password: hashednewPassword },
+          { where: { username: username } }
+        )
+        .then(async () => {
+          await userInTokenDB.destroy();
+        });
       res.status(200).json({ msg: "Password has been successfully Changed" });
     } else {
       res.status(400).json({
