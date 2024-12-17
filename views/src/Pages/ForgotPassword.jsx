@@ -11,96 +11,85 @@ import axios from "axios";
 
 import { baseUrl } from "../API/index";
 
-
-
 function ForgotPassword() {
   const [active, setActive] = useState(0);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [otpValidated, setOtpValidated] = useState(false);
-  const errorMsg = useRef(null);
-  const [otp, setOtp] = useState(0);
+  const [errors, setErrors] = useState([]);
+  const [otp, setOtp] = useState("");
   const [newPwd, setNewPwd] = useState(null);
   const [confirmPwd, setConfirmPwd] = useState(null);
+  const errorConcat = (error) => {
+    setErrors((prevItems) => [...prevItems, error]);
+  };
   const updatepasswordValidator = (input, confirmation) => {
-    errorMsg.current.textContent = ``;
+    setErrors([]);
     let newPwd = input;
     let confirmPwd = confirmation;
     if (!newPwd || !confirmPwd) {
-      errorMsg.current.textContent =
-        "Please enter and confirm your new password";
+      errorConcat("Please enter and confirm your new password");
     }
     if (typeof newPwd !== "string") {
-      errorMsg.current.textContent = "New password must be a string";
+      errorConcat("New password must be a string");
     }
     if (newPwd !== confirmPwd) {
-      errorMsg.current.textContent = "Passwords do not match";
+      errorConcat("Passwords do not match");
     }
     if (newPwd.length < 8) {
-      errorMsg.current.textContent =
-        "Password must be at least 8 characters long";
+      errorConcat("Password must be at least 8 characters long");
     }
 
     if (newPwd.length > 30) {
-      errorMsg.current.textContent =
-        "Password cannot be more than 30 characters long";
+      errorConcat("Password cannot be more than 30 characters long");
     }
   };
   const nextStep = async () => {
     try {
-      errorMsg.current.textContent = ``;
+      setErrors([]);
       let response;
       if (active === 0) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        // Make the API call to sendToken endpoint
-        if (emailRegex.test(email)) {
-          errorMsg.current.textContent = ``;
-          response = await axios.post(`${baseUrl}/api/password/forgotPassword`, { username: email });
-          if (response.status === 200) {
-            setEmailSubmitted(true);
-          } else if (response.status === 404) {
-            errorMsg.current.textContent = `Email not registered!`;
-          }
+        if (!emailRegex.test(email)) {
+          errorConcat(`Error! Enter valid email format.`);
         } else {
-          errorMsg.current.textContent = `Error! Enter valid email format.`;
+          setErrors([]);
+          response = await axios.post(
+            `${baseUrl}/api/password/forgotPassword`,
+            { username: email }
+          );
+          response.status === 200
+            ? setEmailSubmitted(true)
+            : errorConcat(`Email not registered`);
         }
       } else if (active === 1) {
         // Make the API call to check Token endpoint
-        console.log(otp, email);
         response = await axios.post(`${baseUrl}/api/password/checkToken`, {
           username: email,
           resetToken: otp,
         });
-        if (response.status === 200) {
-          setOtpValidated(true);
-        } else {
-          errorMsg.current.textContent = `Invalid OTP`;
-        }
+        response.status === 200
+          ? setOtpValidated(true)
+          : errorConcat(`Invalid OTP`);
       }
 
       // Check if response status is 200
       if (response && response.status === 200) {
         setActive((current) => (current < 3 ? current + 1 : current));
-      } else {
-        console.error("Error:", response.data.msg);
       }
     } catch (error) {
-      console.error("Error:", error);
-      if (error == "AxiosError: Request failed with status code 404") {
-        errorMsg.current.textContent = `Error: Email not registered!`;
-      }
+      errorConcat(error.response.data.msg);
     }
   };
 
   const prevStep = () => {
-    errorMsg.current.textContent = ``;
+    setErrors([]);
     setActive((current) => (current > 0 ? current - 1 : current));
   };
   const finishUp = async () => {
-    console.log(newPwd, confirmPwd);
-    errorMsg.current.textContent = ``;
+    setErrors([]);
     updatepasswordValidator(newPwd, confirmPwd);
-    if (errorMsg.current.textContent === "") {
+    if (!errors.length) {
       try {
         const response = await axios.patch(
           `${baseUrl}/api/password/updatePassword`,
@@ -110,11 +99,11 @@ function ForgotPassword() {
             newPassword: newPwd,
           }
         );
-        if (response && response.status === 200) {
-          setActive((current) => (current < 3 ? current + 1 : current));
-        }
+        response && response.status === 200
+          ? setActive((current) => (current < 3 ? current + 1 : current))
+          : null;
       } catch (error) {
-        errorMsg.current.textContent = `Error: ${error}`;
+        errorConcat(`Error: ${error}`);
       }
     }
   };
@@ -183,7 +172,14 @@ function ForgotPassword() {
           </p>
         </Stepper.Completed>
       </Stepper>
-      <Container style={{ color: "red" }} ref={errorMsg}></Container>
+      <Container style={{ color: "red" }}>
+        {errors.length > 0 &&
+          errors.map((error, index) => (
+            <div key={index}>
+              <p>{error}</p>
+            </div>
+          ))}
+      </Container>
       <Group style={{ marginTop: 20 }} position="center">
         {active != 0 && active != 3 ? (
           <Button onClick={prevStep} color="#F9EB02" style={{ color: "black" }}>
