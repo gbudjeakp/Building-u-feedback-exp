@@ -13,7 +13,6 @@ const {
 } = require("../utility/notifications/flockNotification");
 const logger = require("../utility/logger/logger");
 const redisClient = require("../utility/redisCaching/redisCache");
-const client = require("../utility/redisCaching/redisCache");
 const redisFunctions = require("../utility/redisCaching/redisFunctions");
 
 /*This controller allows the interns to request for feedback using the request
@@ -79,14 +78,22 @@ const submitFeedBack = async (req, res) => {
  */
 const getAllFeedBackRequestsForms = async (req, res) => {
   try {
-    const feedBackrequests = await FeedbackRequest.findAll({
-      where: {
-        status: {
-          [Op.not]: true,
+    const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms();
+    console.log(redisResponse);
+    if (redisResponse !== "No Cache Hit") {
+      return res.status(200).json({ data: redisResponse });
+    } else {
+      const feedBackrequests = await FeedbackRequest.findAll({
+        where: {
+          status: {
+            [Op.not]: true,
+          },
         },
-      },
-    });
-    res.status(200).json({ data: feedBackrequests });
+      });
+      const redisEntry = JSON.stringify(feedBackrequests);
+      await redisFunctions.redisSetEX("FeedbackRequestForms", 1000, redisEntry);
+      return res.status(200).json({ data: feedBackrequests });
+    }
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
     logger.error(`Server Error`, { error: JSON.stringify(err) });
@@ -97,16 +104,29 @@ const getAllFeedBackRequestsForms = async (req, res) => {
 that is logged in */
 const getUserFeedBackRequestForms = async (req, res) => {
   try {
-    const { authToken } = req.cookies;
-    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
-    let singleFeedBack = await FeedbackRequest.findAll({
-      where: { userId: id },
-    });
-    res.status(200).json({ data: singleFeedBack });
-    logger.info(`Feedback Requests was Fetched Successfully`);
+    const redisResponse =
+      await redisFunctions.cacheGetUserFeedbackRequestForms();
+    console.log(redisResponse);
+    if (redisResponse !== "No Cache Hit") {
+      return res.status(200).json({ data: redisResponse });
+    } else {
+      const { authToken } = req.cookies;
+      const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+      let singleFeedBack = await FeedbackRequest.findAll({
+        where: { userId: id },
+      });
+      const redisEntry = JSON.stringify(singleFeedBack);
+      await redisFunctions.redisSetEX(
+        "UserFeedbackRequestForms",
+        1000,
+        redisEntry
+      );
+      res.status(200).json({ data: singleFeedBack });
+      logger.info(`Feedback Requests was Fetched Successfully`);
+    }
   } catch (err) {
     res.status(500).json({ msg: "Internal Server Error" });
-    logger.error(`error is ${JSON.stringify(err)}`);
+    logger.error({ message: err.message });
   }
 };
 
@@ -284,40 +304,47 @@ of the code lead logged in.
  */
 const getAssignedFeedBacks = async (req, res) => {
   try {
-    const { authToken } = req.cookies;
-    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+    const redisResponse = await redisFunctions.cacheGetAssignedFeedbacks();
+    console.log(redisResponse);
+    if (redisResponse !== "No Cache Hit") {
+      return res.status(200).json({ data: redisResponse });
+    } else {
+      const { authToken } = req.cookies;
+      const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
-    let fullName = await User.findOne({
-      where: { id: id },
-    });
+      let fullName = await User.findOne({
+        where: { id: id },
+      });
 
-    // Check if the user is a mentor
-    const isMentor = await User.findOne({
-      where: {
-        id: id,
-        mentor: true,
-      },
-    });
-
-    if (!isMentor) {
-      logger.error(`Unauthorized user`, { log: JSON.stringify(isMentor) });
-      res.status(401).json({ msg: "Unauthorized user" });
-      return;
-    }
-
-    let assignedList = await FeedbackRequest.findAll({
-      where: {
-        whoisAssigned: fullName.fName,
-        status: {
-          [Op.not]: true,
+      // Check if the user is a mentor
+      const isMentor = await User.findOne({
+        where: {
+          id: id,
+          mentor: true,
         },
-      },
-    });
+      });
 
-    logger.info(`List fetched successfully`, {
-      log: JSON.stringify(assignedList),
-    });
-    res.status(200).json({ data: assignedList });
+      if (!isMentor) {
+        logger.error(`Unauthorized user`, { log: JSON.stringify(isMentor) });
+        res.status(401).json({ msg: "Unauthorized user" });
+        return;
+      }
+
+      let assignedList = await FeedbackRequest.findAll({
+        where: {
+          whoisAssigned: fullName.fName,
+          status: {
+            [Op.not]: true,
+          },
+        },
+      });
+      const redisEntry = JSON.stringify(assignedList);
+      await redisFunctions.redisSetEX("AssignedFeedbacks", 1000, redisEntry);
+      logger.info(`List fetched successfully`, {
+        log: JSON.stringify(assignedList),
+      });
+      return res.status(200).json({ data: assignedList });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal Server Error" });
@@ -347,7 +374,10 @@ const getSelectedFeedback = async (req, res) => {
     });
     res.json({ data: feedbackRequest });
   } catch (error) {
-    logger.error(`error:`, { log: JSON.stringify(error) });
+    logger.error(`error:`, {
+      log: JSON.stringify(error),
+      error: error.message,
+    });
   }
 };
 

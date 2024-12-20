@@ -36,4 +36,59 @@ const cacheGetAllExerciseInfo = async () => {
   }
 };
 
-module.exports = { redisGet, redisSetEX, cacheGetAllExerciseInfo };
+const cacheGetFeedbackRequestForms = async () => {
+  try {
+    let cacheResponse = await redisGet("FeedbackRequestForms");
+    console.log(cacheResponse);
+    if (cacheResponse !== undefined && cacheResponse !== null) {
+      let response = JSON.parse(cacheResponse);
+      console.log(response);
+      return response;
+    } else {
+      return "No Cache Hit";
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const cacheGetUserFeedbackRequestForms = async () => {
+  try {
+    let cacheResponse = await redisGet("UserFeedbackRequestForms");
+    console.log(cacheResponse);
+    if (cacheResponse !== undefined && cacheResponse !== null) {
+      let response = JSON.parse(cacheResponse);
+      console.log(response);
+      return response;
+    } else {
+      return "No Cache Hit";
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const cacheGetAssignedFeedbacks = async () => {
+  try {
+    let cacheResponse = await redisGet("AssignedFeedbacks");
+    console.log(cacheResponse);
+    if (cacheResponse !== undefined && cacheResponse !== null) {
+      let response = JSON.parse(cacheResponse);
+      console.log(response);
+      return response;
+    } else {
+      return "No Cache Hit";
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+module.exports = {
+  redisGet,
+  redisSetEX,
+  cacheGetAllExerciseInfo,
+  cacheGetFeedbackRequestForms,
+  cacheGetUserFeedbackRequestForms,
+  cacheGetAssignedFeedbacks,
+};

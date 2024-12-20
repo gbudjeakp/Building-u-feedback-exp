@@ -250,7 +250,6 @@ const getAllExerciseInfo = async (req, res) => {
   } catch (error) {
     logger.error("Internal server error", {
       error: error.message,
-      stack: error.stack,
     });
     res.status(500).json({ error: "Internal server error" });
   }
