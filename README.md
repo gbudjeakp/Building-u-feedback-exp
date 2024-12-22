@@ -105,5 +105,53 @@ Once connected, create a new database for your project.
 ### After setting up to run the database:-
 docker-compose up -d
 
+# Setting Up Redis Stack with Docker
+
+## 1. Install Docker
+Make sure you have Docker installed on your operating system. You can download and install Docker from the [official Docker website](https://www.docker.com/).
+
+---
+
+## 2. Pull the Redis Image
+Open a terminal or command prompt and run the following command to pull the Redis Docker image:
+
+```bash
+docker pull redis/redis-stack-server:latest
+```
+
+This will download the latest Redis image from Docker Hub.
+
+---
+
+## 3. Run the Redis Stack Container
+Once the image is downloaded, run the following command to start a Redis container:
+
+```bash
+docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
+```
+
+- **`-d`**: Runs the container in detached mode (in the background).
+- **`--name redis-stack-server`**: Assigns a name to the container.
+- **`-p 6379:6379`**: Maps port `6379` of the container to port `6379` on your host machine. Replace `6379:6379` with `MY_PORT:6379` if you want to use a different port.
+
+If the image hasn’t been downloaded yet, this command will download the image and start the container all at once.
+
+---
+
+## 4. Verify the Installation
+Check if the Redis container is running by executing:
+
+```bash
+docker ps
+```
+
+If the container is running, it will be listed along with other information.
+
+---
+
+## 5. Connect to the Redis Server
+You can connect to the Redis server using the specified Redis port (`6379` by default, or your custom port if you mapped a different one).
+
+
 ## Conclusion
 Using Docker provides a flexible and easy way to set up a local database for development. By following the steps above, you can quickly get a MySQL or PostgreSQL database up and running.
