@@ -78,6 +78,7 @@ const Checklist = () => {
         striped
         withTableBorder
         highlightOnHover
+        stickyHeader
         style={{ textAlign: "center" }}
       >
         <Table.Thead>
