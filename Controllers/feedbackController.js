@@ -81,8 +81,12 @@ const getAllFeedBackRequestsForms = async (req, res) => {
     const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms();
     console.log(redisResponse);
     if (redisResponse !== "No Cache Hit") {
+      logger.info("Success: Feedback Request Forms Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
     } else {
+      logger.info(
+        "Feedback Request Forms not Found In Cache: Fetching From Database"
+      );
       const feedBackrequests = await FeedbackRequest.findAll({
         where: {
           status: {
@@ -92,6 +96,7 @@ const getAllFeedBackRequestsForms = async (req, res) => {
       });
       const redisEntry = JSON.stringify(feedBackrequests);
       await redisFunctions.redisSetEX("FeedbackRequestForms", 1000, redisEntry);
+      logger.info("Success: Feedback Request Forms Cached");
       return res.status(200).json({ data: feedBackrequests });
     }
   } catch (err) {
@@ -108,8 +113,12 @@ const getUserFeedBackRequestForms = async (req, res) => {
       await redisFunctions.cacheGetUserFeedbackRequestForms();
     console.log(redisResponse);
     if (redisResponse !== "No Cache Hit") {
+      logger.info("Success: User Feedback Request Forms Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
     } else {
+      logger.info(
+        "User Feedback Request Forms not Found In Cache: Fetching From Database"
+      );
       const { authToken } = req.cookies;
       const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
       let singleFeedBack = await FeedbackRequest.findAll({
@@ -121,6 +130,7 @@ const getUserFeedBackRequestForms = async (req, res) => {
         1000,
         redisEntry
       );
+      logger.info("Success: User Feedback Request Forms Cached");
       res.status(200).json({ data: singleFeedBack });
       logger.info(`Feedback Requests was Fetched Successfully`);
     }
@@ -307,8 +317,12 @@ const getAssignedFeedBacks = async (req, res) => {
     const redisResponse = await redisFunctions.cacheGetAssignedFeedbacks();
     console.log(redisResponse);
     if (redisResponse !== "No Cache Hit") {
+      logger.info("Success: Assigned Feedbacks Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
     } else {
+      logger.info(
+        "Assigned Feedbacks not Found In Cache: Fetching From Database"
+      );
       const { authToken } = req.cookies;
       const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
@@ -343,6 +357,7 @@ const getAssignedFeedBacks = async (req, res) => {
       logger.info(`List fetched successfully`, {
         log: JSON.stringify(assignedList),
       });
+      logger.info("Success: Assigned Feedbacks Cached");
       return res.status(200).json({ data: assignedList });
     }
   } catch (err) {

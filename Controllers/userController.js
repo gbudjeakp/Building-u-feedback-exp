@@ -116,7 +116,6 @@ const loginUser = async (req, res) => {
 
     bcrypt.compare(password, hashPassword, async (err, passwordIsCorrect) => {
       if (passwordIsCorrect) {
-        await redisClient.connect();
         redisClient.on("connect", () => {
           console.log("Connected to Redis");
         });
@@ -240,11 +239,14 @@ const getAllExerciseInfo = async (req, res) => {
     const redisResponse = await redisFunctions.cacheGetAllExerciseInfo();
     console.log(redisResponse);
     if (redisResponse !== "No Cache Hit") {
+      logger.info("Success: Exercise Infos Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
     } else {
+      logger.info("Exercise Infos not Found In Cache: Fetching From Database");
       const exerciseInfos = await db.ExerciseInfo.findAll();
       const redisEntry = JSON.stringify(exerciseInfos);
       await redisFunctions.redisSetEX("ExerciseInfo", 1000, redisEntry);
+      logger.info("Success: Exercise Infos Cached");
       return res.status(200).json({ data: exerciseInfos });
     }
   } catch (error) {
