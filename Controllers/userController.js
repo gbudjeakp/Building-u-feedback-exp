@@ -163,8 +163,20 @@ const logout = async (req, res) => {
 
 // This feeds the auth wrapper on the fron-end letting
 // the app know whether or not a user is logged in.
-const authorized = (req, res) => {
-  return res.json({ user: res.locals.user });
+const authorized = async (req, res) => {
+  try {
+    let userInfo = await redisClient.GET("UserInfo");
+    if (!userInfo) {
+      logger.info("Auth not found in cache");
+      await redisClient.SET("UserInfo", JSON.stringify(res.locals.user), "NX");
+      return res.json({ user: res.locals.user });
+    } else {
+      logger.info("Auth done from cache");
+      return res.json({ user: JSON.parse(userInfo) });
+    }
+  } catch (error) {
+    logger.error(error.message);
+  }
 };
 
 // This lets us update a users account information everywhere
