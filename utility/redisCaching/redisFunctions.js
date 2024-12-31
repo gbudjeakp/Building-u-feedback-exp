@@ -83,6 +83,16 @@ const cacheGetAssignedFeedbacks = async () => {
     console.error(err);
   }
 };
+const cacheInvalidator = async (keys) => {
+  try {
+    await keys.forEach((key) => {
+      redisClient.DEL(key);
+    });
+    logger.info("success");
+  } catch (error) {
+    logger.error(error);
+  }
+};
 
 module.exports = {
   redisGet,
@@ -91,4 +101,5 @@ module.exports = {
   cacheGetFeedbackRequestForms,
   cacheGetUserFeedbackRequestForms,
   cacheGetAssignedFeedbacks,
+  cacheInvalidator,
 };

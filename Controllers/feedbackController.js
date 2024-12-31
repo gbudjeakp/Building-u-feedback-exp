@@ -63,7 +63,12 @@ const submitFeedBack = async (req, res) => {
       await FeedbackRequest.create(feedBackRequestData);
       // studentNotification(feedBackRequestData);
     }
-
+    await redisFunctions.cacheInvalidator([
+      "FeedbackRequestForms",
+      "UserFeedbackRequestForms",
+      "ExerciseInfo",
+    ]);
+    logger.info("Outdated cache successfully invalidated");
     res.status(200).json({ data: feedBackRequestData });
     logger.info(`User submitted request successfully`, {
       log: JSON.stringify(feedBackRequestData),
@@ -233,7 +238,8 @@ const assignFeedBack = async (req, res) => {
     feedbackRecord.isAssigned = true;
     feedbackRecord.whoisAssigned = userDetail.fName;
     await feedbackRecord.save();
-
+    await redisClient.cacheInvalidator(["AssignedFeedbacks"]);
+    logger.info("Outdated cache successfully invalidated");
     logger.info(`Feedback assigned to mentor`, {
       log: JSON.stringify(feedbackRecord),
     });
@@ -437,12 +443,17 @@ const markFeedbackRequestComplete = async (req, res) => {
       logger.error(`ExerciseInfo not found`, { log: exerciseInfo });
       return res.status(404).json({ message: "ExerciseInfo not found" });
     }
-
     // Update the ExerciseInfo record
     await exerciseInfo.update({ isCompleted: true });
 
     // Update the status attribute of the FeedbackRequest record
     await markAsComplete.update({ status: true });
+    await redisClient.cacheInvalidator([
+      "FeedbackRequestForms",
+      "UserFeedbackRequestForms",
+      "ExerciseInfo",
+    ]);
+    logger.info("Outdated cache successfully invalidated");
     res.status(200).json({ msg: "Exercise Marked As Complete" });
   } catch (err) {
     logger.error(`Error:`, { log: JSON.stringify(err) });
