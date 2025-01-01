@@ -249,7 +249,6 @@ const updateAccount = async (req, res) => {
 const getAllExerciseInfo = async (req, res) => {
   try {
     const redisResponse = await redisFunctions.cacheGetAllExerciseInfo();
-    console.log(redisResponse);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Exercise Infos Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });

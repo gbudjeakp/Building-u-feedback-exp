@@ -6,7 +6,6 @@ process.env.NODE_ENV === "development"
   ? (clientInfo = `redis://${process.env.REDIS_DEV_HOST}:${Number(process.env.REDIS_DEV_PORT)}`)
   : (clientInfo = `redis://${process.env.REDIS_PROD_HOST}:${Number(process.env.REDIS_PROD_PORT)}`);
 
-console.log(clientInfo);
 
 const redisClient = redis.createClient({ url: clientInfo });
 

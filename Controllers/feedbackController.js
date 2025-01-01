@@ -84,7 +84,6 @@ const submitFeedBack = async (req, res) => {
 const getAllFeedBackRequestsForms = async (req, res) => {
   try {
     const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms();
-    console.log(redisResponse);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Feedback Request Forms Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
@@ -116,7 +115,6 @@ const getUserFeedBackRequestForms = async (req, res) => {
   try {
     const redisResponse =
       await redisFunctions.cacheGetUserFeedbackRequestForms();
-    console.log(redisResponse);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: User Feedback Request Forms Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
@@ -321,7 +319,6 @@ of the code lead logged in.
 const getAssignedFeedBacks = async (req, res) => {
   try {
     const redisResponse = await redisFunctions.cacheGetAssignedFeedbacks();
-    console.log(redisResponse);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Assigned Feedbacks Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
