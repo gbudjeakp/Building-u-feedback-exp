@@ -11,7 +11,9 @@ const feedbackValidator = require("../utility/inputValidator/feedbackValidator")
 const {
   studentNotification,
 } = require("../utility/notifications/flockNotification");
-const logger = require('../utility/logger/logger');
+const logger = require("../utility/logger/logger");
+const redisClient = require("../utility/redisCaching/redisCache");
+const redisFunctions = require("../utility/redisCaching/redisFunctions");
 
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
@@ -24,8 +26,8 @@ const submitFeedBack = async (req, res) => {
   const { errors, validationCheck } = feedbackrequestValidator(req.body);
 
   if (!validationCheck) {
-    logger.error(`error validating inputs: ${JSON.stringify(errors)}`)
-    return  res.status(400).json(errors);
+    logger.error(`error validating inputs: ${JSON.stringify(errors)}`);
+    return res.status(400).json(errors);
   }
 
   let fullName = await User.findOne({
@@ -61,12 +63,19 @@ const submitFeedBack = async (req, res) => {
       await FeedbackRequest.create(feedBackRequestData);
       // studentNotification(feedBackRequestData);
     }
-
+    await redisFunctions.cacheInvalidator([
+      "FeedbackRequestForms",
+      "UserFeedbackRequestForms",
+      "ExerciseInfo",
+    ]);
+    logger.info("Outdated cache successfully invalidated");
     res.status(200).json({ data: feedBackRequestData });
-    logger.info(`User submitted request successfully`, {log: JSON.stringify(feedBackRequestData)});
+    logger.info(`User submitted request successfully`, {
+      log: JSON.stringify(feedBackRequestData),
+    });
   } catch (err) {
     res.status(400).json({ msg: err.message });
-    logger.error(`error submitting request`, {error: JSON.stringify(err)});
+    logger.error(`error submitting request`, { error: JSON.stringify(err) });
   }
 };
 
@@ -74,7 +83,14 @@ const submitFeedBack = async (req, res) => {
  */
 const getAllFeedBackRequestsForms = async (req, res) => {
   try {
-
+    const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms();
+    if (redisResponse !== "No Cache Hit") {
+      logger.info("Success: Feedback Request Forms Retrieved from Cache");
+      return res.status(200).json({ data: redisResponse });
+    } else {
+      logger.info(
+        "Feedback Request Forms not Found In Cache: Fetching From Database"
+      );
       const feedBackrequests = await FeedbackRequest.findAll({
         where: {
           status: {
@@ -82,11 +98,14 @@ const getAllFeedBackRequestsForms = async (req, res) => {
           },
         },
       });
-      res.status(200).json({ data: feedBackrequests });
-
+      const redisEntry = JSON.stringify(feedBackrequests);
+      await redisFunctions.redisSetEX("FeedbackRequestForms", 1000, redisEntry);
+      logger.info("Success: Feedback Request Forms Cached");
+      return res.status(200).json({ data: feedBackrequests });
+    }
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
-    logger.error(`Server Error`, {error: JSON.stringify(err)})
+    logger.error(`Server Error`, { error: JSON.stringify(err) });
   }
 };
 
@@ -94,16 +113,33 @@ const getAllFeedBackRequestsForms = async (req, res) => {
 that is logged in */
 const getUserFeedBackRequestForms = async (req, res) => {
   try {
-    const { authToken } = req.cookies;
-    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
-    let singleFeedBack = await FeedbackRequest.findAll({
-      where: { userId: id },
-    });
-    res.status(200).json({ data: singleFeedBack });
-    logger.info(`Feedback Requests was Fetached Successfully`)
+    const redisResponse =
+      await redisFunctions.cacheGetUserFeedbackRequestForms();
+    if (redisResponse !== "No Cache Hit") {
+      logger.info("Success: User Feedback Request Forms Retrieved from Cache");
+      return res.status(200).json({ data: redisResponse });
+    } else {
+      logger.info(
+        "User Feedback Request Forms not Found In Cache: Fetching From Database"
+      );
+      const { authToken } = req.cookies;
+      const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+      let singleFeedBack = await FeedbackRequest.findAll({
+        where: { userId: id },
+      });
+      const redisEntry = JSON.stringify(singleFeedBack);
+      await redisFunctions.redisSetEX(
+        "UserFeedbackRequestForms",
+        1000,
+        redisEntry
+      );
+      logger.info("Success: User Feedback Request Forms Cached");
+      res.status(200).json({ data: singleFeedBack });
+      logger.info(`Feedback Requests was Fetched Successfully`);
+    }
   } catch (err) {
     res.status(500).json({ msg: "Internal Server Error" });
-    logger.error(`error is ${JSON.stringify(err)}`)
+    logger.error({ message: err.message });
   }
 };
 
@@ -119,7 +155,9 @@ const getMentorFeedback = async (req, res) => {
     });
 
     if (!feedbackRequest) {
-      logger.error(`Feedback request not found for mentor`, {error: JSON.stringify(feedbackRequest)});
+      logger.error(`Feedback request not found for mentor`, {
+        error: JSON.stringify(feedbackRequest),
+      });
       return res.status(404).json({ error: "Feedback request not found" });
     }
 
@@ -131,7 +169,9 @@ const getMentorFeedback = async (req, res) => {
     res.json({ data: allFeedbackOnFeedbackRequest });
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
-    logger.error(`Feedback was not fetched due to error`,  {error: JSON.stringify(error)})
+    logger.error(`Feedback was not fetched due to error`, {
+      error: JSON.stringify(error),
+    });
   }
 };
 
@@ -157,13 +197,14 @@ const flockNotification = async (req, res) => {
 
     studentNotification(data);
     res.status(200).json({ message: "Notification was sent successfully" });
-    logger.info(`Notification was sent successfully`, {log: JSON.stringify(data)})
+    logger.info(`Notification was sent successfully`, {
+      log: JSON.stringify(data),
+    });
   } catch (err) {
     res.status(500).json({ msg: err });
-    logger.error(`error sending notification`, {error: JSON.stringify(err)})
+    logger.error(`error sending notification`, { error: JSON.stringify(err) });
   }
 };
-
 
 /*This controller allows users to assign feedback requests to themselves
 for 
@@ -174,12 +215,11 @@ const assignFeedBack = async (req, res) => {
     const { authToken } = req.cookies;
     const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
 
-
     // Grab the user information based on the id for updates of the request form.
     const userDetail = await User.findOne({
       where: username,
-      where: {id: id}
-    })
+      where: { id: id },
+    });
 
     // Find the specific feedback request record based on feedbackrequestId
     const feedbackRecord = await FeedbackRequest.findOne({
@@ -187,24 +227,30 @@ const assignFeedBack = async (req, res) => {
     });
 
     if (!feedbackRecord) {
-      logger.error(`Feedback record not found`, {log: JSON.stringify(feedbackRecord)})
-      return res.status(404).json({ msg: "Feedback record not found" }); 
+      logger.error(`Feedback record not found`, {
+        log: JSON.stringify(feedbackRecord),
+      });
+      return res.status(404).json({ msg: "Feedback record not found" });
     }
 
     feedbackRecord.isAssigned = true;
     feedbackRecord.whoisAssigned = userDetail.fName;
     await feedbackRecord.save();
-
-    logger.info(`Feedback assigned to mentor`, {log: JSON.stringify(feedbackRecord)})
-    res.json({ msg: "Feedback assigned to mentor", data:  feedbackRecord });
+    await redisClient.cacheInvalidator(["AssignedFeedbacks"]);
+    logger.info("Outdated cache successfully invalidated");
+    logger.info(`Feedback assigned to mentor`, {
+      log: JSON.stringify(feedbackRecord),
+    });
+    res.json({ msg: "Feedback assigned to mentor", data: feedbackRecord });
   } catch (err) {
-    logger.error(`An error occurred while updating feedback`, {log: JSON.stringify(err)})
+    logger.error(`An error occurred while updating feedback`, {
+      log: JSON.stringify(err),
+    });
     res
       .status(500)
       .json({ error: "An error occurred while updating feedback" });
   }
 };
-
 
 /*This controller allows users to add feedbacks to the feedback requests in the queue */
 const addFeedBack = async (req, res) => {
@@ -216,10 +262,9 @@ const addFeedBack = async (req, res) => {
     const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
     if (!validationCheck) {
-      logger.error(`Bad Input:`, {log: JSON.stringify(errors)})
+      logger.error(`Bad Input:`, { log: JSON.stringify(errors) });
       return res.status(400).json(errors);
     }
-
 
     // Find the specific feedback request record based on feedbackrequestId
     const feedbackRequest = await FeedbackRequest.findOne({
@@ -231,8 +276,10 @@ const addFeedBack = async (req, res) => {
     });
 
     if (!feedbackRequest) {
-      logger.error(`Feeback request not found`, {log: JSON.stringify(feedbackRequest)})
-      return res.status(404).json({ msg: "not found" });;
+      logger.error(`Feeback request not found`, {
+        log: JSON.stringify(feedbackRequest),
+      });
+      return res.status(404).json({ msg: "not found" });
     }
 
     // Create the feedback and associate it with the feedback request and mentor
@@ -245,17 +292,20 @@ const addFeedBack = async (req, res) => {
 
     const createdFeedback = await Feedbacks.create(feedBackData);
 
-    logger.info(`Feedback added successfully`, {log: JSON.stringify(createdFeedback)})
+    logger.info(`Feedback added successfully`, {
+      log: JSON.stringify(createdFeedback),
+    });
     res.status(200).json({
       msg: "Feedback added successfully",
       data: createdFeedback,
     });
   } catch (err) {
-    logger.error(`An error occurred adding feedback`, {log: JSON.stringify(err)})
+    logger.error(`An error occurred adding feedback`, {
+      log: JSON.stringify(err),
+    });
     res.status(500).json({ error: "An error occurred adding feedback" });
   }
 };
-
 
 //////////////////////////////////////////
 /* Code below here are basically controller functions 
@@ -268,38 +318,51 @@ of the code lead logged in.
  */
 const getAssignedFeedBacks = async (req, res) => {
   try {
-    const { authToken } = req.cookies;
-    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+    const redisResponse = await redisFunctions.cacheGetAssignedFeedbacks();
+    if (redisResponse !== "No Cache Hit") {
+      logger.info("Success: Assigned Feedbacks Retrieved from Cache");
+      return res.status(200).json({ data: redisResponse });
+    } else {
+      logger.info(
+        "Assigned Feedbacks not Found In Cache: Fetching From Database"
+      );
+      const { authToken } = req.cookies;
+      const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
-    let fullName = await User.findOne({
-      where: { id: id },
-    });
+      let fullName = await User.findOne({
+        where: { id: id },
+      });
 
-    // Check if the user is a mentor
-    const isMentor = await User.findOne({
-      where: {
-        id: id,
-        mentor: true,
-      },
-    });
-
-    if (!isMentor) {
-      logger.error(`Unauthorized user`, {log: JSON.stringify(isMentor)});
-      res.status(401).json({ msg: "Unauthorized user" });
-      return;
-    }
-
-    let assignedList = await FeedbackRequest.findAll({
-      where: {
-        whoisAssigned: fullName.fName,
-        status: {
-          [Op.not]: true,
+      // Check if the user is a mentor
+      const isMentor = await User.findOne({
+        where: {
+          id: id,
+          mentor: true,
         },
-      },
-    });
+      });
 
-    logger.info(`List fetched successfully`, {log: JSON.stringify(assignedList)})
-    res.status(200).json({ data: assignedList });
+      if (!isMentor) {
+        logger.error(`Unauthorized user`, { log: JSON.stringify(isMentor) });
+        res.status(401).json({ msg: "Unauthorized user" });
+        return;
+      }
+
+      let assignedList = await FeedbackRequest.findAll({
+        where: {
+          whoisAssigned: fullName.fName,
+          status: {
+            [Op.not]: true,
+          },
+        },
+      });
+      const redisEntry = JSON.stringify(assignedList);
+      await redisFunctions.redisSetEX("AssignedFeedbacks", 1000, redisEntry);
+      logger.info(`List fetched successfully`, {
+        log: JSON.stringify(assignedList),
+      });
+      logger.info("Success: Assigned Feedbacks Cached");
+      return res.status(200).json({ data: assignedList });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal Server Error" });
@@ -317,15 +380,22 @@ const getSelectedFeedback = async (req, res) => {
     });
 
     if (!feedbackRequest) {
-      logger.error(`Feedback request not found`, {log: JSON.stringify(feedbackRequest)})
+      logger.error(`Feedback request not found`, {
+        log: JSON.stringify(feedbackRequest),
+      });
       res.status(404).json({ msg: "Feedback request not found" });
       return;
     }
-    
-    logger.info(`Fetched feedback successfully`, {log: JSON.stringify(feedbackRequest)})
+
+    logger.info(`Fetched feedback successfully`, {
+      log: JSON.stringify(feedbackRequest),
+    });
     res.json({ data: feedbackRequest });
   } catch (error) {
-    logger.error(`error:`, {log: JSON.stringify(error)});
+    logger.error(`error:`, {
+      log: JSON.stringify(error),
+      error: error.message,
+    });
   }
 };
 
@@ -344,7 +414,7 @@ const markFeedbackRequestComplete = async (req, res) => {
     });
 
     if (!isMentor) {
-      logger.error(`Unauthorized user`, {log: isMentor})
+      logger.error(`Unauthorized user`, { log: isMentor });
       res.status(401).json({ msg: "Unauthorized user" });
       return;
     }
@@ -354,7 +424,7 @@ const markFeedbackRequestComplete = async (req, res) => {
     });
 
     if (!markAsComplete) {
-      logger.error(`FeedbackRequest not found`, {log: markAsComplete})
+      logger.error(`FeedbackRequest not found`, { log: markAsComplete });
       return res.status(404).json({ message: "FeedbackRequest not found" });
     }
 
@@ -367,18 +437,23 @@ const markFeedbackRequestComplete = async (req, res) => {
     });
 
     if (!exerciseInfo) {
-      logger.error(`ExerciseInfo not found`, {log: exerciseInfo})
+      logger.error(`ExerciseInfo not found`, { log: exerciseInfo });
       return res.status(404).json({ message: "ExerciseInfo not found" });
     }
-
     // Update the ExerciseInfo record
     await exerciseInfo.update({ isCompleted: true });
 
     // Update the status attribute of the FeedbackRequest record
     await markAsComplete.update({ status: true });
+    await redisClient.cacheInvalidator([
+      "FeedbackRequestForms",
+      "UserFeedbackRequestForms",
+      "ExerciseInfo",
+    ]);
+    logger.info("Outdated cache successfully invalidated");
     res.status(200).json({ msg: "Exercise Marked As Complete" });
   } catch (err) {
-    logger.error(`Error:`, {log: JSON.stringify(err)})
+    logger.error(`Error:`, { log: JSON.stringify(err) });
     res.status(500).json({ msg: err });
   }
 };

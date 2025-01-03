@@ -5,7 +5,9 @@ import { fetchInternFeedbackRequests } from "../features/Feedbacks/feedbackSlice
 
 function CreatedRequests(props) {
   const dispatch = useDispatch();
-  const internFeedbackRequests = useSelector((state) => state.feedbackSlice.feedbackRequests);
+  const internFeedbackRequests = useSelector(
+    (state) => state.feedbackSlice.feedbackRequests
+  );
 
   useEffect(() => {
     dispatch(fetchInternFeedbackRequests());
@@ -14,7 +16,7 @@ function CreatedRequests(props) {
   return (
     <div>
       <FeedbackCard
-        notifyMentor={true}
+        notifyMentor={false}
         showViewFeedback={true}
         data={internFeedbackRequests}
         pageTitle="MY FEEDBACK REQUESTS"

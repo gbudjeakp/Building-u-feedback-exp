@@ -12,6 +12,9 @@ const Mentors = require("../admin.json");
 const loginValidator = require("../utility/inputValidator/loginValidator");
 const registerValidator = require("../utility/inputValidator/registerValidator");
 const logger = require("../utility/logger/logger");
+const redisClient = require("../utility/redisCaching/redisCache");
+const util = require("util");
+const redisFunctions = require("../utility/redisCaching/redisFunctions");
 
 //Allows users to register to the app
 const registerUser = async (req, res) => {
@@ -44,7 +47,7 @@ const registerUser = async (req, res) => {
     // Hash the password
     // Ideally adding a callback in the hash is best practice
     //Might add callback as code
-    const hashedPassword =  await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     const userData = {
       fName: fName,
       username: userName,
@@ -111,8 +114,11 @@ const loginUser = async (req, res) => {
 
     const hashPassword = await user.password;
 
-    bcrypt.compare(password, hashPassword, (err, passwordIsCorrect) => {
+    bcrypt.compare(password, hashPassword, async (err, passwordIsCorrect) => {
       if (passwordIsCorrect) {
+        redisClient.on("connect", () => {
+          console.log("Connected to Redis");
+        });
         const payload = { id: user.id, username: user.username };
 
         const token = jwt.sign(payload, process.env.JWT_SECRET);
@@ -143,21 +149,34 @@ const loginUser = async (req, res) => {
 
 //This logs the user out the app by removing the
 //Users token
-const logout = (req, res) => {
+const logout = async (req, res) => {
   res.clearCookie("authToken", {
     httpOnly: true,
     secure: true,
     sameSite: "None",
     path: "/",
   });
+  await redisClient.quit();
   res.status(200).json({ msg: "User was Logged Out Successfully" });
   return;
 };
 
 // This feeds the auth wrapper on the fron-end letting
 // the app know whether or not a user is logged in.
-const authorized = (req, res) => {
-  return res.json({ user: res.locals.user });
+const authorized = async (req, res) => {
+  try {
+    let userInfo = await redisClient.GET("UserInfo");
+    if (!userInfo) {
+      logger.info("Auth not found in cache");
+      await redisClient.SET("UserInfo", JSON.stringify(res.locals.user), "NX");
+      return res.json({ user: res.locals.user });
+    } else {
+      logger.info("Auth done from cache");
+      return res.json({ user: JSON.parse(userInfo) });
+    }
+  } catch (error) {
+    logger.error(error.message);
+  }
 };
 
 // This lets us update a users account information everywhere
@@ -202,10 +221,19 @@ const updateAccount = async (req, res) => {
     // Since the full name is used in different tables and is called different names across tables, we are simply updating them below.
     //Probably should have stuck to a naming scheme
     if (fName) {
-      await FeedbackRequest.update({ studentName: fName }, { where: { userId: id } });
-      await FeedbackRequest.update({ mentorId: id }, { where: { whoisAssigned: fName } });
+      await FeedbackRequest.update(
+        { studentName: fName },
+        { where: { userId: id } }
+      );
+      await FeedbackRequest.update(
+        { mentorId: id },
+        { where: { whoisAssigned: fName } }
+      );
 
-      await ExerciseInfo.update({ internName: fName }, { where: { userId: id } });
+      await ExerciseInfo.update(
+        { internName: fName },
+        { where: { userId: id } }
+      );
       await Feedbacks.update({ mentorName: fName }, { where: { userId: id } });
     }
 
@@ -220,12 +248,23 @@ const updateAccount = async (req, res) => {
 
 const getAllExerciseInfo = async (req, res) => {
   try {
-    const exerciseInfos = await db.ExerciseInfo.findAll();
-
-    res.status(200).json({ data: exerciseInfos });
+    const redisResponse = await redisFunctions.cacheGetAllExerciseInfo();
+    if (redisResponse !== "No Cache Hit") {
+      logger.info("Success: Exercise Infos Retrieved from Cache");
+      return res.status(200).json({ data: redisResponse });
+    } else {
+      logger.info("Exercise Infos not Found In Cache: Fetching From Database");
+      const exerciseInfos = await db.ExerciseInfo.findAll();
+      const redisEntry = JSON.stringify(exerciseInfos);
+      await redisFunctions.redisSetEX("ExerciseInfo", 1000, redisEntry);
+      logger.info("Success: Exercise Infos Cached");
+      return res.status(200).json({ data: exerciseInfos });
+    }
   } catch (error) {
-    logger.error(`Internal server error`, { log: JSON.stringify(error) });
-    return res.status(500).json({ error: "Internal server error" });
+    logger.error("Internal server error", {
+      error: error.message,
+    });
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
