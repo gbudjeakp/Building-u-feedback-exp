@@ -23,7 +23,7 @@ const redisSetEX = async (key, seconds, value) => {
 const cacheGetAllExerciseInfo = async () => {
   try {
     let cacheResponse = await redisGet("ExerciseInfo");
-    if (cacheResponse !== undefined && cacheResponse !== null) {
+    if (cacheResponse) {
       let response = JSON.parse(cacheResponse);
       return response;
     } else {
@@ -37,7 +37,7 @@ const cacheGetAllExerciseInfo = async () => {
 const cacheGetFeedbackRequestForms = async () => {
   try {
     let cacheResponse = await redisGet("FeedbackRequestForms");
-    if (cacheResponse !== undefined && cacheResponse !== null) {
+    if (cacheResponse) {
       let response = JSON.parse(cacheResponse);
       return response;
     } else {
@@ -51,7 +51,7 @@ const cacheGetFeedbackRequestForms = async () => {
 const cacheGetUserFeedbackRequestForms = async () => {
   try {
     let cacheResponse = await redisGet("UserFeedbackRequestForms");
-    if (cacheResponse !== undefined && cacheResponse !== null) {
+    if (cacheResponse) {
       let response = JSON.parse(cacheResponse);
       return response;
     } else {
@@ -65,7 +65,7 @@ const cacheGetUserFeedbackRequestForms = async () => {
 const cacheGetAssignedFeedbacks = async () => {
   try {
     let cacheResponse = await redisGet("AssignedFeedbacks");
-    if (cacheResponse !== undefined && cacheResponse !== null) {
+    if (cacheResponse) {
       let response = JSON.parse(cacheResponse);
       return response;
     } else {
