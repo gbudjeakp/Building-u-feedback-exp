@@ -7,7 +7,7 @@ function formatCreatedAt(createdAt) {
     const timezoneOffset = createdDate.getTimezoneOffset();
     createdDate.setMinutes(createdDate.getMinutes() - timezoneOffset);
 
-    const diffTime = now - createdDate;
+    const diffTime = Math.Abs(now - createdDate);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
     const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
