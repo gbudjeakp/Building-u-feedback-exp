@@ -5,6 +5,10 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   base: '/Building-u-feedback/',
+  test: {
+    globals: true,
+    environment: "node"
+  }
 
   ////Uncomment for local development only
   // server: {
