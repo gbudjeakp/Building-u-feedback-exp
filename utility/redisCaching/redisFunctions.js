@@ -1,7 +1,6 @@
-//Importing relevant modules
-const util = require("util");
 const redisClient = require("../redisCaching/redisCache");
-const redis = require("redis");
+const logger = require("../logger/logger");
+
 
 const redisGet = async (key) => {
   try {

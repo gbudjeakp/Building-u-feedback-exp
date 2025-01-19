@@ -39,6 +39,29 @@ async function syncDatabase() {
   }
 }
 
+async function ensureDatabaseExists() {
+  try {
+    const dbName = process.env.DB_NAME;
+
+    const [results] = await sequelize.query(`SHOW DATABASES LIKE '${dbName}'`);
+    
+    if (results.length === 0) {
+      // Database doesn't exist, so create it
+      await sequelize.query(`CREATE DATABASE ${dbName}`);
+      console.log(`Database '${dbName}' created successfully.`);
+    } else {
+      console.log(`Database '${dbName}' already exists.`);
+    }
+  } catch (error) {
+    console.error('Error ensuring database existence:', error);
+  } finally {
+    await sequelize.close();
+  }
+}
+
+
+
+
 (async () => {
   try {
     await sequelize.authenticate();

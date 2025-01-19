@@ -1,15 +1,19 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
-import { Routes, Route, useLocation } from "react-router-dom";
-import { Stack, rem, Tooltip } from "@mantine/core";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../features/Auth/authSlice';
+import { rem } from "@mantine/core";
 import {
   IconFilePlus,
   IconClipboardText,
   IconUser,
   IconListDetails,
+  IconCheckupList,
   IconTable,
   IconLogout,
 } from "@tabler/icons-react";
+import AssignedFeedback from "../Pages/AssignedFeedback";
 import FeedbackRequestForm from "../Pages/FeedbackrequestForm";
 import FeedbackRequestQueue from "../Pages/FeedbackQueue";
 import CreatedRequests from "../Pages/CreatedRequests";
@@ -18,13 +22,22 @@ import TopBar from "../components/TopBar";
 import Checklist from "./Checklist";
 
 function Interndashboard(props) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    navigate('/');
+  };
+
   const navItems = [
     { icon: IconFilePlus, label: "Create Feedback request", to: "requestform" },
     { icon: IconListDetails, label: "Feedback Queue", to: "feedbackqueue" },
     { icon: IconClipboardText, label: "Feedback Requests", to: "myrequests" },
+    { icon: IconCheckupList, label: "Assigned Feedback", to: "assigned" },
     { icon: IconUser, label: "Account", to: "account" },
     { icon: IconTable, label: "Checklist", to: "checklist" },
-    { icon: IconLogout, label: "Logout", to: "logout" },
+    { icon: IconLogout, label: "Logout", onClick: handleLogout },
   ];
 
   const location = useLocation();
@@ -41,19 +54,23 @@ function Interndashboard(props) {
           />
           <Route
             path="/requestform"
-            element={<FeedbackRequestForm active={0} user={props.user} />}
+            element={<FeedbackRequestForm active={1} user={props.user} />}
           />
           <Route
             path="/myrequests"
-            element={<CreatedRequests active={1} user={props.user} />}
+            element={<CreatedRequests active={2} user={props.user} />}
           />
           <Route
             path="/account"
-            element={<Account active={2} user={props.user} />}
+            element={<Account active={3} user={props.user} />}
           />
           <Route
             path="/checklist"
-            element={<Checklist active={3} user={props.user} />}
+            element={<Checklist active={4} user={props.user} />}
+          />
+          <Route
+            path="/assigned"
+            element={<AssignedFeedback active={5} user={props.user} />}
           />
         </Routes>
       </div>

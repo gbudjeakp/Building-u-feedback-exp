@@ -13,7 +13,6 @@ const loginValidator = require("../utility/inputValidator/loginValidator");
 const registerValidator = require("../utility/inputValidator/registerValidator");
 const logger = require("../utility/logger/logger");
 const redisClient = require("../utility/redisCaching/redisCache");
-const util = require("util");
 const redisFunctions = require("../utility/redisCaching/redisFunctions");
 
 //Allows users to register to the app
@@ -150,12 +149,13 @@ const loginUser = async (req, res) => {
 //This logs the user out the app by removing the
 //Users token
 const logout = async (req, res) => {
-  res.clearCookie("authToken", {
+  await res.clearCookie("authToken", {
     httpOnly: true,
     secure: true,
     sameSite: "None",
     path: "/",
   });
+
   await redisClient.quit();
   res.status(200).json({ msg: "User was Logged Out Successfully" });
   return;
@@ -168,7 +168,7 @@ const authorized = async (req, res) => {
     let userInfo = await redisClient.GET("UserInfo");
     if (!userInfo) {
       logger.info("Auth not found in cache");
-      await redisClient.SET("UserInfo", JSON.stringify(res.locals.user), "NX");
+      await redisClient.SET("UserInfo", JSON.stringify(res.locals.user));
       return res.json({ user: res.locals.user });
     } else {
       logger.info("Auth done from cache");

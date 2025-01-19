@@ -1,4 +1,3 @@
-// Sidebar.js
 import React, { useState } from "react";
 import { Stack, rem, Tooltip } from "@mantine/core";
 import { Link } from "react-router-dom";
@@ -22,7 +21,19 @@ function NavbarLink({ to, icon, label, active, onClick }) {
 
   return (
     <Tooltip label={label} position="bottom-start" offset={5}>
-      <Link to={to}>
+      {to ? (
+        <Link to={to}>
+          <div
+            onClick={onClick}
+            style={linkStyle}
+            data-active={active || undefined}
+          >
+            {React.createElement(icon, {
+              style: { width: rem(20), height: rem(20), stroke: 1.5 },
+            })}
+          </div>
+        </Link>
+      ) : (
         <div
           onClick={onClick}
           style={linkStyle}
@@ -32,7 +43,7 @@ function NavbarLink({ to, icon, label, active, onClick }) {
             style: { width: rem(20), height: rem(20), stroke: 1.5 },
           })}
         </div>
-      </Link>
+      )}
     </Tooltip>
   );
 }
@@ -46,7 +57,10 @@ export function Sidebar({ navItems }) {
       icon={link.icon}
       label={link.label}
       active={index === active}
-      onClick={() => setActive(index)}
+      onClick={() => {
+        setActive(index);
+        if (link.onClick) link.onClick();
+      }}
       key={link.label}
     />
   ));
@@ -66,12 +80,12 @@ export function Sidebar({ navItems }) {
 
   return (
     <nav style={sidebarStyle}>
-      <Stack justify="flex-start" spacing="sm" gap={75}>
-        {links.slice(0, -1)}{" "}
+      <Stack justify="flex-start" spacing="sm" gap={45}>
+        {links.slice(0, -1)} 
         {/* Render all links except logout since we want it at the bottom */}
       </Stack>
       <div>
-        {links[links.length - 1]}{" "}
+        {links[links.length - 1]} 
         {/* This renders the logout link at the very bottom */}
       </div>
     </nav>
