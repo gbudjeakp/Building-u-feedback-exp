@@ -1,0 +1,26 @@
+services:
+  mariadb:
+    image: mariadb:10.4.32
+    container_name: local-mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes" # No password
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  redis-stack:
+    image: redis/redis-stack:latest
+    container_name: redis-stack
+    ports:
+      - "6380:6379"
+
+  redis-stack-server:
+    image: redis/redis-stack-server:latest
+    container_name: redis-stack-server
+    ports:
+      - "6379:6379"
+
+volumes:
+  mariadb_data:
+    driver: local

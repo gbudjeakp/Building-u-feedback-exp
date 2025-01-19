@@ -29,8 +29,7 @@ redisClient.on("error", (err) => {
 
 connectRedis();
 
-// Saw this onlin,. it helps with shutting down the connection when the app
-// is shutdown
+// Saw this online, it helps with shutting down the connection when the app is shutdown
 process.on("SIGINT", () => {
   redisClient.quit(() => {
     console.log("Redis client disconnected");

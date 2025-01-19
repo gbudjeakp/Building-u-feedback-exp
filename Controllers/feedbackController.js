@@ -314,7 +314,7 @@ for the Code leads or mentor endpoints
 ///////////////////////////////////////////////
 
 /*This controller retrieves all the assigned Feedback Requests
-of the code lead logged in.
+of the user logged in.
  */
 const getAssignedFeedBacks = async (req, res) => {
   try {
@@ -332,20 +332,6 @@ const getAssignedFeedBacks = async (req, res) => {
       let fullName = await User.findOne({
         where: { id: id },
       });
-
-      // Check if the user is a mentor
-      const isMentor = await User.findOne({
-        where: {
-          id: id,
-          mentor: true,
-        },
-      });
-
-      if (!isMentor) {
-        logger.error(`Unauthorized user`, { log: JSON.stringify(isMentor) });
-        res.status(401).json({ msg: "Unauthorized user" });
-        return;
-      }
 
       let assignedList = await FeedbackRequest.findAll({
         where: {
