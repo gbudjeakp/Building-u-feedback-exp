@@ -1,8 +1,10 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
+import axios  from "axios";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { logoutUser } from '../features/Auth/authSlice';
+import { clearUser } from '../features/Auth/authSlice';
+import { baseUrl } from "../API";
 import { rem } from "@mantine/core";
 import {
   IconFilePlus,
@@ -25,9 +27,22 @@ function Interndashboard(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${baseUrl}/api/users/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+  
+      dispatch(clearUser());
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error.response?.data || error.message);
+      alert('Failed to log out. Please try again.');
+    }
   };
 
   const navItems = [
