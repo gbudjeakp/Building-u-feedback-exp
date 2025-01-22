@@ -149,13 +149,19 @@ const loginUser = async (req, res) => {
 //This logs the user out the app by removing the
 //Users token
 const logout = async (req, res) => {
+  const token = redisFunctions.getToken();
   await res.clearCookie("authToken", {
     httpOnly: true,
     secure: true,
     sameSite: "None",
     path: "/",
   });
-
+  await redisFunctions.cacheInvalidator([
+    `FeedbackRequestForms-${token}`,
+    `UserFeedbackRequestForms-${token}`,
+    `AssignedFeedbacks-${token}`,
+    `UserInfo-${token}`,
+  ]);
   await redisClient.quit();
   res.status(200).json({ msg: "User was Logged Out Successfully" });
   return;
@@ -165,10 +171,14 @@ const logout = async (req, res) => {
 // the app know whether or not a user is logged in.
 const authorized = async (req, res) => {
   try {
-    let userInfo = await redisClient.GET("UserInfo");
+    const token = redisFunctions.getToken();
+    let userInfo = await redisFunctions.cacheGetUserInfo(token);
     if (!userInfo) {
       logger.info("Auth not found in cache");
-      await redisClient.SET("UserInfo", JSON.stringify(res.locals.user));
+      await redisClient.SET(
+        `UserInfo-${token}`,
+        JSON.stringify(res.locals.user)
+      );
       return res.json({ user: res.locals.user });
     } else {
       logger.info("Auth done from cache");

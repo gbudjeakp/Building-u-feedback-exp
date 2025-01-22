@@ -83,7 +83,10 @@ const submitFeedBack = async (req, res) => {
  */
 const getAllFeedBackRequestsForms = async (req, res) => {
   try {
-    const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms();
+    const token = redisFunctions.getToken();
+    const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms(
+      token
+    );
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Feedback Request Forms Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
@@ -99,7 +102,12 @@ const getAllFeedBackRequestsForms = async (req, res) => {
         },
       });
       const redisEntry = JSON.stringify(feedBackrequests);
-      await redisFunctions.redisSetEX("FeedbackRequestForms", 1000, redisEntry);
+      await redisFunctions.redisSetEX(
+        "FeedbackRequestForms",
+        1000,
+        redisEntry,
+        token
+      );
       logger.info("Success: Feedback Request Forms Cached");
       return res.status(200).json({ data: feedBackrequests });
     }
@@ -113,6 +121,7 @@ const getAllFeedBackRequestsForms = async (req, res) => {
 that is logged in */
 const getUserFeedBackRequestForms = async (req, res) => {
   try {
+    const token = redisFunctions.getToken();
     const redisResponse =
       await redisFunctions.cacheGetUserFeedbackRequestForms();
     if (redisResponse !== "No Cache Hit") {
@@ -131,7 +140,8 @@ const getUserFeedBackRequestForms = async (req, res) => {
       await redisFunctions.redisSetEX(
         "UserFeedbackRequestForms",
         1000,
-        redisEntry
+        redisEntry,
+        token
       );
       logger.info("Success: User Feedback Request Forms Cached");
       res.status(200).json({ data: singleFeedBack });
@@ -318,7 +328,8 @@ of the user logged in.
  */
 const getAssignedFeedBacks = async (req, res) => {
   try {
-    const redisResponse = await redisFunctions.cacheGetAssignedFeedbacks();
+    const token = redisFunctions.getToken();
+    const redisResponse = await redisFunctions.cacheGetAssignedFeedbacks(token);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Assigned Feedbacks Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
@@ -342,7 +353,12 @@ const getAssignedFeedBacks = async (req, res) => {
         },
       });
       const redisEntry = JSON.stringify(assignedList);
-      await redisFunctions.redisSetEX("AssignedFeedbacks", 1000, redisEntry);
+      await redisFunctions.redisSetEX(
+        "AssignedFeedbacks",
+        1000,
+        redisEntry,
+        token
+      );
       logger.info(`List fetched successfully`, {
         log: JSON.stringify(assignedList),
       });
