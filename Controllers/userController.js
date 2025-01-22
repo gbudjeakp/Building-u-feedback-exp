@@ -14,6 +14,7 @@ const registerValidator = require("../utility/inputValidator/registerValidator")
 const logger = require("../utility/logger/logger");
 const redisClient = require("../utility/redisCaching/redisCache");
 const redisFunctions = require("../utility/redisCaching/redisFunctions");
+const getToken = require("../utility/getToken/getToken");
 
 //Allows users to register to the app
 const registerUser = async (req, res) => {
@@ -149,7 +150,7 @@ const loginUser = async (req, res) => {
 //This logs the user out the app by removing the
 //Users token
 const logout = async (req, res) => {
-  const token = redisFunctions.getToken();
+  const token = getToken.getToken(req);
   await res.clearCookie("authToken", {
     httpOnly: true,
     secure: true,
@@ -171,7 +172,7 @@ const logout = async (req, res) => {
 // the app know whether or not a user is logged in.
 const authorized = async (req, res) => {
   try {
-    const token = redisFunctions.getToken();
+    const token = getToken.getToken(req);
     let userInfo = await redisFunctions.cacheGetUserInfo(token);
     if (!userInfo) {
       logger.info("Auth not found in cache");
@@ -191,9 +192,8 @@ const authorized = async (req, res) => {
 
 // This lets us update a users account information everywhere
 const updateAccount = async (req, res) => {
-  const { authToken } = req.cookies;
+  const id = getToken(req);
   const { fName, username, oldPassword, newPassword } = req.body;
-  const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
   const isUserExist = await Users.findOne({ where: { id: id } });
 
   try {
@@ -266,7 +266,7 @@ const getAllExerciseInfo = async (req, res) => {
       logger.info("Exercise Infos not Found In Cache: Fetching From Database");
       const exerciseInfos = await db.ExerciseInfo.findAll();
       const redisEntry = JSON.stringify(exerciseInfos);
-      await redisFunctions.redisSetEX("ExerciseInfo", 1000, redisEntry);
+      await redisClient.SETEX("ExerciseInfo", 1000, redisEntry);
       logger.info("Success: Exercise Infos Cached");
       return res.status(200).json({ data: exerciseInfos });
     }

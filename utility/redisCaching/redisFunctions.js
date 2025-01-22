@@ -1,5 +1,6 @@
 const redisClient = require("../redisCaching/redisCache");
 const logger = require("../logger/logger");
+require("dotenv").config();
 
 const redisGet = async (key) => {
   try {
@@ -91,9 +92,7 @@ const cacheGetUserInfo = async (token) => {
     logger.error(err);
   }
 };
-const getToken = async (req, res) => {
-  return;
-};
+
 module.exports = {
   redisGet,
   redisSetEX,
@@ -102,6 +101,5 @@ module.exports = {
   cacheGetUserFeedbackRequestForms,
   cacheGetAssignedFeedbacks,
   cacheInvalidator,
-  getToken,
   cacheGetUserInfo,
 };
