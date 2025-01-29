@@ -197,7 +197,15 @@ const authorized = async (req, res) => {
           updatedAt: updatedAt,
         })
       );
-      return res.json({ user: res.locals.user });
+      return res.json({
+        user: {
+          id: id,
+          fName: fName,
+          username: username,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+        },
+      });
     } else {
       logger.info("Auth done from cache");
       return res.json({ user: JSON.parse(userInfo) });
