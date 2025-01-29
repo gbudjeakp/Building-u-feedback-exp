@@ -21,7 +21,7 @@ feedback forms.
  */
 
 const submitFeedBack = async (req, res) => {
-  const id = getToken(req);
+  const [id, username] = getToken(req);
   const { topicOfLearningSession, codeLink } = req.body;
   const { errors, validationCheck } = feedbackrequestValidator(req.body);
 
@@ -83,10 +83,8 @@ const submitFeedBack = async (req, res) => {
  */
 const getAllFeedBackRequestsForms = async (req, res) => {
   try {
-    const token = getToken.getToken(req);
-    const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms(
-      token
-    );
+    const [id, username] = getToken.getToken(req);
+    const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms(id);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Feedback Request Forms Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
@@ -106,7 +104,7 @@ const getAllFeedBackRequestsForms = async (req, res) => {
         "FeedbackRequestForms",
         1000,
         redisEntry,
-        token
+        id
       );
       logger.info("Success: Feedback Request Forms Cached");
       return res.status(200).json({ data: feedBackrequests });
@@ -121,9 +119,9 @@ const getAllFeedBackRequestsForms = async (req, res) => {
 that is logged in */
 const getUserFeedBackRequestForms = async (req, res) => {
   try {
-    const token = getToken.getToken(req);
+    const [id, username] = getToken.getToken(req);
     const redisResponse = await redisFunctions.cacheGetUserFeedbackRequestForms(
-      token
+      id
     );
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: User Feedback Request Forms Retrieved from Cache");
@@ -132,7 +130,6 @@ const getUserFeedBackRequestForms = async (req, res) => {
       logger.info(
         "User Feedback Request Forms not Found In Cache: Fetching From Database"
       );
-      const id = getToken.getToken(req);
       let singleFeedBack = await FeedbackRequest.findAll({
         where: { userId: id },
       });
@@ -141,7 +138,7 @@ const getUserFeedBackRequestForms = async (req, res) => {
         "UserFeedbackRequestForms",
         1000,
         redisEntry,
-        token
+        id
       );
       logger.info("Success: User Feedback Request Forms Cached");
       res.status(200).json({ data: singleFeedBack });
@@ -190,7 +187,7 @@ This controller is used to trigger the flock webhook that is
 used to notify the code leads that an intern needs a code review.
 */
 const flockNotification = async (req, res) => {
-  const id = getToken(req);
+  const [id, username] = getToken(req);
   const { topicOfLearningSession, codeLink } = req.body;
 
   try {
@@ -221,8 +218,7 @@ for
 const assignFeedBack = async (req, res) => {
   try {
     const { feedbackrequestId } = req.params;
-    const id = getToken.getToken(req);
-
+    const [id, username] = getToken.getToken(req);
     // Grab the user information based on the id for updates of the request form.
     const userDetail = await User.findOne({
       where: username,
@@ -266,7 +262,7 @@ const addFeedBack = async (req, res) => {
     const { feedback } = req.body;
     const { errors, validationCheck } = feedbackValidator(req.body);
     const { feedbackrequestId } = req.params;
-    const id = getToken(req);
+    const [id, username] = getToken(req);
 
     if (!validationCheck) {
       logger.error(`Bad Input:`, { log: JSON.stringify(errors) });
@@ -325,7 +321,7 @@ of the user logged in.
  */
 const getAssignedFeedBacks = async (req, res) => {
   try {
-    const id = getToken.getToken(req);
+    const [id, username] = getToken.getToken(req);
     const redisResponse = await redisFunctions.cacheGetAssignedFeedbacks(id);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Assigned Feedbacks Retrieved from Cache");
@@ -399,7 +395,7 @@ const getSelectedFeedback = async (req, res) => {
 const markFeedbackRequestComplete = async (req, res) => {
   try {
     const { feedbackrequestId } = req.params;
-    const id = getToken(req);
+    const [id, username] = getToken(req);
 
     let markAsComplete = await FeedbackRequest.findOne({
       where: { id: feedbackrequestId },
