@@ -172,12 +172,12 @@ const logout = async (req, res) => {
 // the app know whether or not a user is logged in.
 const authorized = async (req, res) => {
   try {
-    const { token } = getToken(req);
-    let userInfo = await redisFunctions.cacheGetUserInfo(token);
+    let { id } = getToken(req);
+    let userInfo = await redisFunctions.cacheGetUserInfo(id);
     if (!userInfo) {
       logger.info("Auth not found in cache");
       let {
-        id,
+        userId,
         fName,
         username,
         password,
@@ -190,7 +190,7 @@ const authorized = async (req, res) => {
         `UserInfo-${token}`,
         1000,
         JSON.stringify({
-          id: id,
+          id: userId,
           fName: fName,
           username: username,
           createdAt: createdAt,
@@ -199,7 +199,7 @@ const authorized = async (req, res) => {
       );
       return res.json({
         user: {
-          id: id,
+          id: userIdd,
           fName: fName,
           username: username,
           createdAt: createdAt,
