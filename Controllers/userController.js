@@ -176,13 +176,7 @@ const authorized = async (req, res) => {
     let userInfo = await redisFunctions.cacheGetUserInfo(token);
     if (!userInfo) {
       logger.info("Auth not found in cache");
-      let {
-        id,
-        fName,
-        username,
-        createdAt,
-        updatedAt,
-      } = res.locals.user;
+      let { id, fName, username, createdAt, updatedAt } = res.locals.user;
       await redisClient.SETEX(
         `UserInfo-${token}`,
         1000,
