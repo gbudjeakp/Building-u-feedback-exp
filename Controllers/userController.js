@@ -180,9 +180,6 @@ const authorized = async (req, res) => {
         id,
         fName,
         username,
-        password,
-        mentor,
-        mentorId,
         createdAt,
         updatedAt,
       } = res.locals.user;

@@ -177,7 +177,7 @@ const getMentorFeedback = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
     logger.error(`Feedback was not fetched due to error`, {
-      error: JSON.stringify(error),
+      error: JSON.stringify(err),
     });
   }
 };
