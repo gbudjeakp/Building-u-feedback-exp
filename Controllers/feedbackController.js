@@ -83,7 +83,7 @@ const submitFeedBack = async (req, res) => {
  */
 const getAllFeedBackRequestsForms = async (req, res) => {
   try {
-    const { id } = getToken.getToken(req);
+    const { id } = getToken(req);
     const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms(id);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Feedback Request Forms Retrieved from Cache");
@@ -119,7 +119,7 @@ const getAllFeedBackRequestsForms = async (req, res) => {
 that is logged in */
 const getUserFeedBackRequestForms = async (req, res) => {
   try {
-    const { id } = getToken.getToken(req);
+    const { id } = getToken(req);
     const redisResponse = await redisFunctions.cacheGetUserFeedbackRequestForms(
       id
     );
@@ -218,7 +218,7 @@ for
 const assignFeedBack = async (req, res) => {
   try {
     const { feedbackrequestId } = req.params;
-    const { id, username } = getToken.getToken(req);
+    const { id, username } = getToken(req);
     // Grab the user information based on the id for updates of the request form.
     const userDetail = await User.findOne({
       where: username,
@@ -321,7 +321,7 @@ of the user logged in.
  */
 const getAssignedFeedBacks = async (req, res) => {
   try {
-    const { id } = getToken.getToken(req);
+    const { id } = getToken(req);
     const redisResponse = await redisFunctions.cacheGetAssignedFeedbacks(id);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Assigned Feedbacks Retrieved from Cache");

@@ -150,7 +150,7 @@ const loginUser = async (req, res) => {
 //This logs the user out the app by removing the
 //Users token
 const logout = async (req, res) => {
-  const { id } = getToken.getToken(req);
+  const { id } = getToken(req);
   await res.clearCookie("authToken", {
     httpOnly: true,
     secure: true,
@@ -172,7 +172,7 @@ const logout = async (req, res) => {
 // the app know whether or not a user is logged in.
 const authorized = async (req, res) => {
   try {
-    const [token, uName] = getToken.getToken(req);
+    const { token } = getToken(req);
     let userInfo = await redisFunctions.cacheGetUserInfo(token);
     if (!userInfo) {
       logger.info("Auth not found in cache");
@@ -217,7 +217,7 @@ const authorized = async (req, res) => {
 
 // This lets us update a users account information everywhere
 const updateAccount = async (req, res) => {
-  const [id, uName] = getToken(req);
+  const { id } = getToken(req);
   const { fName, username, oldPassword, newPassword } = req.body;
   const isUserExist = await Users.findOne({ where: { id: id } });
 
