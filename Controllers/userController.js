@@ -150,7 +150,7 @@ const loginUser = async (req, res) => {
 //This logs the user out the app by removing the
 //Users token
 const logout = async (req, res) => {
-  const [id, username] = getToken.getToken(req);
+  const { id } = getToken.getToken(req);
   await res.clearCookie("authToken", {
     httpOnly: true,
     secure: true,
