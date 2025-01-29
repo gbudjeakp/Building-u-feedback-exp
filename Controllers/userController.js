@@ -177,7 +177,7 @@ const authorized = async (req, res) => {
     if (!userInfo) {
       logger.info("Auth not found in cache");
       let {
-        userId,
+        id,
         fName,
         username,
         password,
@@ -190,7 +190,7 @@ const authorized = async (req, res) => {
         `UserInfo-${token}`,
         1000,
         JSON.stringify({
-          id: userId,
+          id: id,
           fName: fName,
           username: username,
           createdAt: createdAt,
@@ -199,7 +199,7 @@ const authorized = async (req, res) => {
       );
       return res.json({
         user: {
-          id: userIdd,
+          id: id,
           fName: fName,
           username: username,
           createdAt: createdAt,
