@@ -14,14 +14,14 @@ const {
 const logger = require("../utility/logger/logger");
 const redisClient = require("../utility/redisCaching/redisCache");
 const redisFunctions = require("../utility/redisCaching/redisFunctions");
+const getToken = require("../utility/getToken/getToken");
 
 /*This controller allows the interns to request for feedback using the request
 feedback forms.
  */
 
 const submitFeedBack = async (req, res) => {
-  const { authToken } = req.cookies;
-  const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+  const { id } = getToken(req);
   const { topicOfLearningSession, codeLink } = req.body;
   const { errors, validationCheck } = feedbackrequestValidator(req.body);
 
@@ -64,8 +64,8 @@ const submitFeedBack = async (req, res) => {
       // studentNotification(feedBackRequestData);
     }
     await redisFunctions.cacheInvalidator([
-      "FeedbackRequestForms",
-      "UserFeedbackRequestForms",
+      `FeedbackRequestForms-${id}`,
+      `UserFeedbackRequestForms-${id}`,
       "ExerciseInfo",
     ]);
     logger.info("Outdated cache successfully invalidated");
@@ -83,7 +83,8 @@ const submitFeedBack = async (req, res) => {
  */
 const getAllFeedBackRequestsForms = async (req, res) => {
   try {
-    const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms();
+    const { id } = getToken(req);
+    const redisResponse = await redisFunctions.cacheGetFeedbackRequestForms(id);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Feedback Request Forms Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
@@ -99,7 +100,12 @@ const getAllFeedBackRequestsForms = async (req, res) => {
         },
       });
       const redisEntry = JSON.stringify(feedBackrequests);
-      await redisFunctions.redisSetEX("FeedbackRequestForms", 1000, redisEntry);
+      await redisFunctions.redisSetEX(
+        "FeedbackRequestForms",
+        1000,
+        redisEntry,
+        id
+      );
       logger.info("Success: Feedback Request Forms Cached");
       return res.status(200).json({ data: feedBackrequests });
     }
@@ -113,8 +119,10 @@ const getAllFeedBackRequestsForms = async (req, res) => {
 that is logged in */
 const getUserFeedBackRequestForms = async (req, res) => {
   try {
-    const redisResponse =
-      await redisFunctions.cacheGetUserFeedbackRequestForms();
+    const { id } = getToken(req);
+    const redisResponse = await redisFunctions.cacheGetUserFeedbackRequestForms(
+      id
+    );
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: User Feedback Request Forms Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
@@ -122,8 +130,6 @@ const getUserFeedBackRequestForms = async (req, res) => {
       logger.info(
         "User Feedback Request Forms not Found In Cache: Fetching From Database"
       );
-      const { authToken } = req.cookies;
-      const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
       let singleFeedBack = await FeedbackRequest.findAll({
         where: { userId: id },
       });
@@ -131,7 +137,8 @@ const getUserFeedBackRequestForms = async (req, res) => {
       await redisFunctions.redisSetEX(
         "UserFeedbackRequestForms",
         1000,
-        redisEntry
+        redisEntry,
+        id
       );
       logger.info("Success: User Feedback Request Forms Cached");
       res.status(200).json({ data: singleFeedBack });
@@ -170,7 +177,7 @@ const getMentorFeedback = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
     logger.error(`Feedback was not fetched due to error`, {
-      error: JSON.stringify(error),
+      error: JSON.stringify(err),
     });
   }
 };
@@ -180,9 +187,8 @@ This controller is used to trigger the flock webhook that is
 used to notify the code leads that an intern needs a code review.
 */
 const flockNotification = async (req, res) => {
-  const { authToken } = req.cookies;
+  const { id } = getToken(req);
   const { topicOfLearningSession, codeLink } = req.body;
-  const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
   try {
     let fullName = await User.findOne({
@@ -212,9 +218,7 @@ for
 const assignFeedBack = async (req, res) => {
   try {
     const { feedbackrequestId } = req.params;
-    const { authToken } = req.cookies;
-    const { id, username } = jwt.verify(authToken, process.env.JWT_SECRET);
-
+    const { id, username } = getToken(req);
     // Grab the user information based on the id for updates of the request form.
     const userDetail = await User.findOne({
       where: username,
@@ -236,7 +240,7 @@ const assignFeedBack = async (req, res) => {
     feedbackRecord.isAssigned = true;
     feedbackRecord.whoisAssigned = userDetail.fName;
     await feedbackRecord.save();
-    await redisClient.cacheInvalidator(["AssignedFeedbacks"]);
+    await redisClient.cacheInvalidator([`AssignedFeedbacks-${id}`]);
     logger.info("Outdated cache successfully invalidated");
     logger.info(`Feedback assigned to mentor`, {
       log: JSON.stringify(feedbackRecord),
@@ -258,8 +262,7 @@ const addFeedBack = async (req, res) => {
     const { feedback } = req.body;
     const { errors, validationCheck } = feedbackValidator(req.body);
     const { feedbackrequestId } = req.params;
-    const { authToken } = req.cookies;
-    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+    const { id } = getToken(req);
 
     if (!validationCheck) {
       logger.error(`Bad Input:`, { log: JSON.stringify(errors) });
@@ -318,7 +321,8 @@ of the user logged in.
  */
 const getAssignedFeedBacks = async (req, res) => {
   try {
-    const redisResponse = await redisFunctions.cacheGetAssignedFeedbacks();
+    const { id } = getToken(req);
+    const redisResponse = await redisFunctions.cacheGetAssignedFeedbacks(id);
     if (redisResponse !== "No Cache Hit") {
       logger.info("Success: Assigned Feedbacks Retrieved from Cache");
       return res.status(200).json({ data: redisResponse });
@@ -326,8 +330,6 @@ const getAssignedFeedBacks = async (req, res) => {
       logger.info(
         "Assigned Feedbacks not Found In Cache: Fetching From Database"
       );
-      const { authToken } = req.cookies;
-      const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
 
       let fullName = await User.findOne({
         where: { id: id },
@@ -342,7 +344,12 @@ const getAssignedFeedBacks = async (req, res) => {
         },
       });
       const redisEntry = JSON.stringify(assignedList);
-      await redisFunctions.redisSetEX("AssignedFeedbacks", 1000, redisEntry);
+      await redisFunctions.redisSetEX(
+        "AssignedFeedbacks",
+        1000,
+        redisEntry,
+        id
+      );
       logger.info(`List fetched successfully`, {
         log: JSON.stringify(assignedList),
       });
@@ -388,22 +395,7 @@ const getSelectedFeedback = async (req, res) => {
 const markFeedbackRequestComplete = async (req, res) => {
   try {
     const { feedbackrequestId } = req.params;
-    const { authToken } = req.cookies;
-    const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
-
-    // Check if the user is a mentor
-    const isMentor = await User.findOne({
-      where: {
-        id: id,
-        mentor: true,
-      },
-    });
-
-    if (!isMentor) {
-      logger.error(`Unauthorized user`, { log: isMentor });
-      res.status(401).json({ msg: "Unauthorized user" });
-      return;
-    }
+    const { id } = getToken(req);
 
     let markAsComplete = await FeedbackRequest.findOne({
       where: { id: feedbackrequestId },
@@ -432,8 +424,8 @@ const markFeedbackRequestComplete = async (req, res) => {
     // Update the status attribute of the FeedbackRequest record
     await markAsComplete.update({ status: true });
     await redisClient.cacheInvalidator([
-      "FeedbackRequestForms",
-      "UserFeedbackRequestForms",
+      `FeedbackRequestForms-${id}`,
+      `UserFeedbackRequestForms-${id}`,
       "ExerciseInfo",
     ]);
     logger.info("Outdated cache successfully invalidated");
